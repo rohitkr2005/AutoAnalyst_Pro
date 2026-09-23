@@ -4,8 +4,10 @@ Implements SQLite storage, Werkzeug password hashing, session tracking, and user
 """
 
 import os
+import json
+import random
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -50,6 +52,20 @@ def init_auth_db():
         action_type TEXT DEFAULT 'Analyzed Dataset',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users (id)
+    )
+    """)
+
+    # OTP Verifications table (Registration & Password Reset)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS otp_verifications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT NOT NULL,
+        otp_code TEXT NOT NULL,
+        purpose TEXT NOT NULL,
+        payload TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        expires_at TIMESTAMP NOT NULL,
+        used INTEGER DEFAULT 0
     )
     """)
 
@@ -200,12 +216,12 @@ def record_user_activity(user_id: int, dataset_name: str, records_count: int, he
         print(f"Error logging user activity: {e}")
 
 
-def get_user_history(user_id: int, limit: int = 5) -> List[Dict[str, Any]]:
+def get_user_history(user_id: int, limit: int = 30) -> List[Dict[str, Any]]:
     """Retrieves recent datasets analyzed by the user."""
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
-    SELECT dataset_name, records_count, health_score, action_type, created_at
+    SELECT id, dataset_name, records_count, health_score, action_type, created_at
     FROM user_activity
     WHERE user_id = ?
     ORDER BY id DESC LIMIT ?
@@ -216,6 +232,7 @@ def get_user_history(user_id: int, limit: int = 5) -> List[Dict[str, Any]]:
     history = []
     for r in rows:
         history.append({
+            "id": r["id"],
             "dataset_name": r["dataset_name"],
             "records_count": r["records_count"],
             "health_score": round(r["health_score"], 1),
@@ -223,3 +240,115 @@ def get_user_history(user_id: int, limit: int = 5) -> List[Dict[str, Any]]:
             "created_at": str(r["created_at"])
         })
     return history
+
+
+def clear_user_history(user_id: int) -> bool:
+    """Clears all activity history for a specific user."""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM user_activity WHERE user_id = ?", (user_id,))
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"Error clearing history: {e}")
+        return False
+
+
+def create_otp(email: str, purpose: str, payload: Optional[Dict[str, Any]] = None, expiry_minutes: int = 10) -> str:
+    """Generates a secure 6-digit OTP code and stores it in the database with expiration."""
+    email = email.strip().lower()
+    otp_code = str(random.randint(100000, 999999))
+    expires_at = datetime.utcnow() + timedelta(minutes=expiry_minutes)
+    payload_json = json.dumps(payload) if payload else None
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # Mark old unused OTPs for this email and purpose as used
+    cursor.execute("UPDATE otp_verifications SET used = 1 WHERE email = ? AND purpose = ?", (email, purpose))
+    cursor.execute("""
+    INSERT INTO otp_verifications (email, otp_code, purpose, payload, expires_at, used)
+    VALUES (?, ?, ?, ?, ?, 0)
+    """, (email, otp_code, purpose, payload_json, expires_at.strftime("%Y-%m-%d %H:%M:%S")))
+    conn.commit()
+    conn.close()
+
+    return otp_code
+
+
+def verify_otp(email: str, otp_code: str, purpose: str) -> Dict[str, Any]:
+    """Validates 6-digit OTP code, expiration, and returns stored payload."""
+    email = email.strip().lower()
+    otp_code = otp_code.strip()
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+    SELECT id, payload, expires_at, used
+    FROM otp_verifications
+    WHERE email = ? AND otp_code = ? AND purpose = ? AND used = 0
+    ORDER BY id DESC LIMIT 1
+    """, (email, otp_code, purpose))
+    row = cursor.fetchone()
+
+    if not row:
+        conn.close()
+        return {"valid": False, "message": "Invalid or expired verification code."}
+
+    # Check expiration
+    expires_at = datetime.strptime(row["expires_at"], "%Y-%m-%d %H:%M:%S")
+    if datetime.utcnow() > expires_at:
+        cursor.execute("UPDATE otp_verifications SET used = 1 WHERE id = ?", (row["id"],))
+        conn.commit()
+        conn.close()
+        return {"valid": False, "message": "Verification code has expired. Please request a new one."}
+
+    # Mark as used
+    cursor.execute("UPDATE otp_verifications SET used = 1 WHERE id = ?", (row["id"],))
+    conn.commit()
+    conn.close()
+
+    payload = json.loads(row["payload"]) if row["payload"] else {}
+    return {"valid": True, "payload": payload}
+
+
+def get_user_by_email(email: str) -> Optional[Dict[str, Any]]:
+    """Looks up user record by email address."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+    SELECT id, username, email, full_name, role
+    FROM users WHERE email = ?
+    """, (email.strip().lower(),))
+    row = cursor.fetchone()
+    conn.close()
+    if not row:
+        return None
+    return {
+        "id": row["id"],
+        "username": row["username"],
+        "email": row["email"],
+        "full_name": row["full_name"],
+        "role": row["role"]
+    }
+
+
+def reset_password_with_otp(email: str, otp_code: str, new_password: str) -> Dict[str, Any]:
+    """Validates reset OTP and updates user password hash."""
+    if len(new_password) < 6:
+        return {"success": False, "message": "Password must be at least 6 characters long."}
+
+    v_res = verify_otp(email, otp_code, "reset_password")
+    if not v_res["valid"]:
+        return {"success": False, "message": v_res["message"]}
+
+    pwd_hash = generate_password_hash(new_password)
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET password_hash = ? WHERE email = ?", (pwd_hash, email.strip().lower()))
+    conn.commit()
+    conn.close()
+
+    return {"success": True, "message": "Password reset successfully. You can now sign in with your new password."}
+

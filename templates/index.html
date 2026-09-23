@@ -52,7 +52,7 @@
       <!-- Brand & Workspace Header -->
       <div class="sidebar-header">
         <div class="brand-row">
-          <div class="brand-icon-box">
+          <div class="brand-icon-box" id="sidebar-brand-icon-box" onclick="handleSidebarLogoClick()" title="AutoAnalyst Pro (Click to expand sidebar)" style="cursor: pointer;">
             <svg class="brand-logo-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="brandLogoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
@@ -143,9 +143,16 @@
           <span class="nav-badge ai">AI Copilot</span>
         </button>
 
-        <div class="sidebar-nav-section-title" style="margin-top: 1.4rem;">ACCOUNT</div>
+        <div class="sidebar-nav-section-title" style="margin-top: 1.4rem;">ACCOUNT & LOGS</div>
 
-        <!-- 8. Logout Button (Located at Yellow Marker) -->
+        <!-- History Button for Authenticated Users -->
+        <button class="nav-item" id="nav-history" onclick="openHistoryModal()" title="View Analysis History">
+          <span class="nav-item-icon">📜</span>
+          <span class="nav-item-label">Analysis History</span>
+          <span class="nav-badge count" id="sidebar-history-count">Logs</span>
+        </button>
+
+        <!-- Logout Button (Located at Yellow Marker) -->
         <button class="nav-item nav-logout-item" id="sidebar-logout-btn" onclick="handleLogout()" title="Sign Out of AutoAnalyst">
           <span class="nav-item-icon">🚪</span>
           <span class="nav-item-label">Sign Out</span>
@@ -155,7 +162,7 @@
 
       <!-- Sidebar Bottom Footer: Shows Logged-in User's Name -->
       <div class="sidebar-footer">
-        <div class="sidebar-user-card" id="sidebar-user-card" title="Logged-in User Profile">
+        <div class="sidebar-user-card" id="sidebar-user-card" onclick="handleSidebarLogoClick()" title="User Profile (Click to expand sidebar)" style="cursor: pointer;">
           <div class="sidebar-user-avatar" id="sidebar-user-avatar">DA</div>
           <div class="sidebar-user-info">
             <span class="sidebar-user-name" id="sidebar-user-name">Loading...</span>
@@ -165,6 +172,9 @@
           ◀
         </button>
       </div>
+
+      <!-- Draggable Sidebar Resizer Handle -->
+      <div class="sidebar-resizer" id="sidebar-resizer" title="Drag horizontally to resize sidebar width"></div>
 
     </aside>
 
@@ -243,6 +253,12 @@
               </button>
             </div>
           </div>
+
+          <!-- 4. Analysis History Icon Button -->
+          <button class="topbar-icon-btn btn-history-icon" id="btn-topbar-history" onclick="openHistoryModal()"
+            data-tooltip="Analysis History & Activity Logs" aria-label="Analysis History">
+            <span class="topbar-icon">📜</span>
+          </button>
 
           <!-- 4. 3-Mode Theme Switcher (Icons Only) -->
           <div class="theme-switch-control" role="group" aria-label="Theme Selection">
@@ -1114,6 +1130,36 @@
         autocomplete="off">
       <button type="submit" class="copilot-send-btn" id="copilot-send-btn">Send</button>
     </form>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- ANALYSIS ACTIVITY HISTORY MODAL (For Authenticated Users)    -->
+  <!-- ============================================================ -->
+  <div class="history-modal-overlay" id="history-modal" style="display: none;">
+    <div class="history-modal-backdrop" onclick="closeHistoryModal()"></div>
+    <div class="history-modal-container">
+      <div class="history-modal-header">
+        <div class="history-header-title">
+          <div class="history-icon-badge">📜</div>
+          <div>
+            <h3>Analysis History & Activity</h3>
+            <p>Recent datasets loaded, cleansed, and analyzed in your workspace</p>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="btn-clear-history" id="btn-clear-history" onclick="clearUserHistory()" title="Clear analysis log">
+            🗑️ Clear History
+          </button>
+          <button class="btn-close-history" onclick="closeHistoryModal()" title="Close History">✕</button>
+        </div>
+      </div>
+
+      <div class="history-modal-body">
+        <div class="history-list" id="history-list">
+          <div class="history-loading-placeholder">Loading your activity history...</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Global Loading Spinner Overlay -->

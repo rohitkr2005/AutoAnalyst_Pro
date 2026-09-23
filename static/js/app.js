@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupNavigation();
   setupDropzone();
   setupExportButtons();
+  initSidebarResizer();
 });
 
 // Authentication Session Verification
@@ -329,6 +330,69 @@ function toggleSidebar() {
       collapseBtn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
     }
   }
+}
+
+function handleSidebarLogoClick() {
+  const sidebar = document.getElementById('app-sidebar');
+  if (!sidebar) return;
+  if (sidebar.classList.contains('collapsed')) {
+    sidebar.classList.remove('collapsed');
+    const collapseBtn = document.getElementById('btn-sidebar-collapse');
+    if (collapseBtn) collapseBtn.textContent = '◀';
+  } else if (window.innerWidth <= 900 && !sidebar.classList.contains('mobile-open')) {
+    sidebar.classList.add('mobile-open');
+  }
+}
+
+function initSidebarResizer() {
+  const sidebar = document.getElementById('app-sidebar');
+  const resizer = document.getElementById('sidebar-resizer');
+  if (!sidebar || !resizer) return;
+
+  // Restore saved width from localStorage
+  const savedWidth = localStorage.getItem('analytica_sidebar_width');
+  if (savedWidth && parseInt(savedWidth, 10) >= 200 && parseInt(savedWidth, 10) <= 480) {
+    if (!sidebar.classList.contains('collapsed')) {
+      sidebar.style.width = `${savedWidth}px`;
+    }
+  }
+
+  let isResizing = false;
+  let startX = 0;
+  let startWidth = 260;
+
+  resizer.addEventListener('mousedown', (e) => {
+    if (sidebar.classList.contains('collapsed')) return;
+    isResizing = true;
+    startX = e.clientX;
+    startWidth = sidebar.getBoundingClientRect().width;
+    sidebar.classList.add('resizing');
+    resizer.classList.add('active');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    const dx = e.clientX - startX;
+    let newWidth = startWidth + dx;
+    if (newWidth < 200) newWidth = 200;
+    if (newWidth > 480) newWidth = 480;
+    sidebar.style.width = `${newWidth}px`;
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!isResizing) return;
+    isResizing = false;
+    sidebar.classList.remove('resizing');
+    resizer.classList.remove('active');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    const currentWidth = Math.round(sidebar.getBoundingClientRect().width);
+    if (currentWidth >= 200 && currentWidth <= 480) {
+      localStorage.setItem('analytica_sidebar_width', currentWidth);
+    }
+  });
 }
 
 function toggleExportMenu(e) {
@@ -1972,3 +2036,109 @@ function escapeHtml(str) {
     "'": '&#39;'
   }[match]));
 }
+
+// ============================================================
+// ANALYSIS ACTIVITY HISTORY MODAL CONTROLLER
+// ============================================================
+
+function openHistoryModal() {
+  const modal = document.getElementById('history-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+    fetchUserHistory();
+  }
+}
+
+function closeHistoryModal() {
+  const modal = document.getElementById('history-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function fetchUserHistory() {
+  const listEl = document.getElementById('history-list');
+  if (!listEl) return;
+  listEl.innerHTML = '<div class="history-loading-placeholder" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading your analysis logs...</div>';
+
+  try {
+    const res = await fetch('/api/user/history');
+    const data = await res.json();
+
+    if (data.status === 'success' && Array.isArray(data.history)) {
+      renderUserHistory(data.history);
+      const countBadge = document.getElementById('sidebar-history-count');
+      if (countBadge) {
+        countBadge.textContent = `${data.history.length} Logs`;
+      }
+    } else {
+      listEl.innerHTML = '<div class="history-empty-state">Unable to load activity history.</div>';
+    }
+  } catch (err) {
+    listEl.innerHTML = '<div class="history-empty-state">Network or server error loading history.</div>';
+  }
+}
+
+function renderUserHistory(history) {
+  const listEl = document.getElementById('history-list');
+  if (!listEl) return;
+
+  if (!history || history.length === 0) {
+    listEl.innerHTML = `
+      <div class="history-empty-state">
+        <div style="font-size: 2.2rem; margin-bottom: 0.75rem;">📂</div>
+        <div style="font-weight: 600; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.3rem;">No Activity History Yet</div>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">Load a sample dataset, upload CSV/Excel, or run clean & ML pipelines to build your history log.</p>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  history.forEach(item => {
+    let actionIcon = '📊';
+    const action = item.action_type || '';
+    if (action.includes('Clean')) actionIcon = '🧹';
+    else if (action.includes('ML')) actionIcon = '🧠';
+    else if (action.includes('Upload')) actionIcon = '📁';
+    else if (action.includes('Demo') || action.includes('Sample')) actionIcon = '⚡';
+
+    html += `
+      <div class="history-item">
+        <div class="history-item-main">
+          <div class="history-item-icon">${actionIcon}</div>
+          <div class="history-item-details">
+            <div class="history-item-title">${escapeHtml(item.dataset_name || 'Active Dataset')}</div>
+            <div class="history-item-meta">
+              <span>📅 ${escapeHtml(item.created_at || 'Recent')}</span>
+              <span>•</span>
+              <span>🔢 ${item.records_count ? item.records_count.toLocaleString() : 0} rows</span>
+            </div>
+          </div>
+        </div>
+        <div class="history-item-badges">
+          <span class="history-badge action">${escapeHtml(item.action_type || 'Analyzed')}</span>
+          <span class="history-badge score">Score: ${item.health_score || 0}%</span>
+        </div>
+      </div>
+    `;
+  });
+
+  listEl.innerHTML = html;
+}
+
+async function clearUserHistory() {
+  if (!confirm('Are you sure you want to clear your analysis activity history?')) return;
+  try {
+    const res = await fetch('/api/user/history', { method: 'DELETE' });
+    const data = await res.json();
+    if (data.status === 'success') {
+      fetchUserHistory();
+      const countBadge = document.getElementById('sidebar-history-count');
+      if (countBadge) countBadge.textContent = '0 Logs';
+    } else {
+      alert(data.message || 'Failed to clear history');
+    }
+  } catch (err) {
+    alert('Error clearing history.');
+  }
+}
+
