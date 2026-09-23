@@ -1,0 +1,411 @@
+Account_ID,Company_Name,Subscription_Tier,Industry_Sector,Signup_Date,Monthly_Revenue_MRR,Active_User_Seats,Cloud_Storage_GB,Support_Tickets_Opened,Net_Promoter_Score,Customer_Churned,Product_Satisfaction
+SAAS-5031,Corp_56 Inc,N/A,Other,2022-12-18,$96.90,N/A,132.9,15,5,No,1.4
+SAAS-5258,Corp_947 Inc,STARTER,Logistics,2022-09-07,4795.03 USD,57,425.1,13,5,True,2.7
+SAAS-5256,Corp_24 Inc,Professional Plan,Cybersecurity,2023-04-09,"$9,536.77",129,377.5,16,3,false,4.4
+SAAS-5158,Corp_62 Inc,pro,E-commerce,2023-05-20,511.62,87,95.1,18,10,0,4.9
+SAAS-5242,Corp_598 Inc,enterprise,Other,2022-09-27,1233.36 USD,136,83.0,22,4,yes,1.6
+SAAS-5078,Corp_627 Inc,Professional,Healthtech,2022-09-03,96.53999999999999 USD,88,41.3,7,4,N,4.4
+SAAS-5025,Corp_181 Inc,Professional Plan,Cybersecurity,2022-08-31,$325.23,59,489.5,11,6,true,4.1
+SAAS-5207,Corp_980 Inc,Starter,Logistics,2023-07-31,$332.90,20,395.2,21,3,True,4.6
+SAAS-5261,Corp_262 Inc,ENTERPRISE,Marketing,2022-07-27,"$2,411.38",28,79.5,16,9,True,2.4
+SAAS-5249,Corp_711 Inc,enterprise,Marketing,2022-12-23,"$9,519.66",32,418.0,5,4,N,1.4
+SAAS-5291,Corp_973 Inc,Professional Plan,Cybersecurity,2023-08-30,9542.97,26,53.1,25,7,N/A,2.3
+SAAS-5254,Corp_433 Inc,Starter,Fintech,2023-01-26,4828.1 USD,68,42.5,20,5,0,2.0
+SAAS-5276,Corp_89 Inc,Free Trial,E-commerce,N/A,2400.51,86,495.1,18,4,no,4.9
+SAAS-5206,Corp_440 Inc,enterprise,Marketing,2023-04-09,"$4,818.44",95,350.0,9,1,1,2.6
+SAAS-5250,Corp_238 Inc,PRO,Logistics,2022-08-23,"$9,492.00",135,48.1,20,2,true,2.9
+SAAS-5161,Corp_152 Inc,N/A,Logistics,2022-06-13,513.25 USD,87,413.0,16,7,N/A,
+SAAS-5041,Corp_688 Inc,Enterprise,Logistics,2023-02-06,$98.93,89,397.8,22,3,1,1.4
+SAAS-5192,Corp_364 Inc,starter,Edtech,2022-09-30,"$1,198.07",85,null,9,3,True,2.5
+SAAS-5022,Corp_670 Inc,Professional,Cybersecurity,2022-07-25,"$1,203.78",122,435.1,15,1,true,3.7
+SAAS-5035,Corp_810 Inc,Free Trial,Marketing,2023-04-25,$75.78,104,178.7,9,3,0,4.1
+SAAS-5320,Corp_836 Inc,Starter,Other,2023-07-09,4811.92 USD,7,254.2,5,7,0,1.7
+SAAS-5248,Corp_806 Inc,Professional,Healthtech,2022-09-19,"$9,505.63",9999,270.0,2,7,N,2.7
+SAAS-5202,Corp_541 Inc,N/A,Cybersecurity,2022-07-24,4802.07 USD,72,401.3,16,3,False,4.0
+SAAS-5172,Corp_697 Inc,Free Trial,Edtech,2023-09-26,$140.24,127,419.8,1,10,yes,3.2
+SAAS-5165,Corp_874 Inc,ENTERPRISE,,2023-08-15,$547.87,132,310.7,6,4,N,1.8
+SAAS-5228,Corp_257 Inc,PRO,E-commerce,2022-08-15,$348.72,89,377.3,3,1,no,N/A
+SAAS-5397,Corp_540 Inc,PRO,Marketing,2023-09-08,4834.28 USD,23,375.8,19,9,True,3.9
+SAAS-5040,Corp_201 Inc,PRO,Marketing,2022-06-06,2402.28 USD,70,142.5,11,4,No,4.2
+SAAS-5344,Corp_167 Inc,Enterprise,Fintech,2023-07-31,$524.61,58,381.7,19,5,N,4.1
+SAAS-5264,Corp_745 Inc,enterprise,Cybersecurity,2023-07-21,$292.76,103,257.6,23,1,Yes,3.5
+SAAS-5322,Corp_541 Inc,PRO,Marketing,2023-10-12,$545.98,141,362.7,4,4,true,4.2
+SAAS-5215,Corp_718 Inc,STARTER,Marketing,2022-11-30,90.61,127,21.0,10,99,True,2.4
+SAAS-5294,Corp_667 Inc,Free Trial,Healthtech,2023-04-26,"$2,434.48",84,47.8,14,99,True,2.3
+SAAS-5319,Corp_508 Inc,trial,Other,2023-07-02,516.78 USD,119,173.3,12,-1,False,2.5
+SAAS-5097,Corp_211 Inc,Professional,Logistics,2022-10-09,117.98,43,350.0,12,1,N,3.3
+SAAS-5016,Corp_498 Inc,Enterprise,E-commerce,2023-04-17,312.29,90,27.0,13,6,Y,3.1
+SAAS-5299,Corp_253 Inc,PRO,E-commerce,2023-02-21,1199.71 USD,125,300.3,13,7,N,1.2
+SAAS-5175,Corp_680 Inc,Enterprise,Marketing,2023-02-26,"$1,192.92",84,71.3,20,10,true,3.7
+SAAS-5170,Corp_101 Inc,Professional,Logistics,2022-07-06,,38,365.9,11,3,1,3.9
+SAAS-5283,Corp_365 Inc,STARTER,Marketing,2023-05-20,$495.32,109,258.7,23,8,Yes,3.5
+SAAS-5050,Corp_22 Inc,ENTERPRISE,Other,2022-06-29,66.55 USD,93,262.5,11,1,no,4.3
+SAAS-5399,Corp_961 Inc,N/A,,2023-09-25,9536.23 USD,93,423.2,2,2,no,N/A
+SAAS-5273,Corp_495 Inc,N/A,E-commerce,2023-06-03,1196.37 USD,68,406.6,18,7,Y,2.2
+SAAS-5115,Corp_879 Inc,Starter,Fintech,2023-05-27,530.78 USD,60,,10,8,0,1.0
+SAAS-5006,Corp_880 Inc,Free Trial,Other,2023-09-25,102.48 USD,11,470.9,16,10,N,4.6
+SAAS-5070,Corp_180 Inc,STARTER,Marketing,2023-09-22,$509.13,50,424.6,13,5,1,2.3
+SAAS-5225,Corp_997 Inc,ENTERPRISE,E-commerce,2023-08-21,"$1,210.41",46,null,14,7,No,3.8
+SAAS-5072,Corp_951 Inc,Starter,Healthtech,2023-04-25,"$2,445.76",82,468.8,20,2,true,2.4
+SAAS-5038,Corp_570 Inc,pro,Fintech,2022-12-30,508.59 USD,35,239.1,24,9,N,3.0
+SAAS-5160,Corp_219 Inc,trial,Logistics,2022-09-08,1196.28 USD,5,34.2,15,99,true,5.0
+SAAS-5353,Corp_753 Inc,trial,Marketing,2023-10-10,$504.13,132,,4,3,yes,1.8
+SAAS-5318,Corp_626 Inc,STARTER,Cybersecurity,2023-09-19,111.27 USD,123,357.3,10,5,Y,3.4
+SAAS-5341,Corp_466 Inc,Professional,Fintech,2023-01-10,"$4,849.62",130,421.3,12,2,yes,1.6
+SAAS-5370,Corp_235 Inc,starter,,2023-06-20,1235.57 USD,13,418.0,24,10,N,4.2
+SAAS-5395,Corp_999 Inc,STARTER,Other,2022-12-17,9506.32,-1,111.6,11,1,True,3.5
+SAAS-5378,Corp_903 Inc,Professional,E-commerce,2022-12-20,"$1,240.20",134,141.7,6,9,0,4.4
+SAAS-5198,Corp_58 Inc,pro,Cybersecurity,2023-08-29,$330.55,116,26.5,9,10,Yes,3.6
+SAAS-5065,Corp_907 Inc,PRO,Edtech,2023-04-21,$509.91,8,241.6,23,4,false,2.9
+SAAS-5032,Corp_616 Inc,Enterprise,Marketing,2022-12-30,"$4,816.77",84,293.0,3,6,N/A,3.4
+SAAS-5190,Corp_648 Inc,Professional,Healthtech,2023-06-13,"$4,825.85",123,null,21,7,,1.6
+SAAS-5017,Corp_736 Inc,starter,Healthtech,2023-08-15,$89.19,75,259.9,2,5,Yes,
+SAAS-5366,Corp_172 Inc,ENTERPRISE,Logistics,2022-11-02,$494.67,15,479.4,22,10,,1.6
+SAAS-5234,Corp_916 Inc,enterprise,Fintech,2023-06-24,$289.38,120,32.3,17,8,True,4.9
+SAAS-5200,Corp_831 Inc,ENTERPRISE,Logistics,2023-01-17,"$4,846.74",112,214.6,1,10,N,1.8
+SAAS-5138,Corp_963 Inc,Free Trial,Logistics,2023-01-31,9547.31 USD,96,301.8,15,10,N,2.8
+SAAS-5381,Corp_184 Inc,Professional,Edtech,2022-08-18,500.1 USD,108,207.5,14,6,no,1.8
+SAAS-5101,Corp_533 Inc,Professional,Other,2023-05-08,94.41 USD,87,35.2,5,9,false,2.8
+SAAS-5240,Corp_468 Inc,trial,,2022-07-14,511.85 USD,52,436.8,3,9,Y,2.7
+SAAS-5164,Corp_995 Inc,PRO,Edtech,2022-07-21,348.69 USD,86,323.3,9,8,1,1.6
+SAAS-5253,Corp_424 Inc,enterprise,Fintech,2023-04-26,130.9,101,286.4,19,10,No,3.3
+SAAS-5316,Corp_343 Inc,N/A,Healthtech,2022-09-21,$495.93,92,153.1,20,7,False,4.1
+SAAS-5339,Corp_480 Inc,Professional Plan,E-commerce,2023-07-23,$506.64,47,239.5,3,4,1,3.2
+SAAS-5153,Corp_368 Inc,starter,Other,2023-05-10,$289.12,42,396.1,9,5,1,1.1
+SAAS-5329,Corp_466 Inc,enterprise,Edtech,2023-03-26,111.39,77,264.0,2,10,N,1.7
+SAAS-5218,Corp_695 Inc,trial,,2023-04-14,1207.46,10,201.4,24,2,Yes,1.9
+SAAS-5173,Corp_126 Inc,Starter,Cybersecurity,2023-05-02,"$1,204.04",67,305.2,16,4,True,2.6
+SAAS-5150,Corp_197 Inc,Enterprise,,2023-08-12,"$2,437.36",1,472.0,17,3,false,3.9
+SAAS-5239,Corp_731 Inc,Professional Plan,Edtech,2022-11-06,4838.82 USD,86,239.5,24,3,N/A,3.4
+SAAS-5211,Corp_682 Inc,Starter,Healthtech,2022-09-27,$60.59,68,13.5,14,4,Y,2.6
+SAAS-5049,Corp_86 Inc,Enterprise,Cybersecurity,2023-07-06,$509.31,139,223.6,17,10,True,3.5
+SAAS-5233,Corp_526 Inc,PRO,Healthtech,2022-08-22,"$9,520.57",56,6.3,11,2,yes,4.6
+SAAS-5373,Corp_510 Inc,enterprise,,2022-12-30,495.04 USD,116,486.5,24,5,Yes,2.0
+SAAS-5196,Corp_282 Inc,Professional,Healthtech,2023-07-03,"$9,492.64",3,78.3,8,3,N,1.3
+SAAS-5389,Corp_493 Inc,starter,E-commerce,2022-10-05,"$1,190.75",10,68.1,N/A,-1,,1.9
+SAAS-5298,Corp_68 Inc,ENTERPRISE,Cybersecurity,2022-10-03,2444.57,70,,2,N/A,yes,3.2
+SAAS-5056,Corp_436 Inc,Professional,Marketing,2023-02-06,$125.16,111,108.8,2,3,N,3.3
+SAAS-5229,Corp_266 Inc,pro,Fintech,2022-06-03,115.23 USD,10,478.0,9,1,,2.7
+SAAS-5255,Corp_85 Inc,starter,Other,2023-08-01,"$9,510.65",67,465.8,19,6,Y,2.0
+SAAS-5398,Corp_369 Inc,Professional Plan,Fintech,2023-10-11,1203.42 USD,149,443.4,7,5,Yes,3.9
+SAAS-5284,Corp_766 Inc,Enterprise,Logistics,2023-05-04,47.38 USD,82,193.2,4,5,0,2.8
+SAAS-5304,Corp_452 Inc,Enterprise,Healthtech,2022-11-30,"$1,218.02",91,116.7,3,99,true,4.4
+SAAS-5093,Corp_908 Inc,Enterprise,Logistics,2022-08-15,9508.3 USD,27,347.8,21,9,Yes,4.9
+SAAS-5057,Corp_286 Inc,Professional,Edtech,2022-09-25,$305.65,104,73.2,22,6,true,2.3
+SAAS-5149,Corp_167 Inc,Enterprise,Edtech,2023-09-22,519.16 USD,126,440.6,5,2,Yes,1.5
+SAAS-5238,Corp_114 Inc,Professional Plan,Logistics,,"$2,433.35",25,21.5,20,8,No,1.6
+SAAS-5107,Corp_920 Inc,Free Trial,Marketing,2022-11-23,"$4,836.40",42,388.7,2,2,Yes,3.9
+SAAS-5123,Corp_818 Inc,PRO,E-commerce,2023-05-09,"$2,426.49",50,402.2,0,6,False,3.4
+SAAS-5278,Corp_869 Inc,starter,Cybersecurity,2023-05-03,1195.41,21,430.2,5,3,false,4.5
+SAAS-5197,Corp_374 Inc,Free Trial,Logistics,2023-07-16,123.71000000000001 USD,47,260.7,12,2,No,4.3
+SAAS-5166,Corp_471 Inc,starter,,2023-03-01,,70,277.4,18,10,,4.0
+SAAS-5317,Corp_12 Inc,Starter,,2022-07-04,1229.0 USD,88,494.9,8,4,N/A,1.6
+SAAS-5055,Corp_745 Inc,ENTERPRISE,Fintech,2022-10-10,108.07 USD,134,494.4,5,4,no,3.0
+SAAS-5188,Corp_526 Inc,STARTER,Cybersecurity,2022-09-17,$71.91,78,189.2,12,-1,1,2.3
+SAAS-5009,Corp_208 Inc,Professional,Logistics,2022-09-09,"$9,491.23",87,481.7,12,N/A,true,3.8
+SAAS-5359,Corp_146 Inc,ENTERPRISE,Fintech,2022-06-21,$61.08,109,353.1,19,4,1,3.9
+SAAS-5040,Corp_201 Inc,PRO,Marketing,2022-06-06,2402.28 USD,70,142.5,11,4,No,4.2
+SAAS-5108,Corp_979 Inc,Starter,Fintech,2023-04-11,91.75999999999999 USD,37,167.0,12,8,N,2.6
+SAAS-5013,Corp_54 Inc,trial,Edtech,2023-01-01,9504.51,20,405.9,12,5,True,4.2
+SAAS-5179,Corp_812 Inc,Professional,Cybersecurity,2023-09-09,9527.56,9,456.7,13,5,False,4.7
+SAAS-5286,Corp_60 Inc,pro,Healthtech,2022-07-16,1237.15 USD,10,217.5,3,5,N/A,1.2
+SAAS-5210,Corp_165 Inc,Professional Plan,E-commerce,2023-10-07,N/A,97,432.3,13,10,true,
+SAAS-5015,Corp_454 Inc,Enterprise,,2023-04-06,"$2,407.91",94,290.6,1,9,False,2.7
+SAAS-5071,Corp_720 Inc,Professional Plan,Cybersecurity,2022-09-03,"$1,217.73",145,493.6,12,6,,4.8
+SAAS-5102,Corp_418 Inc,N/A,Cybersecurity,2022-10-04,1229.68,35,110.9,19,9,0,2.5
+SAAS-5346,Corp_498 Inc,Starter,Other,2022-11-20,1223.92 USD,83,415.7,7,10,False,4.4
+SAAS-5069,Corp_953 Inc,Starter,Fintech,2023-05-13,136.79 USD,25,17.8,4,4,Yes,1.6
+SAAS-5222,Corp_108 Inc,Professional,Other,2023-07-05,"$4,841.64",91,491.7,18,8,yes,3.7
+SAAS-5340,Corp_863 Inc,enterprise,Other,2023-06-14,$39.75,98,70.9,9,9,0,2.9
+SAAS-5039,Corp_553 Inc,N/A,Logistics,2022-10-02,9493.78,85,405.4,17,7,N/A,3.3
+SAAS-5141,Corp_416 Inc,N/A,Healthtech,2022-06-08,$533.41,52,231.1,5,3,True,3.1
+SAAS-5289,Corp_217 Inc,trial,Other,2022-06-18,$312.09,78,497.6,13,9,N/A,2.7
+SAAS-5082,Corp_208 Inc,pro,Edtech,2023-03-02,$310.88,16,52.4,18,8,Y,1.1
+SAAS-5324,Corp_913 Inc,N/A,Fintech,2022-11-11,$87.47,9999,null,19,1,N/A,4.1
+SAAS-5280,Corp_210 Inc,Professional Plan,Logistics,2023-04-03,4844.1 USD,8,24.4,14,10,No,N/A
+SAAS-5162,Corp_624 Inc,enterprise,Logistics,2023-05-21,4804.8 USD,N/A,307.1,12,9,No,2.3
+SAAS-5245,Corp_982 Inc,Enterprise,Healthtech,2023-07-16,4830.53 USD,9999,310.5,?,6,yes,4.9
+SAAS-5011,Corp_472 Inc,Free Trial,Edtech,2022-10-25,76.65,89,111.7,21,10,True,1.8
+SAAS-5392,Corp_582 Inc,Professional Plan,,2023-07-24,2444.26 USD,16,361.1,4,3,0,1.6
+SAAS-5157,Corp_630 Inc,Free Trial,Fintech,2022-09-21,2396.12 USD,95,85.9,0,10,no,4.9
+SAAS-5237,Corp_88 Inc,N/A,Logistics,2023-05-24,$109.66,55,337.4,13,2,True,3.5
+SAAS-5383,Corp_316 Inc,Professional Plan,Logistics,2023-09-17,76.47 USD,9,478.3,22,5,N/A,
+SAAS-5384,Corp_41 Inc,PRO,Edtech,2022-09-28,$138.39,118,191.4,2,9,N,2.0
+SAAS-5295,Corp_775 Inc,Professional Plan,E-commerce,2022-09-12,$0,150,272.5,4,3,false,5.0
+SAAS-5244,Corp_982 Inc,N/A,Cybersecurity,2023-07-06,522.86 USD,39,178.6,15,4,true,4.8
+SAAS-5367,Corp_346 Inc,Free Trial,Healthtech,2022-12-21,"$9,515.27",85,258.5,25,-1,0,4.1
+SAAS-5165,Corp_874 Inc,ENTERPRISE,,2023-08-15,$547.87,132,310.7,6,4,N,1.8
+SAAS-5144,Corp_180 Inc,Enterprise,Other,2023-05-19,303.64,144,332.2,25,5,No,3.7
+SAAS-5274,Corp_636 Inc,Enterprise,Fintech,N/A,"$2,414.02",88,201.3,23,4,true,N/A
+SAAS-5021,Corp_368 Inc,STARTER,Cybersecurity,,315.0 USD,125,34.1,24,4,1,4.9
+SAAS-5231,Corp_574 Inc,enterprise,Cybersecurity,2023-06-25,85.5 USD,27,144.8,3,10,false,1.3
+SAAS-5128,Corp_813 Inc,N/A,E-commerce,2022-06-12,9525.41,72,491.3,25,9,Y,2.7
+SAAS-5059,Corp_16 Inc,pro,Cybersecurity,2022-12-11,526.68,81,308.6,23,-1,true,3.8
+SAAS-5257,Corp_804 Inc,STARTER,Healthtech,N/A,$338.39,-1,25.0,11,7,False,1.6
+SAAS-5091,Corp_710 Inc,starter,Edtech,2022-08-22,2413.32 USD,63,277.5,18,N/A,No,2.6
+SAAS-5360,Corp_553 Inc,ENTERPRISE,,2023-07-01,"$1,244.83",48,96.8,5,2,true,3.5
+SAAS-5297,Corp_870 Inc,trial,Fintech,2022-11-24,4824.84 USD,40,75.2,7,7,,2.1
+SAAS-5174,Corp_784 Inc,trial,Fintech,2022-08-22,$316.04,149,124.7,25,3,false,4.9
+SAAS-5152,Corp_806 Inc,Starter,,2023-08-14,$91.00,9999,91.9,7,1,,3.8
+SAAS-5076,Corp_805 Inc,Free Trial,Edtech,2023-07-25,$323.46,17,399.6,25,10,Y,1.9
+SAAS-5143,Corp_738 Inc,Professional Plan,Fintech,2023-03-26,N/A,7,342.2,18,2,,1.3
+SAAS-5007,Corp_412 Inc,ENTERPRISE,Other,2023-09-25,303.99 USD,127,279.9,7,5,false,4.4
+SAAS-5293,Corp_300 Inc,Starter,Fintech,2022-11-09,515.13 USD,97,65.1,18,N/A,,2.9
+SAAS-5026,Corp_221 Inc,STARTER,Logistics,2023-04-08,"$1,242.52",44,481.9,13,-1,yes,4.0
+SAAS-5382,Corp_966 Inc,trial,,2022-06-03,$293.96,22,483.3,9,6,1,1.6
+SAAS-5002,Corp_946 Inc,Professional,Healthtech,2022-12-01,$530.36,90,149.6,24,6,N/A,N/A
+SAAS-5080,Corp_832 Inc,N/A,Marketing,2023-04-04,$39.13,9,202.9,8,9,No,2.0
+SAAS-5113,Corp_379 Inc,STARTER,,2023-04-17,$343.14,89,247.1,20,4,Y,2.6
+SAAS-5375,Corp_102 Inc,ENTERPRISE,Edtech,2023-02-21,"$9,514.84",112,362.7,19,7,N,1.3
+SAAS-5168,Corp_93 Inc,Enterprise,Fintech,2023-06-02,"$2,431.73",96,498.7,8,3,True,1.0
+SAAS-5277,Corp_673 Inc,Free Trial,Healthtech,2023-09-04,$51.43,N/A,146.9,16,3,false,2.9
+SAAS-5187,Corp_495 Inc,trial,,2023-02-15,127.9 USD,68,234.4,25,8,yes,3.0
+SAAS-5096,Corp_443 Inc,Free Trial,Logistics,2023-01-02,$546.04,138,76.5,13,6,no,4.0
+SAAS-5305,Corp_874 Inc,Starter,,2023-03-28,47.24 USD,99,497.8,21,2,yes,1.8
+SAAS-5332,Corp_937 Inc,Free Trial,,2023-03-31,548.01 USD,131,137.3,21,4,yes,4.9
+SAAS-5126,Corp_527 Inc,starter,Healthtech,2023-08-04,pending,49,438.8,N/A,2,N/A,1.8
+SAAS-5061,Corp_769 Inc,PRO,Marketing,2023-08-28,1240.77 USD,130,331.0,8,3,No,4.0
+SAAS-5330,Corp_204 Inc,Free Trial,Cybersecurity,2023-05-26,"$9,500.90",105,25.0,2,4,no,3.8
+SAAS-5133,Corp_448 Inc,PRO,,2023-07-10,"$9,526.34",49,380.1,18,9,Y,3.2
+SAAS-5371,Corp_778 Inc,Professional Plan,Logistics,2023-05-22,$39.78,140,491.1,25,99,false,3.0
+SAAS-5064,Corp_893 Inc,enterprise,Fintech,2023-09-12,$342.25,137,396.3,10,6,No,2.8
+SAAS-5140,Corp_672 Inc,Professional,Fintech,2023-04-30,$103.72,9999,228.9,15,5,N,4.0
+SAAS-5357,Corp_298 Inc,Enterprise,E-commerce,2022-11-22,9544.16,28,null,14,9,yes,N/A
+SAAS-5337,Corp_347 Inc,STARTER,,2023-01-06,94.25 USD,110,160.8,3,N/A,0,3.3
+SAAS-5183,Corp_358 Inc,N/A,Fintech,2023-08-10,"$9,522.79",33,85.1,25,3,N,2.3
+SAAS-5271,Corp_588 Inc,Starter,Fintech,2022-12-29,1217.81,48,181.9,16,4,False,3.1
+SAAS-5354,Corp_999 Inc,PRO,Logistics,2022-07-20,310.88,85,135.1,6,9,No,2.7
+SAAS-5077,Corp_215 Inc,enterprise,Other,2023-07-27,$331.48,84,444.8,7,3,No,4.3
+SAAS-5201,Corp_346 Inc,trial,Marketing,2022-08-31,$69.39,113,20.1,5,8,N/A,1.8
+SAAS-5314,Corp_486 Inc,N/A,Other,2023-04-18,"$9,545.16",102,295.1,13,10,No,3.4
+SAAS-5178,Corp_58 Inc,PRO,E-commerce,2023-05-27,2397.69 USD,60,null,11,6,yes,4.0
+SAAS-5031,Corp_56 Inc,N/A,Other,2022-12-18,$96.90,N/A,132.9,15,5,No,1.4
+SAAS-5000,Corp_792 Inc,Professional Plan,Other,2022-12-27,$529.60,10,166.4,20,9,True,2.3
+SAAS-5122,Corp_234 Inc,trial,Marketing,2022-07-19,$94.07,103,54.9,13,N/A,1,3.3
+SAAS-5270,Corp_542 Inc,N/A,Marketing,2023-09-18,88.47 USD,104,472.8,23,7,True,3.5
+SAAS-5387,Corp_807 Inc,PRO,E-commerce,2023-05-01,"$2,449.85",50,271.3,3,8,False,4.4
+SAAS-5243,Corp_479 Inc,STARTER,Logistics,2022-08-03,535.5 USD,105,47.0,24,7,Y,1.1
+SAAS-5044,Corp_316 Inc,enterprise,Logistics,2023-02-14,1222.78 USD,18,224.8,20,3,Yes,1.1
+SAAS-5369,Corp_707 Inc,Professional Plan,E-commerce,2022-11-28,$125.66,142,120.5,25,9,1,1.8
+SAAS-5252,Corp_781 Inc,Free Trial,,2023-07-13,$321.29,41,242.9,17,6,false,2.2
+SAAS-5303,Corp_761 Inc,N/A,E-commerce,2022-06-07,"$1,225.94",25,219.0,16,9,1,4.4
+SAAS-5155,Corp_462 Inc,Enterprise,Cybersecurity,2022-09-10,$292.92,116,282.3,?,2,0,1.3
+SAAS-5287,Corp_727 Inc,enterprise,Cybersecurity,2022-10-09,$77.42,36,489.9,19,N/A,Y,1.5
+SAAS-5275,Corp_617 Inc,Free Trial,Edtech,2022-08-10,4816.84 USD,27,198.8,?,10,true,2.7
+SAAS-5385,Corp_560 Inc,starter,Cybersecurity,2023-09-06,"$2,411.10",89,345.3,5,1,no,3.9
+SAAS-5145,Corp_273 Inc,N/A,Logistics,2023-04-18,$140.21,29,315.1,13,3,No,4.5
+SAAS-5176,Corp_837 Inc,Professional,,2023-04-23,102.97 USD,2,52.7,0,5,N/A,2.7
+SAAS-5110,Corp_590 Inc,starter,Edtech,N/A,$512.11,63,283.8,?,1,True,4.6
+SAAS-5347,Corp_976 Inc,trial,Logistics,2023-03-16,104.78 USD,91,62.0,13,2,1,2.6
+SAAS-5180,Corp_986 Inc,ENTERPRISE,Edtech,2022-11-11,2401.48 USD,59,297.8,9,5,N,2.9
+SAAS-5087,Corp_174 Inc,N/A,Fintech,2023-06-15,1244.54,114,290.1,9,6,No,2.4
+SAAS-5209,Corp_905 Inc,N/A,Edtech,2023-03-26,"$2,401.50",100,125.3,12,9,false,2.4
+SAAS-5312,Corp_433 Inc,Professional Plan,Cybersecurity,2023-01-23,$525.10,N/A,128.5,7,7,no,4.9
+SAAS-5139,Corp_69 Inc,ENTERPRISE,E-commerce,2023-05-08,"$2,430.25",50,,19,7,1,4.7
+SAAS-5394,Corp_998 Inc,Professional Plan,Fintech,2023-04-09,"$4,801.78",61,425.7,N/A,3,N/A,4.7
+SAAS-5074,Corp_298 Inc,starter,Healthtech,2023-02-03,"$2,393.17",54,249.8,22,9,N,4.7
+SAAS-5362,Corp_458 Inc,PRO,Edtech,2023-07-26,$499.92,124,14.3,4,8,N/A,3.6
+SAAS-5232,Corp_216 Inc,pro,Other,2022-11-18,1247.68,97,259.5,18,1,True,2.4
+SAAS-5219,Corp_704 Inc,pro,Cybersecurity,2022-06-10,$69.33,130,424.9,20,9,N/A,4.8
+SAAS-5386,Corp_964 Inc,starter,Other,2023-10-12,"$2,400.46",17,496.4,13,3,N/A,3.9
+SAAS-5288,Corp_312 Inc,ENTERPRISE,Edtech,2022-07-31,318.62,33,140.7,13,4,No,3.3
+SAAS-5204,Corp_102 Inc,ENTERPRISE,Edtech,2022-12-31,4837.11 USD,4,27.1,11,1,no,4.9
+SAAS-5095,Corp_183 Inc,trial,E-commerce,0000-00-00,9494.68,7,430.3,24,7,Yes,3.0
+SAAS-5092,Corp_292 Inc,STARTER,E-commerce,2023-01-29,121.19 USD,107,171.2,9,9,N/A,3.8
+SAAS-5345,Corp_946 Inc,enterprise,,2023-01-08,9491.07 USD,149,72.2,12,99,0,3.3
+SAAS-5084,Corp_755 Inc,Professional,Cybersecurity,2022-07-15,"$9,549.18",59,263.0,24,4,N/A,3.7
+SAAS-5004,Corp_267 Inc,ENTERPRISE,Other,2023-10-04,$322.58,4,364.3,23,1,no,3.3
+SAAS-5003,Corp_821 Inc,Professional Plan,Cybersecurity,2023-02-22,2410.97 USD,51,12.5,16,6,yes,4.0
+SAAS-5106,Corp_456 Inc,STARTER,Cybersecurity,2023-07-07,9491.51 USD,56,257.1,9,3,no,4.9
+SAAS-5260,Corp_640 Inc,starter,Logistics,2022-07-20,58.1 USD,7,332.7,12,5,0,2.0
+SAAS-5114,Corp_770 Inc,Professional,E-commerce,2023-06-10,9513.81 USD,N/A,149.0,1,6,1,2.1
+SAAS-5054,Corp_238 Inc,enterprise,Marketing,2023-09-27,497.01 USD,92,null,19,N/A,no,2.9
+SAAS-5167,Corp_763 Inc,Professional,Other,2023-07-29,$534.03,66,268.2,23,10,1,3.3
+SAAS-5120,Corp_342 Inc,trial,,2022-08-10,"$4,822.12",148,461.4,17,5,Yes,3.5
+SAAS-5130,Corp_765 Inc,Free Trial,Edtech,2022-10-22,$39.02,81,212.8,12,-1,0,3.0
+SAAS-5364,Corp_208 Inc,pro,Marketing,2023-04-06,"$4,804.67",115,48.2,23,1,yes,4.7
+SAAS-5348,Corp_466 Inc,Free Trial,,2023-06-16,62.36 USD,15,340.9,6,5,False,1.4
+SAAS-5327,Corp_671 Inc,pro,Cybersecurity,,"$4,799.98",44,466.9,24,6,False,2.7
+SAAS-5336,Corp_330 Inc,PRO,Other,2023-09-25,"$2,412.83",102,254.2,17,8,0,4.1
+SAAS-5331,Corp_971 Inc,Free Trial,Healthtech,2023-01-10,342.02 USD,50,444.8,1,5,0,3.5
+SAAS-5083,Corp_597 Inc,Professional Plan,Healthtech,2023-04-18,$81.62,14,32.2,14,8,true,4.0
+SAAS-5379,Corp_318 Inc,Professional,Logistics,2023-06-03,75.64 USD,135,258.6,25,9,True,3.4
+SAAS-5027,Corp_443 Inc,enterprise,Other,2023-07-15,41.92 USD,117,422.9,9,9,false,2.2
+SAAS-5018,Corp_255 Inc,Professional Plan,Edtech,2022-07-12,289.34 USD,142,128.4,9,1,Y,3.2
+SAAS-5320,Corp_836 Inc,Starter,Other,2023-07-09,4811.92 USD,7,254.2,5,7,0,1.7
+SAAS-5224,Corp_952 Inc,starter,Logistics,2022-11-22,"$4,815.12",98,409.7,22,6,N/A,2.6
+SAAS-5374,Corp_970 Inc,N/A,,2022-12-14,4839.91 USD,26,294.2,17,2,Y,2.2
+SAAS-5311,Corp_870 Inc,ENTERPRISE,Logistics,N/A,"$4,796.61",52,262.7,6,8,false,3.6
+SAAS-5352,Corp_571 Inc,enterprise,,2022-08-02,"$9,540.86",22,467.5,14,7,No,3.0
+SAAS-5100,Corp_906 Inc,Starter,Other,2022-06-14,$95.71,125,107.6,7,10,True,3.5
+SAAS-5264,Corp_745 Inc,enterprise,Cybersecurity,2023-07-21,$292.76,103,257.6,23,1,Yes,3.5
+SAAS-5246,Corp_650 Inc,starter,Other,2023-07-17,4810.4 USD,133,355.5,4,2,false,N/A
+SAAS-5356,Corp_977 Inc,Enterprise,Other,,57.03 USD,35,437.8,?,6,Yes,2.8
+SAAS-5335,Corp_201 Inc,Professional Plan,Marketing,2023-06-06,1236.73 USD,25,58.5,8,6,N,2.6
+SAAS-5214,Corp_257 Inc,Professional,Marketing,2022-07-26,$68.38,41,279.7,17,99,yes,3.7
+SAAS-5230,Corp_18 Inc,Professional,Marketing,2022-07-31,$73.03,92,78.9,10,8,True,3.8
+SAAS-5046,Corp_526 Inc,Professional Plan,E-commerce,2022-10-17,62.54 USD,139,203.8,8,9,yes,2.4
+SAAS-5349,Corp_339 Inc,PRO,,2023-04-21,537.95 USD,22,140.3,22,N/A,True,3.6
+SAAS-5221,Corp_647 Inc,PRO,Cybersecurity,2023-08-06,$92.85,147,116.2,N/A,10,N/A,3.5
+SAAS-5301,Corp_308 Inc,trial,Fintech,2023-04-10,319.7 USD,111,497.7,16,6,1,2.4
+SAAS-5380,Corp_578 Inc,enterprise,Other,2023-09-16,9521.75 USD,111,423.7,19,10,true,4.0
+SAAS-5068,Corp_968 Inc,enterprise,,2023-08-24,2415.23 USD,8,435.8,12,4,no,1.3
+SAAS-5024,Corp_594 Inc,Enterprise,E-commerce,2023-01-15,128.36 USD,119,301.4,22,10,True,1.8
+SAAS-5171,Corp_377 Inc,starter,Edtech,2023-09-09,4794.62 USD,67,20.2,23,N/A,N/A,3.3
+SAAS-5075,Corp_324 Inc,PRO,Other,2023-03-28,9503.7 USD,35,341.2,25,4,false,1.5
+SAAS-5134,Corp_104 Inc,Enterprise,Healthtech,2022-11-16,"$2,407.63",65,351.2,21,2,1,3.0
+SAAS-5094,Corp_326 Inc,Starter,Marketing,2022-12-29,61.74,107,190.7,?,5,True,2.0
+SAAS-5267,Corp_392 Inc,starter,,2022-11-19,105.84,65,375.0,19,6,Y,2.7
+SAAS-5316,Corp_343 Inc,N/A,Healthtech,2022-09-21,$495.93,92,153.1,20,7,False,4.1
+SAAS-5199,Corp_809 Inc,ENTERPRISE,Cybersecurity,2023-09-17,"$1,198.23",55,259.0,6,3,True,3.7
+SAAS-5045,Corp_295 Inc,pro,Marketing,2022-12-03,"$9,523.40",10,188.0,21,8,yes,2.3
+SAAS-5205,Corp_376 Inc,pro,Edtech,2022-11-29,2427.29 USD,138,57.5,21,6,True,2.4
+SAAS-5313,Corp_122 Inc,N/A,E-commerce,2023-10-14,"$1,244.42",20,411.3,11,3,N/A,N/A
+SAAS-5148,Corp_857 Inc,Professional,Logistics,2023-09-22,$52.65,144,null,22,10,1,2.4
+SAAS-5269,Corp_190 Inc,Enterprise,Other,2022-11-09,"$4,790.35",140,406.7,25,6,Yes,3.1
+SAAS-5195,Corp_127 Inc,Enterprise,Edtech,2022-11-10,N/A,68,378.1,4,2,true,4.6
+SAAS-5191,Corp_938 Inc,Starter,Other,2023-06-19,2418.13 USD,21,72.9,19,3,N/A,4.2
+SAAS-5099,Corp_586 Inc,trial,Cybersecurity,2023-01-06,$125.47,123,48.8,1,1,true,4.3
+SAAS-5217,Corp_326 Inc,PRO,Other,2022-09-05,"$4,848.69",128,5.9,11,N/A,true,3.2
+SAAS-5169,Corp_577 Inc,PRO,Healthtech,2022-10-06,"$2,449.99",35,52.3,12,2,Y,4.7
+SAAS-5098,Corp_319 Inc,enterprise,E-commerce,2023-08-19,4831.02 USD,99,153.4,16,5,1,3.8
+SAAS-5033,Corp_163 Inc,ENTERPRISE,Logistics,2022-07-05,98.82,80,29.9,3,10,N,4.3
+SAAS-5047,Corp_524 Inc,STARTER,Logistics,2023-04-08,4814.67 USD,N/A,220.7,22,5,1,3.8
+SAAS-5014,Corp_756 Inc,PRO,Edtech,2022-07-02,"$4,838.97",93,325.6,N/A,N/A,False,1.9
+SAAS-5300,Corp_245 Inc,ENTERPRISE,Other,2022-10-18,"$2,408.16",59,139.0,7,9,1,2.4
+SAAS-5281,Corp_308 Inc,Professional Plan,Edtech,,$524.49,95,446.1,21,5,yes,1.9
+SAAS-5361,Corp_81 Inc,Free Trial,Logistics,2023-07-25,2448.53 USD,47,98.0,9,3,N,4.9
+SAAS-5351,Corp_349 Inc,ENTERPRISE,Edtech,2023-07-01,52.62 USD,-1,317.0,9,7,N,2.2
+SAAS-5012,Corp_647 Inc,pro,E-commerce,2023-07-12,"$4,811.82",137,375.6,22,4,,1.7
+SAAS-5210,Corp_165 Inc,Professional Plan,E-commerce,2023-10-07,N/A,97,432.3,13,10,true,
+SAAS-5184,Corp_916 Inc,N/A,,2023-03-27,"$4,837.61",19,376.0,1,8,yes,2.6
+SAAS-5388,Corp_366 Inc,Professional Plan,,2023-08-30,"$1,190.63",149,219.0,17,4,Yes,2.1
+SAAS-5315,Corp_564 Inc,Free Trial,Edtech,N/A,$518.96,N/A,299.0,6,10,True,2.8
+SAAS-5088,Corp_403 Inc,PRO,E-commerce,2023-05-04,$524.39,115,371.5,16,7,No,3.8
+SAAS-5227,Corp_494 Inc,Professional Plan,Logistics,2023-01-31,"$9,549.16",3,426.0,2,5,0,1.7
+SAAS-5393,Corp_250 Inc,STARTER,Edtech,2023-08-13,2439.97 USD,146,268.0,4,99,False,2.1
+SAAS-5163,Corp_685 Inc,Enterprise,Fintech,2023-02-20,1218.2 USD,48,,8,8,True,1.6
+SAAS-5290,Corp_126 Inc,Enterprise,Logistics,2022-11-10,1195.85 USD,95,12.8,21,3,yes,3.6
+SAAS-5213,Corp_397 Inc,pro,Cybersecurity,2022-11-26,2403.07,108,23.0,9,8,no,4.5
+SAAS-5377,Corp_190 Inc,Free Trial,,2023-05-26,"$4,822.96",113,166.4,12,2,No,3.5
+SAAS-5005,Corp_170 Inc,Free Trial,Fintech,2023-08-26,N/A,23,236.4,17,7,no,3.6
+SAAS-5334,Corp_902 Inc,PRO,Edtech,2023-06-27,$145.68,147,37.9,1,1,Y,2.9
+SAAS-5272,Corp_271 Inc,Professional,Other,2023-08-12,131.61,126,189.1,10,4,false,3.5
+SAAS-5266,Corp_407 Inc,ENTERPRISE,Healthtech,2022-11-02,$112.83,147,134.0,7,8,false,4.6
+SAAS-5136,Corp_94 Inc,Starter,Logistics,2022-08-26,$500.17,74,null,3,10,true,2.9
+SAAS-5159,Corp_969 Inc,trial,E-commerce,2023-02-02,"$1,221.77",10,37.4,15,9,no,4.1
+SAAS-5376,Corp_581 Inc,Professional Plan,Logistics,2023-07-11,2427.36 USD,141,51.6,19,6,Yes,1.4
+SAAS-5182,Corp_305 Inc,PRO,Logistics,2023-06-09,"$9,493.86",51,185.7,8,7,true,2.3
+SAAS-5372,Corp_668 Inc,PRO,E-commerce,2023-09-03,335.49 USD,102,238.4,17,N/A,False,4.1
+SAAS-5216,Corp_843 Inc,Enterprise,Marketing,2022-12-03,128.18,59,500.0,5,5,True,4.1
+SAAS-5116,Corp_389 Inc,Free Trial,Fintech,2023-01-17,522.81 USD,46,52.8,8,6,yes,1.6
+SAAS-5105,Corp_616 Inc,Professional Plan,,2022-07-18,"$4,817.25",50,68.5,5,4,yes,3.2
+SAAS-5235,Corp_858 Inc,enterprise,Other,2022-10-20,$56.14,14,86.7,15,8,Yes,3.7
+SAAS-5194,Corp_148 Inc,ENTERPRISE,Logistics,2022-09-30,4792.44 USD,98,94.9,15,7,0,4.4
+SAAS-5193,Corp_255 Inc,Professional Plan,Edtech,2022-08-18,1213.86 USD,116,26.8,2,3,Y,4.8
+SAAS-5008,Corp_983 Inc,ENTERPRISE,Logistics,2023-07-19,4827.09 USD,122,488.7,18,2,1,3.5
+SAAS-5019,Corp_220 Inc,ENTERPRISE,Marketing,2023-05-02,"$4,801.41",24,278.2,1,5,0,3.7
+SAAS-5270,Corp_542 Inc,N/A,Marketing,2023-09-18,88.47 USD,104,472.8,23,7,True,3.5
+SAAS-5251,Corp_492 Inc,starter,Logistics,2023-04-19,,35,122.7,9,10,false,1.3
+SAAS-5306,Corp_19 Inc,Starter,Fintech,2023-01-08,"$1,203.61",126,127.7,25,2,Y,1.1
+SAAS-5001,Corp_141 Inc,Professional Plan,Other,2023-06-17,$70.34,127,27.7,20,1,No,1.7
+SAAS-5062,Corp_777 Inc,STARTER,Other,2023-03-01,"$2,420.96",91,140.0,13,4,No,3.1
+SAAS-5189,Corp_423 Inc,trial,Edtech,2022-12-27,"$2,429.78",77,220.5,22,4,False,3.6
+SAAS-5292,Corp_472 Inc,trial,Other,2023-01-10,$332.19,133,468.1,19,4,Yes,N/A
+SAAS-5355,Corp_234 Inc,starter,E-commerce,2023-10-09,515.34 USD,86,425.2,18,6,No,2.0
+SAAS-5321,Corp_33 Inc,pro,Healthtech,2023-09-16,$499.04,39,490.8,11,7,N/A,1.2
+SAAS-5081,Corp_118 Inc,ENTERPRISE,Cybersecurity,2023-01-23,9510.8 USD,110,92.9,17,-1,false,3.1
+SAAS-5066,Corp_178 Inc,pro,Edtech,2022-12-18,$541.49,143,11.1,13,99,no,2.6
+SAAS-5391,Corp_143 Inc,Professional,Edtech,2023-07-15,N/A,65,289.0,6,5,No,4.8
+SAAS-5042,Corp_531 Inc,starter,Other,2022-06-02,$141.47,54,78.3,19,5,0,4.8
+SAAS-5307,Corp_357 Inc,starter,Cybersecurity,2023-05-13,"$9,490.64",73,85.5,0,3,False,3.7
+SAAS-5390,Corp_110 Inc,ENTERPRISE,Healthtech,2023-04-02,324.11 USD,105,150.4,12,3,N/A,5.0
+SAAS-5079,Corp_100 Inc,enterprise,Other,2023-10-06,1204.93,56,248.3,23,4,False,4.6
+SAAS-5203,Corp_215 Inc,Professional,E-commerce,0000-00-00,"$9,512.50",23,370.7,11,1,Yes,2.7
+SAAS-5034,Corp_305 Inc,starter,Cybersecurity,2023-10-14,$72.38,16,455.7,1,3,no,2.3
+SAAS-5333,Corp_376 Inc,Free Trial,Logistics,2023-09-27,1220.02 USD,116,455.2,9,4,,1.4
+SAAS-5350,Corp_318 Inc,pro,Logistics,2022-09-19,129.22 USD,94,443.7,11,3,No,4.7
+SAAS-5226,Corp_41 Inc,STARTER,Fintech,2023-08-12,"$2,405.34",3,218.0,12,7,no,2.5
+SAAS-5089,Corp_543 Inc,Starter,E-commerce,2022-09-15,$117.85,90,200.3,10,6,false,2.7
+SAAS-5029,Corp_883 Inc,Professional,Other,2023-06-10,9538.88 USD,98,120.0,22,-1,,1.4
+SAAS-5154,Corp_844 Inc,trial,Other,2023-04-03,330.27 USD,90,122.2,12,8,Y,2.4
+SAAS-5310,Corp_759 Inc,ENTERPRISE,E-commerce,2022-09-04,9517.96 USD,35,100.2,18,7,1,3.1
+SAAS-5262,Corp_288 Inc,PRO,Logistics,2022-12-21,2446.89 USD,146,456.2,23,8,0,2.7
+SAAS-5156,Corp_607 Inc,Enterprise,Marketing,2023-06-12,1230.77 USD,137,230.3,14,3,N/A,3.4
+SAAS-5223,Corp_388 Inc,trial,Healthtech,2023-05-18,$90.24,89,139.3,13,7,No,2.1
+SAAS-5131,Corp_574 Inc,N/A,E-commerce,2023-03-26,"$9,516.17",9999,311.3,14,6,false,4.3
+SAAS-5022,Corp_670 Inc,Professional,Cybersecurity,2022-07-25,"$1,203.78",122,435.1,15,1,true,3.7
+SAAS-5109,Corp_699 Inc,Starter,Marketing,2022-10-26,298.23 USD,122,269.0,9,5,1,N/A
+SAAS-5132,Corp_837 Inc,STARTER,Other,2023-04-20,47.37 USD,41,499.5,17,N/A,,4.3
+SAAS-5053,Corp_908 Inc,ENTERPRISE,Fintech,2022-11-15,2440.56,69,223.4,22,7,N,N/A
+SAAS-5236,Corp_167 Inc,ENTERPRISE,,2023-06-29,537.74 USD,46,null,20,5,Yes,4.3
+SAAS-5363,Corp_30 Inc,starter,Other,2022-11-20,"$4,798.27",84,9.7,19,6,,2.9
+SAAS-5028,Corp_231 Inc,Enterprise,Marketing,2023-06-26,40.89 USD,70,361.2,13,N/A,True,1.9
+SAAS-5282,Corp_385 Inc,PRO,Healthtech,0000-00-00,"$4,848.12",116,244.1,11,3,,2.0
+SAAS-5181,Corp_716 Inc,pro,Marketing,2022-06-29,"$1,197.07",132,426.7,9,2,Yes,4.0
+SAAS-5063,Corp_322 Inc,Professional Plan,Other,2022-12-23,504.6,32,null,25,5,N,2.6
+SAAS-5285,Corp_630 Inc,ENTERPRISE,Fintech,2022-10-17,$110.97,51,171.1,12,7,Y,2.6
+SAAS-5058,Corp_379 Inc,starter,Logistics,2022-06-12,39.32,74,320.2,10,10,N,4.7
+SAAS-5135,Corp_765 Inc,ENTERPRISE,Edtech,2023-01-21,1209.82 USD,51,340.8,0,10,N,1.8
+SAAS-5309,Corp_800 Inc,Free Trial,Edtech,2023-09-20,294.6 USD,141,249.1,24,5,N,2.4
+SAAS-5111,Corp_277 Inc,Professional,Logistics,2022-10-05,525.76 USD,113,164.4,14,5,No,4.6
+SAAS-5051,Corp_901 Inc,enterprise,Healthtech,2022-06-02,$102.95,137,399.8,24,5,no,4.1
+SAAS-5241,Corp_147 Inc,STARTER,Other,2023-01-29,"$4,846.56",N/A,499.8,6,1,no,3.0
+SAAS-5279,Corp_576 Inc,starter,Fintech,2023-02-07,$534.77,139,260.8,?,4,False,4.4
+SAAS-5268,Corp_373 Inc,enterprise,Edtech,2023-02-24,$88.23,3,280.0,22,2,yes,1.7
+SAAS-5365,Corp_202 Inc,Professional Plan,Fintech,2022-09-09,$332.22,39,472.2,0,99,True,1.7
+SAAS-5338,Corp_208 Inc,Professional,Edtech,2023-02-06,47.59 USD,76,226.9,4,99,N,2.1
+SAAS-5186,Corp_493 Inc,starter,Healthtech,2022-09-30,"$9,516.02",59,227.8,0,4,true,4.0
+SAAS-5208,Corp_915 Inc,pro,Edtech,2023-10-12,4844.01 USD,149,57.9,6,3,0,3.3
+SAAS-5302,Corp_815 Inc,Starter,Edtech,2022-08-23,"$9,543.83",58,274.8,22,9,True,3.3
+SAAS-5085,Corp_962 Inc,Enterprise,Edtech,2023-06-01,331.8 USD,108,12.6,1,2,No,4.8
+SAAS-5023,Corp_492 Inc,Starter,,2023-03-25,4843.13,25,272.2,13,3,Yes,3.1
+SAAS-5146,Corp_877 Inc,STARTER,Fintech,2023-03-21,$90.52,123,276.7,1,4,no,4.7
+SAAS-5259,Corp_662 Inc,ENTERPRISE,Logistics,2022-09-19,4817.64 USD,51,223.0,18,3,Y,
+SAAS-5103,Corp_879 Inc,Free Trial,Healthtech,2023-06-22,132.72,79,360.8,14,7,0,1.9
+SAAS-5037,Corp_539 Inc,Professional Plan,Marketing,2023-02-09,294.72,20,295.3,2,10,true,2.7
+SAAS-5342,Corp_448 Inc,pro,Cybersecurity,2022-08-29,N/A,17,485.4,24,6,False,1.1
+SAAS-5247,Corp_260 Inc,starter,Fintech,2022-11-25,$322.36,25,328.9,17,2,True,1.7
+SAAS-5127,Corp_943 Inc,ENTERPRISE,Marketing,2022-07-11,"$4,831.79",94,268.3,11,4,N/A,
+SAAS-5073,Corp_528 Inc,PRO,Cybersecurity,2023-03-20,"$9,514.88",120,369.6,10,10,true,4.8
+SAAS-5112,Corp_816 Inc,Professional Plan,Cybersecurity,2022-10-08,310.45 USD,97,289.0,12,4,N,3.5
+SAAS-5325,Corp_408 Inc,Starter,Logistics,2022-06-07,1192.57,53,282.3,9,2,1,1.7
+SAAS-5326,Corp_657 Inc,Professional Plan,Healthtech,2023-07-16,"$9,540.98",146,74.0,9,1,Yes,4.1
+SAAS-5121,Corp_776 Inc,N/A,,0000-00-00,9514.28 USD,44,227.6,1,2,false,4.6
+SAAS-5396,Corp_869 Inc,starter,E-commerce,2023-01-31,"$4,834.84",137,481.7,25,2,1,2.4
+SAAS-5212,Corp_931 Inc,pro,Healthtech,2023-06-21,$95.14,4,59.8,0,3,yes,4.6
+SAAS-5328,Corp_632 Inc,starter,Marketing,2022-08-31,"$4,816.74",72,387.9,9,7,1,4.5
+SAAS-5067,Corp_595 Inc,PRO,Marketing,2022-06-11,94.82 USD,86,230.8,0,8,1,4.2
+SAAS-5137,Corp_924 Inc,Free Trial,Other,2023-09-17,102.27 USD,58,442.1,4,4,No,1.6
+SAAS-5368,Corp_528 Inc,Enterprise,Logistics,N/A,$100.98,110,290.9,13,7,1,3.1
+SAAS-5124,Corp_219 Inc,Professional,Fintech,2022-08-22,"$9,521.28",87,276.0,16,5,False,2.6
+SAAS-5010,Corp_337 Inc,STARTER,Healthtech,,"$9,512.00",142,90.6,25,4,No,4.5
+SAAS-5118,Corp_320 Inc,Professional Plan,,2023-04-18,1233.77,22,152.0,15,10,N,4.9
+SAAS-5052,Corp_81 Inc,Free Trial,Cybersecurity,2022-09-01,9526.47 USD,112,null,6,1,False,2.9
+SAAS-5177,Corp_479 Inc,Professional,Healthtech,2022-11-05,2420.39 USD,123,249.9,12,1,N,1.0
+SAAS-5323,Corp_172 Inc,PRO,E-commerce,2022-10-07,"$4,818.46",3,432.5,13,8,0,3.6
+SAAS-5119,Corp_232 Inc,Professional,Logistics,2022-07-30,$107.11,52,372.1,18,3,Yes,3.8
+SAAS-5308,Corp_466 Inc,Starter,Healthtech,2022-10-24,510.12 USD,90,242.4,4,2,True,2.0
+SAAS-5043,Corp_998 Inc,STARTER,Other,2022-11-02,104.73 USD,71,10.2,3,1,False,2.6
+SAAS-5090,Corp_934 Inc,STARTER,Fintech,2023-01-20,$49.34,71,431.0,17,9,N/A,4.7
+SAAS-5104,Corp_237 Inc,Professional Plan,Logistics,2022-09-19,$87.03,139,195.3,18,10,False,1.2
+SAAS-5020,Corp_376 Inc,Free Trial,Fintech,N/A,307.53 USD,132,213.9,8,7,no,3.3
+SAAS-5117,Corp_248 Inc,starter,Logistics,2022-09-29,$39.45,1,224.9,0,9,0,4.0
+SAAS-5343,Corp_89 Inc,Starter,Marketing,2022-09-20,311.34 USD,9999,464.4,25,3,True,1.1
+SAAS-5125,Corp_717 Inc,enterprise,Cybersecurity,2022-10-11,48.15 USD,115,180.8,1,2,,4.1
+SAAS-5036,Corp_44 Inc,trial,Logistics,2022-09-14,134.68 USD,148,207.3,6,3,No,4.6
+SAAS-5030,Corp_418 Inc,N/A,Cybersecurity,2022-12-10,$517.96,83,16.2,11,7,0,4.7
+SAAS-5265,Corp_772 Inc,trial,Other,2022-06-14,9526.51 USD,88,124.2,11,9,False,2.7
+SAAS-5147,Corp_549 Inc,Enterprise,Fintech,2022-12-28,53.74 USD,83,407.5,16,6,False,2.8
+SAAS-5142,Corp_157 Inc,Free Trial,Other,2023-10-02,"$2,396.01",N/A,302.2,17,5,,1.0
+SAAS-5220,Corp_468 Inc,Enterprise,,2023-07-10,$347.38,123,118.2,2,5,N,2.8
+SAAS-5048,Corp_574 Inc,Free Trial,Marketing,2022-09-10,343.59000000000003 USD,107,35.0,0,7,true,N/A
+SAAS-5129,Corp_994 Inc,trial,Fintech,2023-03-08,"$4,805.84",9999,437.9,6,7,,1.1
+SAAS-5086,Corp_453 Inc,STARTER,Fintech,2022-07-01,1247.21 USD,115,227.7,12,7,Y,4.0
+SAAS-5358,Corp_976 Inc,pro,Fintech,2023-07-18,"$4,824.02",26,88.0,23,3,false,1.7
+SAAS-5263,Corp_463 Inc,Free Trial,Fintech,2022-09-01,138.77,88,379.9,18,1,Yes,3.6
+SAAS-5185,Corp_634 Inc,starter,Other,2023-03-19,116.26 USD,63,65.9,8,3,N,1.8
+SAAS-5296,Corp_390 Inc,Free Trial,,2023-10-03,1227.36,27,132.9,4,7,,4.7
+SAAS-5060,Corp_464 Inc,PRO,Logistics,2022-11-09,509.88,51,141.6,10,10,false,1.3
+SAAS-5151,Corp_326 Inc,pro,,2022-10-15,1203.77 USD,67,106.4,21,1,no,2.3
+SAAS-5234,Corp_916 Inc,enterprise,Fintech,2023-06-24,$289.38,120,32.3,17,8,True,4.9

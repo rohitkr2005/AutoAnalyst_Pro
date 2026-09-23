@@ -1,0 +1,519 @@
+Order_ID,Customer_ID,Transaction_Date,Customer_City,Product_Category,Quantity,Unit_Price,Discount_Rate,Total_Revenue,Payment_Method,Customer_Rating,Delivery_Status
+ORD-1176,CUST-180,29-Jul-2023,  Chicago  ,Sports & Fitness,6,$464.73,0.05,2648.96,Debit,3.5,UNKNOWN
+ORD-1132,CUST-241,04-Oct-2023,New York,Electronics,8,127.89 USD,25%,767.34,credit card,3.5,UNKNOWN
+ORD-1006,CUST-224,"Feb 05, 2023",los angeles,Beauty & Care,7,€723.81,0.15,"$4,306.67",paypal,N/A,Pending
+ORD-1084,CUST-114,2023/10/14 00:00:00,CHICAGO,Electronics,-1,$440.06,0%,$440.06,Debit,3.5,UNKNOWN
+ORD-1456,CUST-210,10-Sep-2023,houston,Home & Kitchen,2,$562.04,5%,1067.88,Cryptocurrency,1,Returned
+ORD-1311,CUST-236,2023-04-03,miami,Books,6,310.32 USD,15%,"$1,582.63",credit card,2,Cancelled
+ORD-1333,CUST-152,2023-07-20,chicago,Electronics,5,83.53 USD,25%,$313.24,paypal,1,
+ORD-1072,CUST-140,"Sep 13, 2023",New York,Beauty & Care,8,$725.51,0,"$5,804.08",Credit Card,3,Returned
+ORD-1184,CUST-187,07/07/2023,Miami,Books,5,346.29,25%,"$1,298.59",PayPal,10,
+ORD-1154,CUST-193,2023-08-20,chicago,Electronics,5,$417.55,0.05,"$1,983.36",paypal,4,Pending
+ORD-1229,CUST-247,08/17/2023,LA,Home & Kitchen,7,542.58 USD,20%,"$3,038.45",N/A,-5,Returned
+ORD-1304,CUST-180,2023-06-26,Seattle,Sports & Fitness,4,667.37 USD,0.1,"$2,402.53",Credit Card,4.5,In Transit
+ORD-1093,CUST-124,09/26/2023,miami,Home & Kitchen,2,€289.19,25%,$433.78,apple pay,1,Delivered
+ORD-1101,CUST-302,"Jul 04, 2023",Miami,Electronics,3,€490.54,0.3,"$1,030.13",N/A,2,
+ORD-1010,CUST-114,"Jan 26, 2023",NEW YORK,Sports & Fitness,3,65.36 USD,0.2,156.86,N/A,4.5,Returned
+ORD-1448,CUST-204,30-Nov-2023,New York,Sports & Fitness,3,?,0.05,1952.91,Cryptocurrency,5,Delivered
+ORD-1079,CUST-325,2023/09/01 00:00:00,chicago,Home & Kitchen,2,€494.44,0.05,?,Apple Pay,3.5,Cancelled
+ORD-1030,?,"Dec 19, 2023",houston,Home & Kitchen,2,520.23 USD,25%,$780.35,Debit,2,Cancelled
+ORD-1185,CUST-328,"Nov 19, 2023",  Chicago  ,Beauty & Care,1,$307.83,0.3,$215.48,Cryptocurrency,3,Returned
+ORD-1137,CUST-303,05-Jun-2023,Houston,Books,3,235.85 USD,0.25,530.66,Apple Pay,3.5,Delivered
+ORD-1195,CUST-227,"Feb 16, 2023",New York,Books,2,107.48,0.3,"$15,047.20",apple pay,1,
+ORD-1082,CUST-219,06/07/2023,Miami,Books,5,285.14 USD,0.15,"$1,211.84",N/A,3.5,Pending
+ORD-1158,CUST-271,01/29/2023,Houston,Home & Kitchen,5,$164.94,0.15,701.00,N/A,3.5,Cancelled
+ORD-1375,CUST-318,10/30/2023,  Chicago  ,Electronics,7,27.98 USD,0.2,$156.69,N/A,1,Cancelled
+ORD-1231,CUST-224,2023/12/03 00:00:00,Houston,Fashion & Apparel,7,€473.09,0.05,"$3,146.05",N/A,5,Returned
+ORD-1298,CUST-241,02-Feb-2023,new york,Beauty & Care,6,$344.52,25%,1550.34,Cryptocurrency,4.5,
+ORD-1077,CUST-157,02-Jun-2023,chicago,Beauty & Care,5,€226.53,0.1,1019.39,Cryptocurrency,4.5,
+ORD-1384,CUST-253,2023-01-07,miami,Books,4,€117.33,15%,$398.92,Credit Card,5,UNKNOWN
+ORD-1489,CUST-111,2023/11/06 00:00:00,New York,Home & Kitchen,-2,€498.05,0%,$498.05,Apple Pay,3,UNKNOWN
+ORD-1408,CUST-345,2023-11-17,Houston,Home & Kitchen,3,234.58 USD,,492.62,N/A,-,Cancelled
+ORD-1484,CUST-207,04/02/2023,Los Angeles,Electronics,2,497.06 USD,5%,944.41,apple pay,4,Cancelled
+ORD-1398,CUST-146,2023/02/25 00:00:00,new york,Home & Kitchen,8,$171.29,N/A,"$1,164.77",Credit Card,1,Returned
+ORD-1329,CUST-246,22-Mar-2023,  Chicago  ,Electronics,1,356.96 USD,15%,?,paypal,1,Cancelled
+ORD-1009,CUST-224,09/04/2023,CHICAGO,Fashion & Apparel,9999,301.96 USD,0.25,"$2,264,473.53",Debit,4.5,Delivered
+ORD-1073,CUST-193,2023/01/24 00:00:00,los angeles,Home & Kitchen,8,€576.84,0,4614.72,paypal,1,Delivered
+ORD-1487,CUST-121,2023-10-01,CHICAGO,Beauty & Care,8,€521.41,20%,null,apple pay,3,Cancelled
+ORD-1192,CUST-126,25-May-2023,NY,Electronics,-1,€266.31,None,$186.42,apple pay,,In Transit
+ORD-1247,CUST-347,2023/08/31 00:00:00,New York,Electronics,7,199.77 USD,0,"$1,398.39",credit card,null,
+ORD-1078,CUST-311,03-Oct-2023,new york,Fashion & Apparel,4,$52.31,5%,198.78,Credit Card,2,UNKNOWN
+ORD-1355,CUST-336,2023/10/01 00:00:00,Seattle,Fashion & Apparel,2,€488.33,0.25,$732.50,Debit,4.5,Pending
+ORD-1124,CUST-213,2023-03-07,new york,Home & Kitchen,3,694.24 USD,15%,"$1,770.31",PayPal,-,Pending
+ORD-1055,CUST-314,2023-06-25,houston,Fashion & Apparel,3,$282.47,0.3,$593.19,credit card,3,In Transit
+ORD-1479,CUST-126,19-Nov-2023,Los Angeles,,2,$152.53,20%,244.05,apple pay,2,Cancelled
+ORD-1140,CUST-255,06-Jun-2023,Los Angeles,Home & Kitchen,7,$ - ,0.3,2178.54,Apple Pay,?,Returned
+ORD-1225,CUST-200,"Apr 02, 2023",houston,Books,6,615.82 USD,0.3,2586.44,credit card,4.5,
+ORD-1414,CUST-206,04-Jun-2023,los angeles,Electronics,1,304.1,0,304.10,PayPal,4.5,UNKNOWN
+ORD-1394,CUST-274,2023-08-26,NY,Books,3,580.09 USD,0.25,"$1,305.20",Debit,4,Delivered
+ORD-1227,CUST-266,06-Feb-2023,NY,Beauty & Care,8,297.11 USD,0.3,"$1,663.82",credit card,3.5,
+ORD-1495,CUST-332,03/23/2023,houston,Electronics,8,648.69 USD,0.25,3892.14,Apple Pay,3,UNKNOWN
+ORD-1009,CUST-224,09/04/2023,CHICAGO,Fashion & Apparel,9999,301.96 USD,0.25,"$2,264,473.53",Debit,4.5,Delivered
+ORD-1486,,2023-01-21,Seattle,Electronics,7,263.03 USD,5%,"$1,749.15",credit card,4.5,UNKNOWN
+ORD-1063,CUST-111,2023-04-13,miami,Beauty & Care,4,$225.29,25%,675.87,apple pay,4.5,
+ORD-1440,CUST-250,01/06/2023,LA,Sports & Fitness,4,$612.28,5%,2326.66,PayPal,1,delivered
+ORD-1424,CUST-131,2023/08/10 00:00:00,  Chicago  ,Home & Kitchen,-3,123.14 USD,20%,$98.51,Credit Card,1,Delivered
+ORD-1287,CUST-201,10-Dec-2023,LA,Electronics,8,$698.79,10%,5031.29,Apple Pay,4.5,Returned
+ORD-1244,CUST-151,07-Aug-2023,CHICAGO,Books,3,$251.37,0%,$754.11,Cryptocurrency,5,Delivered
+ORD-1084,CUST-114,2023/10/14 00:00:00,CHICAGO,Electronics,-1,$440.06,0%,$440.06,Debit,3.5,UNKNOWN
+ORD-1002,CUST-318,2023-04-30,NEW YORK,Home & Kitchen,5,$530.84,0.25,1990.65,N/A,3.5,Delivered
+ORD-1465,CUST-121,2023/03/14 00:00:00,miami,Books,8,$200.24,zero,"$1,521.82",paypal,5,
+ORD-1395,CUST-298,2023/12/16 00:00:00,new york,Sports & Fitness,8,0.00,0.2,$554.18,PayPal,3,Returned
+ORD-1104,CUST-292,2023-12-27,NEW YORK,Sports & Fitness,2,207.83 USD,20%,$332.53,PayPal,3,delivered
+ORD-1090,CUST-298,2023/05/25 00:00:00,  Chicago  ,Home & Kitchen,8,87.48,10%,$629.86,N/A,4,Cancelled
+ORD-1274,CUST-116,2023-06-06,New York,,7,€210.96,15%,"$1,255.21",Apple Pay,3,In Transit
+ORD-1173,CUST-286,05-Dec-2023,Los Angeles,Sports & Fitness,7,456.62 USD,25%,2397.26,credit card,1,Delivered
+ORD-1348,CUST-273,01/15/2023,NEW YORK,Books,3,€24.07,20%,$57.77,apple pay,5,UNKNOWN
+ORD-1068,CUST-283,"Sep 03, 2023",new york,Sports & Fitness,2,$345.73,0.3,$484.02,Credit Card,3,In Transit
+ORD-1172,CUST-184,2023/02/28 00:00:00,NEW YORK,Sports & Fitness,4,$46.71,0.25,140.13,N/A,5,Delivered
+ORD-1033,CUST-311,"Jan 01, 2023",chicago,Sports & Fitness,8,€573.59,25%,3441.54,Debit,1,Pending
+ORD-1070,CUST-342,"Nov 25, 2023",CHICAGO,Sports & Fitness,-3,$416.00,0.05,$395.20,Apple Pay,3,In Transit
+ORD-1076,CUST-152,"Jul 30, 2023",houston,Books,4,427.25 USD,0.05,1623.55,Debit,2,Cancelled
+ORD-1000,CUST-106,05/21/2023,houston,Books,7,$38.36,N/A,$214.82,Apple Pay,1,In Transit
+ORD-1011,CUST-201,09-Mar-2023,New York,Electronics,2,$68.85,0.1,123.93,Debit,4.5,Delivered
+ORD-1453,CUST-222,12/25/2023,Seattle,Sports & Fitness,3,$673.27,25%,"$1,514.86",credit card,1,UNKNOWN
+ORD-1022,CUST-209,2023/03/11 00:00:00,NY,Home & Kitchen,7,€219.52,0.25,1152.48,Credit Card,2,Delivered
+ORD-1431,CUST-226,08-Jul-2023,Los Angeles,Electronics,1,$223.32,0.2,$178.66,Cryptocurrency,4.5,
+ORD-1368,CUST-190,"Aug 28, 2023",houston,Sports & Fitness,5,$482.19,30%,1687.66,PayPal,3,
+ORD-1194,CUST-240,2023-09-24,chicago,Fashion & Apparel,4,730.36 USD,30%,null,Apple Pay,3.5,delivered
+ORD-1296,CUST-122,2023-99-99,NY,Books,3,€492.56,10%,1329.91,Apple Pay,3.5,
+ORD-1371,CUST-178,"Nov 26, 2023",Seattle,Beauty & Care,6,$19.33,N/A,?,Apple Pay,2,UNKNOWN
+ORD-1245,CUST-302,"Nov 20, 2023",new york,Beauty & Care,9999,€146.87,30%,"$1,027,987.19",Apple Pay,5,Delivered
+ORD-1018,CUST-172,"Sep 21, 2023",Houston,Fashion & Apparel,3,€32.95,0.15,$84.02,PayPal,0,UNKNOWN
+ORD-1177,CUST-318,2023-12-04,NEW YORK,Books,6,603.63 USD,15%,3078.51,apple pay,3,delivered
+ORD-1131,CUST-118,,chicago,Electronics,2,$417.08,0.2,667.33,apple pay,2,Pending
+ORD-1277,CUST-286,2023-11-17,NY,Fashion & Apparel,5,€635.43,0.3,2224.00,apple pay,1,Pending
+ORD-1155,CUST-300,08-Apr-2023,miami,Books,8,€351.18,-,2107.08,PayPal,3.5,In Transit
+ORD-1039,CUST-318,2023-09-05,  Chicago  ,Sports & Fitness,7,€216.74,0.2,"$1,213.74",Cryptocurrency,3,In Transit
+ORD-1467,CUST-323,2023/10/08 00:00:00,  Chicago  ,Beauty & Care,5,$399.02,25%,1496.32,Cryptocurrency,4,Pending
+ORD-1046,CUST-346,2023-01-16,Houston,Beauty & Care,8,69.02 USD,0.1,496.94,Debit,1,delivered
+ORD-1388,CUST-248,"Aug 04, 2023",NY,Books,1,$164.41,0.15,139.75,PayPal,3.5,UNKNOWN
+ORD-1204,CUST-202,2023/09/14 00:00:00,Los Angeles,Fashion & Apparel,4,427.46 USD,10%,1538.86,apple pay,3,Delivered
+ORD-1364,CUST-111,2023-05-02,NEW YORK,Fashion & Apparel,6,218.89 USD,0.1,"$1,182.01",apple pay,2,delivered
+ORD-1402,CUST-322,2023/03/05 00:00:00,chicago,Beauty & Care,6,98.33 USD,20%,471.98,Debit,3.5,delivered
+ORD-1325,CUST-196,2023/04/16 00:00:00,New York,Home & Kitchen,-1,€119.67,0%,$119.67,N/A,2,Cancelled
+ORD-1124,CUST-213,2023-03-07,new york,Home & Kitchen,3,694.24 USD,15%,"$1,770.31",PayPal,-,Pending
+ORD-1483,CUST-255,04/02/2023,LA,Electronics,2,$489.50,5%,$930.05,Debit,1,Cancelled
+ORD-1499,CUST-196,09/06/2023,Seattle,Beauty & Care,2,$266.64,0.1,$479.95,Credit Card,3.5,Pending
+ORD-1117,CUST-132,2023-05-18,  Chicago  ,,2,$379.67,30%,531.54,credit card,1,Delivered
+ORD-1069,CUST-339,26-Apr-2023,miami,Home & Kitchen,5,107.0 USD,0.05,508.25,Cryptocurrency,3.5,Delivered
+ORD-1356,CUST-129,21-Oct-2023,LA,Beauty & Care,4,$637.63,0.1,2295.47,credit card,4,Returned
+ORD-1302,CUST-135,03/04/2023,NY,Electronics,5,$386.19,0.3,1351.66,paypal,4,
+ORD-1371,CUST-178,"Nov 26, 2023",Seattle,Beauty & Care,6,$19.33,N/A,?,Apple Pay,2,UNKNOWN
+ORD-1471,CUST-198,31-Aug-2023,new york,Sports & Fitness,3,€709.94,15%,1810.35,PayPal,?,
+ORD-1391,CUST-208,22-Mar-2023,houston,Fashion & Apparel,4,303.33 USD,0%,1213.32,PayPal,?,UNKNOWN
+ORD-1380,CUST-156,01-Jun-2023,los angeles,Electronics,-1,$707.40,0.3,495.18,Credit Card,3,Returned
+ORD-1405,CUST-200,"Apr 09, 2023",CHICAGO,Sports & Fitness,3,$311.29,0.05,887.18,Debit,3,Pending
+ORD-1331,CUST-300,2023/07/26 00:00:00,Los Angeles,Electronics,3,651.12 USD,0.05,"$1,855.69",credit card,3.5,UNKNOWN
+ORD-1220,CUST-285,"Oct 19, 2023",chicago,Fashion & Apparel,8,688.38 USD,0.25,4130.28,Credit Card,4.5,Returned
+ORD-1148,CUST-312,09/25/2023,New York,Fashion & Apparel,8,$ - ,0,"$2,063.92",N/A,N/A,Cancelled
+ORD-1301,CUST-337,2023/08/13 00:00:00,Miami,Electronics,2,$620.35,25%,930.53,N/A,2,Returned
+ORD-1278,CUST-179,2023/08/26 00:00:00,Seattle,Books,3,$36.42,0.2,$87.41,credit card,1,UNKNOWN
+ORD-1357,CUST-341,06/01/2023,  Chicago  ,Sports & Fitness,1,455.18 USD,30%,318.63,apple pay,?,In Transit
+ORD-1354,CUST-272,2023/10/08 00:00:00,Los Angeles,Electronics,4,140.27 USD,,$420.81,Debit,4.5,delivered
+ORD-1208,,01-Jul-2023,  Chicago  ,Sports & Fitness,7,$669.45,20%,"$3,748.92",apple pay,3.5,Pending
+ORD-1255,CUST-323,"Apr 15, 2023",Houston,,6,$323.80,0.05,1845.66,apple pay,3.5,Returned
+ORD-1334,,01/06/2023,NEW YORK,Beauty & Care,7,€366.51,0.05,2437.29,Debit,4.5,
+ORD-1275,CUST-193,08/12/2023,miami,Electronics,5,49.94 USD,0.25,$187.27,N/A,3.5,delivered
+ORD-1447,CUST-282,,LA,Electronics,8,$98.19,0.2,628.42,PayPal,-,Returned
+ORD-1361,CUST-267,2023-99-99,Houston,Beauty & Care,1,€446.34,20%,357.07,credit card,3.5,In Transit
+ORD-1086,CUST-163,24-Aug-2023,Miami,Books,7,466.97 USD,0%,"$3,268.79",Credit Card,2,Delivered
+ORD-1322,CUST-340,2023-12-12,new york,Fashion & Apparel,2,450.77 USD,20%,$721.23,Credit Card,?,UNKNOWN
+ORD-1075,CUST-285,2023-12-19,Miami,Books,4,$545.23,0.25,"$1,635.69",credit card,4,In Transit
+ORD-1454,CUST-198,06/13/2023,Seattle,Books,5,$437.73,10%,"$1,969.79",Debit,2,Cancelled
+ORD-1015,CUST-156,2023/04/13 00:00:00,NY,Fashion & Apparel,9999,€156.95,0.25,"$1,177,007.29",Debit,3,Delivered
+ORD-1370,CUST-325,09/26/2023,los angeles,Fashion & Apparel,8,$293.63,0.25,"$1,761.78",Debit,-5,UNKNOWN
+ORD-1182,CUST-313,"May 08, 2023",Seattle,Electronics,8,466.16 USD,15%,3169.89,Debit,5,Cancelled
+ORD-1399,CUST-350,08/31/2023,CHICAGO,Books,2,$119.18,0.3,$166.85,Credit Card,3,Cancelled
+ORD-1019,CUST-305,"Dec 23, 2023",Los Angeles,Electronics,6,€713.28,30%,"$2,995.78",paypal,3.5,
+ORD-1332,CUST-215,2023-10-13,  Chicago  ,Fashion & Apparel,-3,€628.21,30%,$439.75,PayPal,3,UNKNOWN
+ORD-1342,CUST-270,2023-09-04,Los Angeles,Sports & Fitness,4,$385.01,0,1540.04,credit card,?,
+ORD-1056,CUST-249,12/06/2023,houston,Books,2,€242.54,0.3,339.56,N/A,2,Pending
+ORD-1250,CUST-155,2023/10/30 00:00:00,CHICAGO,Books,6,334.17,0%,2005.02,apple pay,3.5,delivered
+ORD-1341,CUST-268,"May 23, 2023",CHICAGO,Fashion & Apparel,2,538.71 USD,0.1,969.68,PayPal,4.5,Returned
+ORD-1437,CUST-119,"Oct 01, 2023",los angeles,Sports & Fitness,2,€443.34,15%,753.68,Cryptocurrency,1,Pending
+ORD-1155,CUST-300,08-Apr-2023,miami,Books,8,€351.18,-,2107.08,PayPal,3.5,In Transit
+ORD-1025,CUST-335,2023/10/03 00:00:00,  Chicago  ,Sports & Fitness,2,220.01 USD,25%,$330.01,Debit,4.5,Cancelled
+ORD-1386,CUST-235,"Jun 21, 2023",Houston,Books,6,658.42 USD,0.1,N/A,PayPal,4.5,
+ORD-1042,CUST-220,"Jan 13, 2023",NY,Sports & Fitness,8,683.4 USD,0%,"$5,467.20",Apple Pay,4.5,UNKNOWN
+ORD-1314,CUST-237,"Aug 05, 2023",miami,,3,15.4 USD,0.3,32.34,Debit,-,delivered
+ORD-1284,CUST-341,2023-99-99,LA,Books,8,$160.73,0.15,"$1,092.96",credit card,-,UNKNOWN
+ORD-1167,CUST-117,10-Apr-2023,  Chicago  ,Books,6,$608.66,10%,3286.76,PayPal,4,
+ORD-1286,CUST-332,08-May-2023,New York,Electronics,7,€519.84,0%,"$3,638.88",Credit Card,-,UNKNOWN
+ORD-1126,CUST-299,2023-05-24,Miami,Home & Kitchen,3,$88.60,0.3,186.06,apple pay,3.5,In Transit
+ORD-1336,CUST-333,12/04/2023,New York,Books,5,663.68 USD,25%,2488.80,Cryptocurrency,N/A,Returned
+ORD-1031,CUST-311,19-Oct-2023,houston,Home & Kitchen,8,€336.75,0,2694.00,Debit,2,
+ORD-1113,CUST-273,2023-03-15,Los Angeles,N/A,3,691.12 USD,0%,"$2,073.36",PayPal,2,Cancelled
+ORD-1411,CUST-327,"Jan 18, 2023",miami,Sports & Fitness,6,307.76 USD,5%,1754.23,credit card,N/A,Returned
+ORD-1222,CUST-195,20-Aug-2023,chicago,Electronics,2,null,20%,$545.87,Cryptocurrency,3.5,In Transit
+ORD-1153,CUST-130,2023-09-12,los angeles,Sports & Fitness,9999,81.81 USD,0.2,654414.55,paypal,3.5,
+ORD-1057,CUST-296,09/06/2023,  Chicago  ,Electronics,1,501.52 USD,0.05,$476.44,Apple Pay,?,Pending
+ORD-1210,CUST-236,03/02/2023,New York,Books,7,€721.48,0.25,3787.77,Debit,5,Pending
+ORD-1024,CUST-297,"Jun 04, 2023",Miami,Sports & Fitness,6,$65.68,15%,334.97,PayPal,4.5,Cancelled
+ORD-1017,CUST-270,29-Jul-2023,NY,Fashion & Apparel,3,467.4 USD,0.1,"$1,261.98",paypal,3.5,In Transit
+ORD-1211,CUST-106,2023-07-03,miami,Sports & Fitness,6,150.22 USD,None,$856.25,paypal,4,
+ORD-1066,CUST-266,05/23/2023,Los Angeles,N/A,2,€207.41,15%,352.60,credit card,3,Returned
+ORD-1228,CUST-252,26-Aug-2023,  Chicago  ,Fashion & Apparel,2,518.85 USD,25%,778.28,Credit Card,4,Cancelled
+ORD-1209,CUST-246,2023/03/20 00:00:00,Los Angeles,Home & Kitchen,3,$442.06,0.05,1259.87,PayPal,2,Returned
+ORD-1094,CUST-121,2023/09/13 00:00:00,Seattle,Electronics,4,677.44 USD,0%,"$2,709.76",Cryptocurrency,null,In Transit
+ORD-1289,CUST-281,2023/10/15 00:00:00,miami,Books,4,$653.11,0.2,2089.95,Credit Card,4,delivered
+ORD-1291,CUST-287,10/19/2023,  Chicago  ,Books,2,$417.16,0.1,750.89,PayPal,4.5,In Transit
+ORD-1023,CUST-161,2023/03/06 00:00:00,Los Angeles,Fashion & Apparel,3,€460.33,10%,1242.89,apple pay,5,Pending
+ORD-1365,CUST-168,11/21/2023,miami,Books,3,$247.52,20%,$594.05,Cryptocurrency,3,Cancelled
+ORD-1422,CUST-288,"Jun 29, 2023",Los Angeles,Home & Kitchen,9999,274.18,30%,"$1,919,068.07",apple pay,2,Returned
+ORD-1218,CUST-286,"Nov 19, 2023",LA,Books,5,$328.88,20%,1315.52,Apple Pay,5,Pending
+ORD-1005,CUST-295,"Apr 02, 2023",miami,Home & Kitchen,3,289.83,20%,695.59,Debit,5,delivered
+ORD-1116,CUST-200,2023-10-28,New York,Fashion & Apparel,2,$348.23,25%,"$52,234.50",PayPal,3,Cancelled
+ORD-1045,CUST-128,2023-12-05,LA,Fashion & Apparel,1,$108.17,0,108.17,Credit Card,4.5,Cancelled
+ORD-1428,?,2023/03/06 00:00:00,Los Angeles,Sports & Fitness,5,$624.97,0,"$3,124.85",N/A,2,In Transit
+ORD-1016,CUST-211,26-Jun-2023,CHICAGO,Electronics,1,?,0.25,$401.97,Cryptocurrency,1,Cancelled
+ORD-1481,CUST-185,2023-01-28,Los Angeles,Home & Kitchen,3,$162.30,5%,462.56,Cryptocurrency,null,Returned
+ORD-1369,CUST-102,"Aug 06, 2023",los angeles,Beauty & Care,2,€313.02,25%,469.53,N/A,4,In Transit
+ORD-1003,CUST-108,2023/06/11 00:00:00,Seattle,Sports & Fitness,8,305.79 USD,0.05,2324.00,Cryptocurrency,5,
+ORD-1238,CUST-263,2023-03-04,Houston,Beauty & Care,3,$673.56,15%,1717.58,Cryptocurrency,3,Delivered
+ORD-1438,CUST-306,"Oct 16, 2023",chicago,Electronics,2,$667.33,None,"$1,001.00",Apple Pay,2,Delivered
+ORD-1060,CUST-135,20-Jan-2023,Miami,Fashion & Apparel,1,free,0.3,476.57,paypal,4,
+ORD-1110,CUST-100,2023/02/17 00:00:00,Miami,Electronics,7,$621.26,0.1,"$3,913.94",Credit Card,,Delivered
+ORD-1460,CUST-300,2023-07-29,chicago,Books,7,$308.03,0.25,"$1,617.16",PayPal,1,Returned
+ORD-1271,CUST-197,06-Nov-2023,Miami,Electronics,8,597.66 USD,0.1,null,apple pay,4,Returned
+ORD-1029,CUST-130,2023/10/13 00:00:00,Miami,Fashion & Apparel,8,233.55 USD,0,"$1,868.40",credit card,1,In Transit
+ORD-1423,CUST-162,2023/10/23 00:00:00,Seattle,Fashion & Apparel,5,659.7 USD,0.2,2638.80,Debit,5,Returned
+ORD-1180,CUST-204,2023-09-17,new york,Home & Kitchen,5,525.23,30%,null,Debit,null,Pending
+ORD-1026,CUST-232,2023-04-08,Miami,Sports & Fitness,8,0.00,5%,2617.52,Cryptocurrency,3,Returned
+ORD-1007,CUST-101,2023-02-06,new york,Home & Kitchen,8,172.46 USD,15%,1172.73,Cryptocurrency,4.5,Delivered
+ORD-1181,CUST-205,"Jun 30, 2023",NY,Home & Kitchen,6,70.88 USD,0.2,$340.22,paypal,3,Pending
+ORD-1469,CUST-103,09-Apr-2023,LA,Beauty & Care,7,701.72 USD,0.2,"$3,929.63",N/A,3,Cancelled
+ORD-1108,CUST-256,2023/11/20 00:00:00,miami,Fashion & Apparel,6,$406.23,0.25,1828.04,credit card,4,Delivered
+ORD-1037,CUST-109,2023-11-13,NY,Home & Kitchen,2,$573.87,0.05,"$1,090.35",Cryptocurrency,4,In Transit
+ORD-1157,CUST-259,29-May-2023,Houston,Books,6,537.11 USD,0.25,2416.99,apple pay,1,UNKNOWN
+ORD-1485,CUST-129,2023/11/06 00:00:00,chicago,Books,2,592.34 USD,25%,$888.51,N/A,4,UNKNOWN
+ORD-1118,CUST-220,2023/07/06 00:00:00,los angeles,Electronics,7,180.02 USD,30%,$882.10,N/A,1,
+ORD-1114,CUST-276,14-Jan-2023,houston,Fashion & Apparel,4,378.74 USD,20%,"$1,211.97",apple pay,3.5,
+ORD-1268,CUST-158,2023-07-28,new york,Beauty & Care,6,$532.98,10%,2878.09,Apple Pay,3.5,UNKNOWN
+ORD-1175,CUST-197,"Jun 29, 2023",LA,Books,8,$577.91,20%,3698.62,N/A,-5,Pending
+ORD-1203,CUST-261,2023-07-15,LA,Sports & Fitness,4,127.6,20%,$408.32,credit card,5,UNKNOWN
+ORD-1262,CUST-276,,LA,Electronics,7,€653.23,20%,"$3,658.09",Apple Pay,2,Delivered
+ORD-1144,CUST-261,01-Apr-2023,NY,,3,$374.84,20%,$899.62,N/A,1,Returned
+ORD-1194,CUST-240,2023-09-24,chicago,Fashion & Apparel,4,730.36 USD,30%,null,Apple Pay,3.5,delivered
+ORD-1382,CUST-156,16-Jun-2023,NEW YORK,Beauty & Care,7,$285.95,0.05,1901.57,PayPal,2,In Transit
+ORD-1393,CUST-341,2023-06-08,los angeles,Beauty & Care,6,$730.78,0.15,"$3,726.98",apple pay,1,Cancelled
+ORD-1418,CUST-275,"Jun 07, 2023",houston,Electronics,-2,$ - ,20%,$121.98,PayPal,3,Delivered
+ORD-1234,CUST-171,05/10/2023,New York,Home & Kitchen,3,$499.48,30%,"$1,048.91",credit card,3.5,In Transit
+ORD-1237,CUST-250,"Apr 10, 2023",chicago,Fashion & Apparel,2,$23.79,0.15,null,Credit Card,3.5,Pending
+ORD-1461,CUST-238,2023-01-11,chicago,Books,2,$496.37,0.05,$943.10,PayPal,2,Pending
+ORD-1141,CUST-166,02-Dec-2023,Seattle,Fashion & Apparel,7,500.49,10%,3153.09,paypal,4.5,
+ORD-1495,CUST-332,03/23/2023,houston,Electronics,8,648.69 USD,0.25,3892.14,Apple Pay,3,UNKNOWN
+ORD-1067,CUST-240,05-Oct-2023,houston,Books,6,$388.94,5%,"$2,216.96",N/A,1,Cancelled
+ORD-1323,CUST-266,03-Jul-2023,NEW YORK,Fashion & Apparel,5,?,25%,1072.84,apple pay,4.5,Pending
+ORD-1168,CUST-298,2023/06/06 00:00:00,new york,Sports & Fitness,3,670.1 USD,25%,?,paypal,5,
+ORD-1188,CUST-201,2023-02-22,New York,Sports & Fitness,9999,$306.80,10%,"$2,760,923.88",Debit,5,In Transit
+ORD-1346,CUST-294,"Jun 03, 2023",  Chicago  ,Fashion & Apparel,5,$290.73,5%,,Apple Pay,4,Returned
+ORD-1433,CUST-255,12/04/2023,los angeles,Books,6,$444.60,0%,2667.60,Apple Pay,3.5,Pending
+ORD-1353,,24-Jan-2023,CHICAGO,Beauty & Care,6,329.52,0%,1977.12,N/A,,delivered
+ORD-1193,CUST-315,2023/05/09 00:00:00,NY,Books,4,null,0.25,1671.45,Debit,4.5,Delivered
+ORD-1081,CUST-319,2023/11/24 00:00:00,CHICAGO,Electronics,3,$365.93,0.15,933.12,Credit Card,2,Delivered
+ORD-1109,CUST-321,12/02/2023,houston,Fashion & Apparel,7,$374.75,15%,"$2,229.76",Debit,4,
+ORD-1261,CUST-218,10/18/2023,los angeles,Home & Kitchen,5,628.42 USD,0%,3142.10,credit card,4,In Transit
+ORD-1145,CUST-235,2023-04-08,NY,Fashion & Apparel,3,$90.49,0%,271.47,Cryptocurrency,2,Returned
+ORD-1092,CUST-205,03/12/2023,los angeles,Fashion & Apparel,8,?,20%,"$3,197.25",N/A,3.5,In Transit
+ORD-1152,CUST-311,"Oct 13, 2023",los angeles,Fashion & Apparel,3,$70.03,10%,$189.08,Apple Pay,1,
+ORD-1377,CUST-289,"Jul 05, 2023",  Chicago  ,Books,2,$110.91,0.2,$177.46,credit card,-,Returned
+ORD-1407,CUST-268,27-Jan-2023,Houston,Electronics,2,$352.46,10%,634.43,paypal,1,UNKNOWN
+ORD-1253,CUST-193,,houston,Sports & Fitness,4,116.73 USD,0.25,350.19,paypal,5,UNKNOWN
+ORD-1083,CUST-252,"Feb 11, 2023",Seattle,Electronics,4,$435.94,0.2,1395.01,Apple Pay,5,UNKNOWN
+ORD-1103,,2023-11-28,NY,Books,6,$426.49,15%,2175.10,paypal,1,Pending
+ORD-1165,CUST-317,07-Oct-2023,Seattle,Books,6,?,5%,4096.48,Debit,4.5,Returned
+ORD-1163,CUST-208,02/23/2023,Miami,Books,2,563.96 USD,0%,1127.92,Debit,4,UNKNOWN
+ORD-1199,CUST-119,"Apr 21, 2023",CHICAGO,Sports & Fitness,4,433.97 USD,0.25,1301.91,credit card,4,Returned
+ORD-1249,CUST-349,05/19/2023,New York,Sports & Fitness,8,$352.06,0.1,"$2,534.83",N/A,3.5,
+ORD-1074,,"Aug 31, 2023",NEW YORK,Sports & Fitness,3,303.82 USD,0.2,729.17,Cryptocurrency,4,Cancelled
+ORD-1318,CUST-244,"Dec 11, 2023",houston,Fashion & Apparel,4,$662.54,0.3,"$1,855.11",N/A,10,Delivered
+ORD-1310,CUST-330,22-Jul-2023,houston,Beauty & Care,3,€534.80,0%,1604.40,N/A,1,delivered
+ORD-1488,CUST-105,05-Apr-2023,miami,Electronics,4,434.61 USD,0.3,1216.91,apple pay,2,Cancelled
+ORD-1119,CUST-298,09-Jun-2023,NY,Home & Kitchen,4,€355.99,20%,"$113,916.80",apple pay,-,Returned
+ORD-1290,CUST-227,2023-12-13,CHICAGO,Unknown,2,$630.18,30%,882.25,Cryptocurrency,4,Returned
+ORD-1498,CUST-139,12/22/2023,  Chicago  ,Beauty & Care,-1,$443.67,0.1,399.30,PayPal,5,Returned
+ORD-1470,CUST-288,2023/11/12 00:00:00,NY,N/A,3,$120.35,0%,361.05,Cryptocurrency,2,UNKNOWN
+ORD-1410,CUST-342,07/24/2023,  Chicago  ,Books,5,136.76 USD,0.15,581.23,apple pay,4.5,delivered
+ORD-1494,CUST-321,04/09/2023,NEW YORK,Fashion & Apparel,4,252.2 USD,0.15,$857.48,Apple Pay,5,Returned
+ORD-1280,CUST-144,20-Apr-2023,New York,Sports & Fitness,2,247.62,0.05,null,Credit Card,2,Cancelled
+ORD-1452,CUST-321,2023/09/29 00:00:00,houston,Beauty & Care,2,$262.55,0.2,$420.08,Apple Pay,4.5,UNKNOWN
+ORD-1497,CUST-225,06-May-2023,Miami,Home & Kitchen,5,$451.90,,"$2,033.55",PayPal,4.5,
+ORD-1305,CUST-238,05/26/2023,chicago,Sports & Fitness,1,$669.38,0.3,$468.57,Cryptocurrency,1,Delivered
+ORD-1396,CUST-118,2023/04/02 00:00:00,Miami,Home & Kitchen,3,705.77 USD,0.1,"$1,905.58",Cryptocurrency,5,
+ORD-1320,CUST-116,null,Miami,Sports & Fitness,5,196.66,0.2,786.64,Apple Pay,1,Delivered
+ORD-1036,CUST-109,"Mar 06, 2023",miami,Electronics,8,€26.28,30%,147.17,N/A,4.5,
+ORD-1196,CUST-243,"May 31, 2023",los angeles,Fashion & Apparel,5,652.73 USD,20%,"$2,610.92",N/A,1,Returned
+ORD-1139,CUST-189,06/26/2023,new york,Books,3,$642.56,0.05,"$1,831.30",Credit Card,2,Delivered
+ORD-1377,CUST-289,"Jul 05, 2023",  Chicago  ,Books,2,$110.91,0.2,$177.46,credit card,-,Returned
+ORD-1442,CUST-152,"Mar 12, 2023",new york,Fashion & Apparel,3,41.36,0%,124.08,credit card,-,UNKNOWN
+ORD-1493,CUST-274,2023/02/20 00:00:00,CHICAGO,Beauty & Care,-1,116.85 USD,25%,87.64,credit card,5,UNKNOWN
+ORD-1400,CUST-189,2023/08/03 00:00:00,houston,Fashion & Apparel,7,619.92 USD,0.25,3254.58,Cryptocurrency,,In Transit
+ORD-1059,CUST-232,05-Mar-2023,Seattle,Beauty & Care,2,710.61 USD,0%,"$1,421.22",paypal,N/A,Returned
+ORD-1450,CUST-291,03/01/2023,chicago,Beauty & Care,2,687.26 USD,0.15,"$1,168.34",apple pay,5,Cancelled
+ORD-1248,CUST-183,08/03/2023,Miami,Fashion & Apparel,4,$557.24,0.05,"$2,117.51",Apple Pay,4,Pending
+ORD-1111,CUST-319,2023/03/22 00:00:00,NY,Beauty & Care,5,$131.85,25%,$494.44,Debit,4,delivered
+ORD-1089,?,"Dec 11, 2023",Miami,Fashion & Apparel,4,$367.35,0%,1469.40,paypal,4,Pending
+ORD-1272,CUST-213,-,Seattle,Home & Kitchen,3,244.66 USD,0.15,623.88,N/A,?,
+ORD-1265,CUST-213,"Nov 02, 2023",  Chicago  ,Books,9999,613.71 USD,5%,5829661.98,credit card,,UNKNOWN
+ORD-1373,CUST-141,12/08/2023,new york,Home & Kitchen,3,253.79 USD,25%,$571.03,PayPal,-5,Pending
+ORD-1150,CUST-216,2023/05/20 00:00:00,Houston,Beauty & Care,3,526.68 USD,15%,1343.03,Cryptocurrency,3.5,In Transit
+ORD-1394,CUST-274,2023-08-26,NY,Books,3,580.09 USD,0.25,"$1,305.20",Debit,4,Delivered
+ORD-1038,CUST-120,2023/11/09 00:00:00,NEW YORK,Sports & Fitness,8,null,10%,1459.22,apple pay,3,Pending
+ORD-1324,CUST-187,2023/04/07 00:00:00,houston,Sports & Fitness,6,$467.84,0.15,2385.98,paypal,4,Returned
+ORD-1198,CUST-234,"Nov 16, 2023",houston,Sports & Fitness,4,496.98 USD,0.25,"$1,490.94",Credit Card,1,delivered
+ORD-1266,N/A,"Jan 17, 2023",New York,Home & Kitchen,2,$590.04,5%,1121.08,Cryptocurrency,3.5,Pending
+ORD-1146,CUST-225,07/03/2023,New York,Beauty & Care,3,?,0.05,485.13,N/A,1,delivered
+ORD-1406,CUST-106,2023-08-12,LA,Electronics,2,$ - ,0.05,827.01,paypal,2,UNKNOWN
+ORD-1147,CUST-105,2023-01-25,  Chicago  ,Sports & Fitness,1,236.32 USD,20%,189.06,Debit,2,Pending
+ORD-1316,N/A,12/11/2023,Los Angeles,Books,2,410.91 USD,0,$821.82,Credit Card,2,
+ORD-1415,CUST-122,08-Apr-2023,Seattle,Electronics,1,$96.44,0.1,86.80,Apple Pay,2,UNKNOWN
+ORD-1123,CUST-240,2023-05-08,new york,Fashion & Apparel,9999,$625.32,0.3,4376802.28,credit card,N/A,Pending
+ORD-1381,CUST-280,09-Oct-2023,  Chicago  ,Sports & Fitness,1,620.59 USD,0,$620.59,apple pay,4.5,Pending
+ORD-1096,CUST-215,09/09/2023,NEW YORK,Beauty & Care,2,$582.54,0%,1165.08,Cryptocurrency,3,
+ORD-1143,CUST-130,2023-08-29,new york,Sports & Fitness,2,$652.61,0%,1305.22,Apple Pay,2,delivered
+ORD-1239,CUST-185,31-Jan-2023,new york,Beauty & Care,7,$146.15,0.3,$716.13,Credit Card,-,Cancelled
+ORD-1281,CUST-179,24-Nov-2023,miami,Sports & Fitness,1,683.69 USD,0,$683.69,Apple Pay,3.5,UNKNOWN
+ORD-1097,CUST-169,02/22/2023,los angeles,Sports & Fitness,2,275.13 USD,-,467.72,paypal,4,In Transit
+ORD-1362,CUST-279,2023/01/11 00:00:00,Los Angeles,Sports & Fitness,2,568.83 USD,30%,$796.36,PayPal,1,Cancelled
+ORD-1122,CUST-191,2023/04/17 00:00:00,new york,Electronics,1,$173.04,25%,$129.78,PayPal,,
+ORD-1183,CUST-292,10/23/2023,los angeles,Beauty & Care,3,351.04 USD,N/A,"$1,053.12",Debit,3,
+ORD-1202,CUST-155,09-Feb-2023,houston,Books,5,$42.47,0.3,$148.64,credit card,4.5,Delivered
+ORD-1246,CUST-283,"Sep 13, 2023",chicago,Home & Kitchen,4,$101.37,0.1,364.93,paypal,3.5,In Transit
+ORD-1455,CUST-152,"Oct 10, 2023",Seattle,Unknown,1,$373.95,0.1,336.56,Debit,3.5,delivered
+ORD-1307,CUST-115,08/06/2023,Houston,Home & Kitchen,7,€655.93,15%,"$3,902.78",Apple Pay,3.5,delivered
+ORD-1468,CUST-337,03/11/2023,chicago,Electronics,2,$ - ,5%,1415.65,PayPal,-,Pending
+ORD-1429,CUST-347,09/11/2023,  Chicago  ,Fashion & Apparel,1,$607.13,zero,$607.13,credit card,4,UNKNOWN
+ORD-1409,CUST-149,2023-11-07,NY,Fashion & Apparel,4,$36.68,25%,$110.04,N/A,3.5,
+ORD-1374,,"Aug 08, 2023",  Chicago  ,Home & Kitchen,4,$468.95,0.1,1688.22,paypal,1,In Transit
+ORD-1125,CUST-227,"Jul 30, 2023",NEW YORK,Beauty & Care,4,478.6,0.1,"$1,722.96",Debit,2,Delivered
+ORD-1312,CUST-139,2023/06/07 00:00:00,NEW YORK,Home & Kitchen,9999,$58.00,15%,"$492,950.70",paypal,4,UNKNOWN
+ORD-1223,CUST-109,2023/08/24 00:00:00,  Chicago  ,Electronics,2,$259.97,30%,363.96,Cryptocurrency,5,Returned
+ORD-1432,CUST-140,"Jul 03, 2023",Seattle,Home & Kitchen,2,143.26 USD,0.15,$243.54,apple pay,,UNKNOWN
+ORD-1219,CUST-350,2023-04-10,houston,Electronics,7,319.32 USD,0,"$2,235.24",N/A,-5,Returned
+ORD-1129,CUST-250,2023/03/31 00:00:00,NEW YORK,Fashion & Apparel,7,640.31 USD,0.1,4033.95,PayPal,3,Returned
+ORD-1434,CUST-325,2023/03/31 00:00:00,New York,Electronics,2,339.52 USD,0.05,645.09,paypal,4.5,Cancelled
+ORD-1297,CUST-151,"May 31, 2023",New York,Home & Kitchen,7,734.92 USD,20%,4115.55,Apple Pay,1,UNKNOWN
+ORD-1338,CUST-212,2023/03/13 00:00:00,miami,Fashion & Apparel,9999,88.88 USD,0%,"$888,711.12",Credit Card,4,Delivered
+ORD-1390,CUST-135,28-Sep-2023,Miami,Beauty & Care,-1,$129.58,30%,90.71,Apple Pay,5,Cancelled
+ORD-1299,CUST-175,2023/07/19 00:00:00,chicago,Books,3,€472.05,5%,"$1,345.34",paypal,1,Returned
+ORD-1367,CUST-199,03-Apr-2023,los angeles,Sports & Fitness,8,€450.35,0.05,3422.66,paypal,4,In Transit
+ORD-1420,CUST-125,23-Apr-2023,chicago,Fashion & Apparel,5,€554.40,0.1,"$2,494.80",Cryptocurrency,1,
+ORD-1294,CUST-205,2023/02/18 00:00:00,chicago,Home & Kitchen,1,$98.74,5%,$93.80,Apple Pay,3.5,Cancelled
+ORD-1404,CUST-265,,  Chicago  ,Sports & Fitness,5,631.29 USD,None,2682.98,Cryptocurrency,4,Pending
+ORD-1421,CUST-105,01-Apr-2023,LA,Electronics,1,$373.91,,$261.74,PayPal,3.5,Returned
+ORD-1112,CUST-100,2023/04/20 00:00:00,Houston,Sports & Fitness,-2,615.58 USD,0%,$615.58,Debit,3.5,In Transit
+ORD-1179,CUST-349,2023-03-22,Houston,Home & Kitchen,1,$556.64,0.1,500.98,paypal,4,Delivered
+ORD-1317,N/A,24-May-2023,  Chicago  ,Books,8,null,25%,"$4,355.76",Debit,5,Pending
+ORD-1349,CUST-287,2023-07-30,miami,Home & Kitchen,7,free,30%,"$2,590.97",Debit,3,In Transit
+ORD-1340,CUST-325,02/19/2023,new york,Sports & Fitness,4,$474.13,15%,"$1,612.04",Cryptocurrency,null,
+ORD-1073,CUST-193,2023/01/24 00:00:00,los angeles,Home & Kitchen,8,€576.84,0,4614.72,paypal,1,Delivered
+ORD-1104,CUST-292,2023-12-27,NEW YORK,Sports & Fitness,2,207.83 USD,20%,$332.53,PayPal,3,delivered
+ORD-1233,CUST-231,"Aug 29, 2023",  Chicago  ,Home & Kitchen,5,$549.32,0.15,2334.61,Credit Card,5,delivered
+ORD-1477,CUST-244,2023/06/11 00:00:00,NEW YORK,Fashion & Apparel,8,209.44 USD,0.25,1256.64,apple pay,4.5,UNKNOWN
+ORD-1321,CUST-327,2023-12-22,New York,Beauty & Care,2,$89.84,30%,125.78,Credit Card,4,delivered
+ORD-1164,CUST-199,2023-12-11,new york,Sports & Fitness,2,$277.91,25%,$416.87,Credit Card,2,UNKNOWN
+ORD-1136,CUST-244,21-Feb-2023,  Chicago  ,Beauty & Care,8,$42.54,20%,272.26,Credit Card,3,Delivered
+ORD-1197,CUST-161,2023-06-14,NY,Beauty & Care,3,465.58 USD,20%,"$1,117.39",credit card,5,UNKNOWN
+ORD-1258,CUST-175,31-Aug-2023,Houston,Sports & Fitness,8,263.93 USD,25%,"$1,583.58",credit card,2,Pending
+ORD-1232,N/A,2023/10/18 00:00:00,houston,Beauty & Care,5,356.73 USD,0.15,1516.10,Debit,5,Delivered
+ORD-1115,CUST-297,2023-02-07,New York,N/A,7,387.36 USD,0.25,"$2,033.64",credit card,3.5,In Transit
+ORD-1120,CUST-277,null,  Chicago  ,Books,4,323.56 USD,0.1,1164.82,Cryptocurrency,5,delivered
+ORD-1360,CUST-124,2023/07/02 00:00:00,Houston,Sports & Fitness,3,$475.82,5%,1356.09,credit card,4.5,UNKNOWN
+ORD-1224,CUST-271,02-Mar-2023,LA,Electronics,6,€418.78,0.05,"$2,387.05",Apple Pay,4,Delivered
+ORD-1416,CUST-271,"Mar 04, 2023",Los Angeles,Books,8,$180.99,0,1447.92,credit card,,Delivered
+ORD-1347,CUST-178,"Nov 25, 2023",CHICAGO,Electronics,7,718.47 USD,0.25,3771.97,paypal,3.5,Returned
+ORD-1127,CUST-251,12-Jun-2023,LA,,4,629.97 USD,5%,2393.89,Credit Card,3.5,In Transit
+ORD-1285,CUST-337,2023/08/21 00:00:00,miami,Fashion & Apparel,8,$295.82,5%,"$2,248.23",PayPal,?,Pending
+ORD-1425,CUST-101,09-Aug-2023,NEW YORK,,3,$715.96,0.25,"$1,610.91",Cryptocurrency,4,UNKNOWN
+ORD-1107,CUST-310,"Jul 07, 2023",Los Angeles,Books,2,$555.95,30%,$778.33,credit card,3.5,Returned
+ORD-1383,CUST-275,11/08/2023,Los Angeles,Fashion & Apparel,2,547.37 USD,0%,1094.74,Credit Card,3,In Transit
+ORD-1335,CUST-101,2023/03/15 00:00:00,los angeles,Fashion & Apparel,8,353.25 USD,0.15,2402.10,PayPal,5,UNKNOWN
+ORD-1133,CUST-329,05-Dec-2023,chicago,Fashion & Apparel,8,$47.79,30%,$267.62,Cryptocurrency,3.5,Pending
+ORD-1376,CUST-341,2023/06/29 00:00:00,New York,Fashion & Apparel,9999,$500.42,10%,"$4,503,329.62",Debit,4.5,In Transit
+ORD-1044,CUST-154,"Nov 25, 2023",NY,Home & Kitchen,4,$65.43,5%,248.63,Debit,2,Cancelled
+ORD-1478,CUST-307,16-Dec-2023,los angeles,Sports & Fitness,2,$392.26,None,$706.07,Apple Pay,4,Delivered
+ORD-1065,CUST-263,27-Jul-2023,New York,Fashion & Apparel,8,40.58 USD,15%,$275.94,Apple Pay,5,Returned
+ORD-1283,CUST-260,06-Jun-2023,los angeles,Fashion & Apparel,3,637.52 USD,15%,"$1,625.68",Debit,2,UNKNOWN
+ORD-1085,CUST-328,2023/07/15 00:00:00,new york,Beauty & Care,3,$495.35,20%,1188.84,Debit,4,UNKNOWN
+ORD-1242,CUST-135,-,new york,Beauty & Care,8,€407.45,0,3259.60,N/A,3.5,In Transit
+ORD-1186,N/A,"Jun 29, 2023",los angeles,Books,6,253.94 USD,0%,"$1,523.64",Cryptocurrency,4,delivered
+ORD-1397,CUST-324,2023-12-16,Miami,Books,1,$128.60,20%,$102.88,Apple Pay,3.5,
+ORD-1159,CUST-112,2023/07/15 00:00:00,chicago,Books,5,164.27 USD,0.05,780.28,paypal,3,
+ORD-1012,CUST-241,2023-06-03,Seattle,Electronics,5,$222.09,25%,832.84,credit card,1,Delivered
+ORD-1035,CUST-172,"Jun 02, 2023",Los Angeles,Fashion & Apparel,7,$349.68,25%,"$1,835.82",Apple Pay,4,In Transit
+ORD-1028,CUST-349,"Jan 28, 2023",miami,Books,1,436.94 USD,0,$436.94,Credit Card,3,delivered
+ORD-1170,CUST-224,2023-04-29,NY,Books,7,$360.21,0.25,1891.10,Debit,4,UNKNOWN
+ORD-1142,CUST-271,"Jul 03, 2023",Seattle,Books,8,€109.04,0.25,654.24,apple pay,3,Cancelled
+ORD-1412,CUST-245,06/14/2023,NY,Sports & Fitness,5,€541.46,0.25,"$2,030.48",Apple Pay,4,delivered
+ORD-1352,CUST-340,2023/07/04 00:00:00,miami,Home & Kitchen,8,€654.85,0%,"$5,238.80",Apple Pay,1,Returned
+ORD-1221,CUST-104,"Apr 17, 2023",new york,Home & Kitchen,1,264.28 USD,0.2,211.42,Cryptocurrency,1,
+ORD-1095,CUST-282,2023-07-23,miami,Sports & Fitness,6,€297.13,25%,"$1,337.09",apple pay,4.5,Cancelled
+ORD-1051,CUST-227,08/09/2023,los angeles,Fashion & Apparel,6,$67.98,0%,$407.88,apple pay,3,In Transit
+ORD-1240,CUST-104,09/12/2023,Houston,Unknown,6,€679.89,0.15,"$3,467.44",apple pay,4,delivered
+ORD-1449,CUST-138,2023-07-15,LA,Fashion & Apparel,7,€411.14,25%,"$2,158.49",paypal,3,Pending
+ORD-1351,CUST-125,2023-01-05,LA,Books,4,?,0.2,"$1,276.54",apple pay,3,Returned
+ORD-1392,CUST-127,2023-02-23,New York,Home & Kitchen,2,63.01 USD,0.2,100.82,Credit Card,1,Delivered
+ORD-1178,CUST-285,2023/07/16 00:00:00,LA,Books,3,$485.61,0.25,1092.62,paypal,3,Pending
+ORD-1041,CUST-186,2023/02/28 00:00:00,miami,Fashion & Apparel,7,$725.94,30%,3557.11,Debit,3,delivered
+ORD-1451,CUST-187,2023-06-10,LA,Fashion & Apparel,4,$676.41,0,"$2,705.64",Credit Card,2,delivered
+ORD-1444,CUST-337,2023-01-30,  Chicago  ,Books,8,326.52 USD,0.15,"$2,220.34",Debit,5,Cancelled
+ORD-1206,null,10/03/2023,los angeles,Home & Kitchen,3,$525.88,25%,1183.23,Debit,N/A,delivered
+ORD-1282,CUST-170,2023/02/11 00:00:00,houston,Home & Kitchen,2,620.93 USD,0.2,993.49,PayPal,2,Delivered
+ORD-1358,CUST-153,2023-04-26,houston,Beauty & Care,3,$743.43,25%,1672.72,Debit,3.5,UNKNOWN
+ORD-1254,CUST-116,10-Jul-2023,Los Angeles,Electronics,5,347.2,0,"$1,736.00",credit card,4.5,In Transit
+ORD-1426,CUST-331,20-Feb-2023,LA,Fashion & Apparel,3,$517.24,20%,"$1,241.38",PayPal,4,delivered
+ORD-1004,CUST-112,02/26/2023,LA,Beauty & Care,8,403.9 USD,0.25,"$2,423.40",Debit,4.5,Cancelled
+ORD-1256,CUST-270,"Dec 23, 2023",LA,Home & Kitchen,3,$595.11,10%,"$1,606.80",PayPal,2,In Transit
+ORD-1464,CUST-279,"Oct 01, 2023",houston,,2,$347.42,30%,$486.39,credit card,3.5,
+ORD-1100,CUST-218,2023/04/18 00:00:00,miami,Electronics,8,$117.30,0.05,$891.48,apple pay,3.5,UNKNOWN
+ORD-1226,CUST-342,04/25/2023,CHICAGO,Home & Kitchen,6,594.75 USD,15%,"$3,033.22",PayPal,4.5,delivered
+ORD-1441,CUST-340,10/06/2023,Seattle,Home & Kitchen,5,$706.95,0.25,"$2,651.06",Cryptocurrency,5,
+ORD-1213,CUST-232,2023-11-19,Miami,Home & Kitchen,7,€231.40,0.25,1214.85,N/A,4,Delivered
+ORD-1436,CUST-191,"Nov 13, 2023",CHICAGO,Beauty & Care,2,$108.49,0.15,184.43,Debit,3.5,In Transit
+ORD-1171,CUST-267,"Feb 09, 2023",los angeles,Fashion & Apparel,6,372.84 USD,5%,"$2,125.19",PayPal,1,Pending
+ORD-1098,CUST-177,2023/05/18 00:00:00,CHICAGO,Home & Kitchen,6,200.0 USD,5%,"$114,000.00",apple pay,3.5,Returned
+ORD-1292,CUST-225,10-Aug-2023,Houston,Home & Kitchen,4,374.87 USD,15%,1274.56,credit card,?,
+ORD-1215,CUST-268,03/18/2023,New York,Books,8,€227.25,30%,"$1,272.60",Apple Pay,4,
+ORD-1061,CUST-314,"Sep 13, 2023",NY,Sports & Fitness,1,€466.89,0.1,420.20,apple pay,4,Returned
+ORD-1047,CUST-266,10/10/2023,chicago,Beauty & Care,2,$244.72,5%,$464.97,Cryptocurrency,5,Returned
+ORD-1032,CUST-213,05/23/2023,new york,Beauty & Care,6,$507.55,0.25,"$2,283.98",credit card,3.5,UNKNOWN
+ORD-1267,CUST-117,"Feb 20, 2023",NY,Books,1,$730.58,20%,584.46,credit card,4,UNKNOWN
+ORD-1327,CUST-277,11-Jul-2023,Seattle,Fashion & Apparel,4,$643.01,0.05,2443.44,Apple Pay,4,delivered
+ORD-1200,CUST-236,2023/11/04 00:00:00,chicago,Sports & Fitness,7,$622.22,0.2,3484.43,Apple Pay,0,Cancelled
+ORD-1462,CUST-109,"Jan 11, 2023",New York,Beauty & Care,4,$479.19,0.25,1437.57,Debit,5,UNKNOWN
+ORD-1027,CUST-169,06-Jun-2023,new york,Home & Kitchen,3,$155.78,0.2,$373.87,paypal,4.5,In Transit
+ORD-1403,CUST-306,2023-02-23,new york,Beauty & Care,2,480.64,5%,$913.22,credit card,4,UNKNOWN
+ORD-1230,CUST-172,01/16/2023,chicago,Books,7,415.66 USD,15%,2473.18,PayPal,1,In Transit
+ORD-1260,CUST-327,2023/08/16 00:00:00,Seattle,Books,3,$629.10,0.1,1698.57,apple pay,3,UNKNOWN
+ORD-1378,CUST-221,"Apr 14, 2023",CHICAGO,Fashion & Apparel,6,€672.76,0.15,"$3,431.08",PayPal,1,Pending
+ORD-1288,CUST-172,"May 15, 2023",chicago,Sports & Fitness,8,576.3,0%,"$4,610.40",Apple Pay,4,Delivered
+ORD-1162,CUST-274,2023/06/14 00:00:00,  Chicago  ,Beauty & Care,6,393.02 USD,0.25,1768.59,N/A,2,Pending
+ORD-1439,CUST-106,"Apr 11, 2023",houston,Books,9999,$369.40,5%,3508949.07,Cryptocurrency,1,Pending
+ORD-1138,CUST-140,03-Feb-2023,Seattle,Sports & Fitness,4,€630.18,10%,2268.65,paypal,2,
+ORD-1062,CUST-104,2023-07-02,new york,Books,6,$113.06,0.25,508.77,PayPal,,Delivered
+ORD-1135,CUST-208,2023/02/10 00:00:00,miami,Fashion & Apparel,2,€78.97,zero,$110.56,PayPal,3.5,delivered
+ORD-1128,CUST-145,-,Miami,Fashion & Apparel,6,721.01 USD,0%,"$4,326.06",Apple Pay,5,Returned
+ORD-1496,CUST-285,21-Jan-2023,Houston,Books,2,€122.30,0.05,$232.37,Debit,1,
+ORD-1008,CUST-265,2023-02-20,NY,Electronics,3,$325.08,0,975.24,Credit Card,3.5,Pending
+ORD-1326,CUST-105,12/13/2023,chicago,Electronics,4,$286.69,0.2,$917.41,PayPal,2,Pending
+ORD-1482,CUST-240,2023/12/18 00:00:00,CHICAGO,Books,2,299.87 USD,0.1,$539.77,credit card,5,Delivered
+ORD-1064,CUST-304,23-Sep-2023,CHICAGO,Electronics,5,251.09 USD,20%,1004.36,Cryptocurrency,4.5,Delivered
+ORD-1300,CUST-191,12/13/2023,New York,Sports & Fitness,2,$468.91,0.1,844.04,PayPal,5,delivered
+ORD-1014,CUST-326,"Jul 28, 2023",miami,Fashion & Apparel,3,$ - ,10%,"$1,789.67",PayPal,3.5,Delivered
+ORD-1156,CUST-268,"Nov 04, 2023",CHICAGO,Beauty & Care,4,216.09 USD,0.05,821.14,N/A,5,Pending
+ORD-1040,CUST-331,2023-11-18,chicago,Sports & Fitness,5,$255.14,0.3,892.99,Debit,3.5,Cancelled
+ORD-1379,CUST-201,"Sep 11, 2023",Los Angeles,Fashion & Apparel,7,$309.62,0.05,"$205,897.30",N/A,5,Cancelled
+ORD-1476,CUST-335,02/16/2023,Houston,Sports & Fitness,1,$174.88,25%,131.16,PayPal,3,In Transit
+ORD-1417,CUST-271,2023/04/21 00:00:00,chicago,Electronics,6,573.96 USD,20%,"$2,755.01",N/A,1,Cancelled
+ORD-1216,CUST-120,-,los angeles,Books,3,$123.97,zero,260.34,Credit Card,2,Cancelled
+ORD-1279,CUST-271,2023-12-03,NY,Fashion & Apparel,2,€398.64,0%,797.28,apple pay,4,Pending
+ORD-1450,CUST-291,03/01/2023,chicago,Beauty & Care,2,687.26 USD,0.15,"$1,168.34",apple pay,5,Cancelled
+ORD-1446,CUST-248,10-Feb-2023,Los Angeles,Electronics,5,$205.76,0.05,$977.36,N/A,1,Pending
+ORD-1337,CUST-142,05/10/2023,Houston,Electronics,7,$267.59,None,1873.13,Apple Pay,5,Pending
+ORD-1236,CUST-211,07-Jan-2023,chicago,Books,1,$86.56,0.3,$60.59,credit card,4,Pending
+ORD-1207,CUST-169,06-Dec-2023,NY,,2,679.35 USD,5%,N/A,N/A,4.5,In Transit
+ORD-1212,CUST-321,08/23/2023,houston,Sports & Fitness,7,464.46 USD,0.25,"$2,438.41",paypal,4.5,Delivered
+ORD-1295,CUST-335,04/06/2023,  Chicago  ,Sports & Fitness,1,$19.30,15%,16.41,Debit,3,UNKNOWN
+ORD-1473,CUST-278,27-Dec-2023,miami,Sports & Fitness,8,747.97 USD,0.3,4188.63,PayPal,3.5,In Transit
+ORD-1251,CUST-161,"Feb 12, 2023",NY,Beauty & Care,2,$26.71,0.15,"$4,540.70",Apple Pay,4.5,UNKNOWN
+ORD-1068,CUST-283,"Sep 03, 2023",new york,Sports & Fitness,2,$345.73,0.3,$484.02,Credit Card,3,In Transit
+ORD-1480,CUST-253,2023/06/22 00:00:00,Miami,Fashion & Apparel,2,324.42 USD,0%,648.84,N/A,3.5,In Transit
+ORD-1303,CUST-232,16-Dec-2023,houston,Electronics,2,263.65 USD,0.15,$448.20,N/A,4.5,Cancelled
+ORD-1350,CUST-150,09/07/2023,miami,Sports & Fitness,3,€609.75,0.2,"$1,463.40",credit card,4,
+ORD-1269,CUST-117,01-Sep-2023,Houston,Beauty & Care,2,€102.63,0.05,195.00,credit card,4,Cancelled
+ORD-1201,CUST-232,N/A,New York,Home & Kitchen,5,690.55 USD,,3452.75,paypal,1,UNKNOWN
+ORD-1161,CUST-181,09/27/2023,NEW YORK,Sports & Fitness,2,271.81 USD,0.1,489.26,Credit Card,2,Pending
+ORD-1043,CUST-286,2023/03/21 00:00:00,CHICAGO,Sports & Fitness,6,$174.69,0.1,$943.33,apple pay,3.5,
+ORD-1217,CUST-277,"Dec 25, 2023",houston,Beauty & Care,2,579.86,30%,$811.80,N/A,2,Delivered
+ORD-1401,CUST-181,2023/02/28 00:00:00,miami,Beauty & Care,2,$41.82,25%,62.73,Credit Card,3,Cancelled
+ORD-1190,,11-Mar-2023,Seattle,Books,5,$21.71,0.05,$103.12,paypal,4,UNKNOWN
+ORD-1309,CUST-155,-,CHICAGO,Electronics,8,€676.71,0.3,"$3,789.58",Cryptocurrency,5,UNKNOWN
+ORD-1259,CUST-296,-,Houston,Books,7,157.92,0.1,$994.90,Cryptocurrency,3.5,delivered
+ORD-1105,CUST-180,03/02/2023,NEW YORK,Books,3,437.48 USD,25%,$984.33,Apple Pay,1,
+ORD-1053,CUST-137,05/12/2023,new york,Books,8,356.01,0.25,"$2,136.06",credit card,3.5,Cancelled
+ORD-1389,CUST-311,2023-04-25,houston,Books,7,288.19 USD,30%,"$1,412.13",Credit Card,2,In Transit
+ORD-1001,CUST-187,05/23/2023,new york,Electronics,6,458.74 USD,15%,"$2,339.57",paypal,2,Cancelled
+ORD-1457,CUST-242,2023-12-05,NEW YORK,Fashion & Apparel,4,$509.91,30%,"$1,427.75",N/A,1,UNKNOWN
+ORD-1374,,"Aug 08, 2023",  Chicago  ,Home & Kitchen,4,$468.95,0.1,1688.22,paypal,1,In Transit
+ORD-1049,CUST-279,08-Jun-2023,LA,Fashion & Apparel,1,$82.44,15%,70.07,credit card,3.5,Delivered
+ORD-1419,CUST-194,2023-02-20,NY,Beauty & Care,5,€404.23,0%,"$2,021.15",credit card,4.5,UNKNOWN
+ORD-1080,CUST-102,"Jun 02, 2023",  Chicago  ,Home & Kitchen,8,668.61 USD,30%,"$3,744.22",Cryptocurrency,3.5,Pending
+ORD-1205,CUST-143,"Jun 29, 2023",NEW YORK,Sports & Fitness,4,€161.77,0,$647.08,Cryptocurrency,4,
+ORD-1034,CUST-333,2023/02/28 00:00:00,Los Angeles,Fashion & Apparel,5,320.39 USD,0.05,1521.85,Debit,3,Cancelled
+ORD-1430,N/A,2023/06/03 00:00:00,miami,Fashion & Apparel,8,646.6 USD,0.05,4914.16,paypal,4.5,delivered
+ORD-1263,CUST-207,,los angeles,Electronics,2,$455.09,0.1,819.16,credit card,2,Delivered
+ORD-1427,CUST-213,22-Dec-2023,Los Angeles,Home & Kitchen,7,$354.04,0.3,"$1,734.80",N/A,5,Cancelled
+ORD-1490,CUST-242,07-Jan-2023,NEW YORK,Beauty & Care,4,$406.20,zero,1381.08,Cryptocurrency,5,Returned
+ORD-1366,CUST-304,null,CHICAGO,Fashion & Apparel,2,$144.16,30%,$201.82,Debit,2,Returned
+ORD-1091,CUST-184,2023/04/28 00:00:00,Houston,Sports & Fitness,8,725.38 USD,30%,4062.13,Credit Card,1,Delivered
+ORD-1339,CUST-307,2023-09-25,LA,Electronics,9999,582.72 USD,5%,"$553,528,641.60",Credit Card,4.5,delivered
+ORD-1492,CUST-190,2023/04/22 00:00:00,Houston,Home & Kitchen,6,$384.19,15%,1959.37,PayPal,10,
+ORD-1052,CUST-258,24-Aug-2023,CHICAGO,Fashion & Apparel,7,$654.84,0.3,3208.72,Cryptocurrency,4.5,In Transit
+ORD-1345,CUST-150,2023/05/06 00:00:00,LA,Home & Kitchen,5,648.88 USD,15%,2757.74,Apple Pay,,UNKNOWN
+ORD-1264,CUST-172,2023/07/10 00:00:00,new york,Fashion & Apparel,4,599.4,0.25,"$1,798.20",PayPal,3,Returned
+ORD-1241,CUST-339,03-Jul-2023,Houston,Books,6,74.14 USD,0.05,$422.60,credit card,1,
+ORD-1013,CUST-133,23-Nov-2023,CHICAGO,Books,3,416.01 USD,,1185.63,Cryptocurrency,1,Returned
+ORD-1315,CUST-201,2023-12-24,Seattle,Home & Kitchen,6,€664.69,0.1,3589.33,Credit Card,1,
+ORD-1088,CUST-181,2023/12/23 00:00:00,Miami,Fashion & Apparel,4,€236.04,15%,802.54,Apple Pay,4.5,Pending
+ORD-1387,CUST-128,2023/10/23 00:00:00,chicago,Electronics,7,€274.17,0.25,"$1,439.39",Apple Pay,5,Pending
+ORD-1273,CUST-196,12-Nov-2023,New York,Electronics,6,$271.42,25%,"$1,221.39",paypal,5,delivered
+ORD-1166,CUST-331,"Nov 27, 2023",miami,Sports & Fitness,1,640.77 USD,0.2,512.62,Cryptocurrency,2,delivered
+ORD-1328,CUST-199,"Nov 27, 2023",chicago,Fashion & Apparel,8,$541.00,0.15,3678.80,Apple Pay,3,UNKNOWN
+ORD-1406,CUST-106,2023-08-12,LA,Electronics,2,$ - ,0.05,827.01,paypal,2,UNKNOWN
+ORD-1134,CUST-315,"Jul 18, 2023",LA,Beauty & Care,2,$305.18,0.2,$488.29,Apple Pay,2,Pending
+ORD-1306,CUST-340,2023/03/05 00:00:00,chicago,Beauty & Care,4,€272.50,0.25,$817.50,Cryptocurrency,4,UNKNOWN
+ORD-1361,CUST-267,2023-99-99,Houston,Beauty & Care,1,€446.34,20%,357.07,credit card,3.5,In Transit
+ORD-1319,CUST-182,2023/08/10 00:00:00,Los Angeles,Beauty & Care,4,49.52 USD,15%,N/A,apple pay,2,In Transit
+ORD-1243,CUST-159,2023-02-06,Los Angeles,Electronics,4,$530.45,0,2121.80,credit card,4,Pending
+ORD-1054,CUST-190,2023-09-17,chicago,Electronics,2,467.03 USD,30%,$653.84,Apple Pay,4,delivered
+ORD-1363,CUST-108,2023-02-13,NEW YORK,Sports & Fitness,1,€197.53,0.2,158.02,Cryptocurrency,4.5,delivered
+ORD-1050,CUST-169,2023/08/15 00:00:00,NY,Home & Kitchen,7,96.5 USD,-,$607.95,paypal,3,Returned
+ORD-1472,CUST-188,08/06/2023,CHICAGO,Fashion & Apparel,1,$158.94,20%,127.15,Debit,?,
+ORD-1174,CUST-320,2023/09/16 00:00:00,Los Angeles,Fashion & Apparel,2,83.49 USD,0,$166.98,Credit Card,3.5,
+ORD-1445,CUST-201,"Jan 20, 2023",Miami,Home & Kitchen,1,$106.37,10%,"$9,573.30",Credit Card,4,Pending
+ORD-1189,,2023/06/16 00:00:00,los angeles,Home & Kitchen,3,€449.26,25%,1010.84,Apple Pay,2,Cancelled
+ORD-1388,CUST-248,"Aug 04, 2023",NY,Books,1,$164.41,0.15,139.75,PayPal,3.5,UNKNOWN
+ORD-1463,,11/06/2023,NY,Beauty & Care,6,$327.49,15%,"$1,670.20",credit card,3,
+ORD-1187,CUST-187,27-Apr-2023,LA,Home & Kitchen,8,589.02 USD,15%,"$400,533.60",paypal,4.5,delivered
+ORD-1475,CUST-271,2023-02-01,houston,Fashion & Apparel,1,217.51 USD,0.25,$163.13,Apple Pay,5,
+ORD-1169,CUST-138,2023/07/07 00:00:00,miami,Books,2,306.64,0.2,490.62,PayPal,3,Delivered
+ORD-1058,CUST-256,2023/05/26 00:00:00,Seattle,Beauty & Care,8,$354.33,20%,2267.71,Credit Card,5,delivered
+ORD-1474,CUST-313,2023-03-03,new york,Home & Kitchen,4,$496.50,25%,1489.50,Cryptocurrency,4,UNKNOWN
+ORD-1048,CUST-205,2023/07/01 00:00:00,LA,Home & Kitchen,4,128.73 USD,0.2,411.94,N/A,?,Delivered
+ORD-1344,CUST-278,"Apr 24, 2023",Los Angeles,Fashion & Apparel,8,66.44 USD,5%,$504.94,N/A,,Cancelled
+ORD-1235,CUST-292,2023/07/31 00:00:00,NEW YORK,Books,6,54.93 USD,15%,280.14,apple pay,3,In Transit
+ORD-1252,CUST-323,2023/07/09 00:00:00,CHICAGO,Unknown,1,232.99 USD,0.2,186.39,Credit Card,3,Delivered
+ORD-1021,,2023/06/02 00:00:00,los angeles,Beauty & Care,4,373.85 USD,25%,"$1,121.55",N/A,,Delivered
+ORD-1313,CUST-168,01-Feb-2023,New York,Beauty & Care,1,212.83 USD,20%,170.26,N/A,3,In Transit
+ORD-1459,CUST-329,2023/05/28 00:00:00,CHICAGO,Books,6,$500.55,5%,"$2,853.14",paypal,?,Pending
+ORD-1160,CUST-274,02/08/2023,CHICAGO,Electronics,5,$110.60,0.1,497.70,Debit,3,delivered
+ORD-1276,CUST-177,16-Sep-2023,CHICAGO,Fashion & Apparel,8,508.6 USD,0.2,3255.04,Apple Pay,3.5,UNKNOWN
+ORD-1443,CUST-320,2023/07/15 00:00:00,NEW YORK,Beauty & Care,5,38.01,0.1,171.04,Cryptocurrency,3.5,UNKNOWN
+ORD-1191,CUST-120,08/05/2023,Miami,Sports & Fitness,5,$318.48,10%,"$1,433.16",Cryptocurrency,N/A,Delivered
+ORD-1385,CUST-333,2023-04-25,Houston,Home & Kitchen,7,519.77 USD,0,"$3,638.39",Cryptocurrency,1,In Transit
+ORD-1293,CUST-265,12/18/2023,los angeles,Books,2,$681.80,5%,1295.42,N/A,N/A,delivered
+ORD-1413,CUST-143,04-Nov-2023,  Chicago  ,Electronics,9999,$590.73,0.15,5020702.88,Credit Card,10,delivered
+ORD-1491,CUST-292,2023/06/11 00:00:00,LA,N/A,1,€567.27,0.2,$453.82,credit card,2,UNKNOWN
+ORD-1343,CUST-138,07/12/2023,LA,Books,6,113.69 USD,0.3,,Cryptocurrency,4.5,Pending
+ORD-1257,CUST-129,22-Jan-2023,NEW YORK,Home & Kitchen,6,€733.85,0%,"$4,403.10",Cryptocurrency,5,Returned
+ORD-1308,CUST-216,2023-08-31,Seattle,Home & Kitchen,7,$96.10,20%,$538.16,PayPal,1,Cancelled
+ORD-1149,CUST-216,01-Jun-2023,miami,Fashion & Apparel,6,€328.11,5%,1870.23,credit card,1,UNKNOWN
+ORD-1130,CUST-326,15-Feb-2023,houston,Fashion & Apparel,2,544.5 USD,5%,"$1,034.55",Apple Pay,3.5,Pending
+ORD-1151,CUST-224,2023/02/27 00:00:00,chicago,Books,9999,€653.22,0.25,"$4,898,660.08",paypal,4.5,UNKNOWN
+ORD-1359,CUST-182,2023-10-25,Houston,Beauty & Care,8,$228.94,0.25,"$1,373.64",PayPal,4.5,In Transit
+ORD-1099,CUST-210,"Nov 30, 2023",NY,Books,7,727.01 USD,20%,"$4,071.26",paypal,4.5,Delivered
+ORD-1372,CUST-224,01/04/2023,CHICAGO,Beauty & Care,3,€409.27,5%,"$1,166.42",paypal,4,Returned
+ORD-1087,CUST-174,"Apr 30, 2023",miami,Books,3,739.49 USD,0.2,"$1,774.78",Apple Pay,?,UNKNOWN
+ORD-1458,CUST-242,11/09/2023,  Chicago  ,Books,4,483.72 USD,0.1,1741.39,Cryptocurrency,2,delivered
+ORD-1330,CUST-231,2023-10-07,new york,Electronics,-1,$260.31,0.25,195.23,N/A,10,Cancelled
+ORD-1214,CUST-251,2023/04/14 00:00:00,Seattle,Books,2,82.03 USD,0.25,$123.05,apple pay,null,Returned
+ORD-1466,CUST-266,01-May-2023,miami,Sports & Fitness,2,$327.89,0,655.78,Credit Card,4.5,
+ORD-1121,CUST-263,2023-07-21,NEW YORK,Books,6,695.64 USD,15%,3547.76,PayPal,3,UNKNOWN
+ORD-1030,?,"Dec 19, 2023",houston,Home & Kitchen,2,520.23 USD,25%,$780.35,Debit,2,Cancelled
+ORD-1020,CUST-170,2023-08-14,chicago,Home & Kitchen,3,184.98 USD,15%,$471.70,Credit Card,4,
+ORD-1071,CUST-283,13-Jun-2023,los angeles,Home & Kitchen,8,$105.05,0%,840.40,PayPal,4.5,Returned
+ORD-1106,CUST-308,"Jul 16, 2023",Los Angeles,Books,8,137.93 USD,0,1103.44,Apple Pay,1,Cancelled
+ORD-1270,CUST-296,"Oct 25, 2023",CHICAGO,Books,7,$740.83,15%,"$4,407.94",credit card,4,Delivered
+ORD-1435,CUST-289,2023/03/24 00:00:00,new york,Fashion & Apparel,2,164.6 USD,0.15,279.82,N/A,5,
+ORD-1102,CUST-218,"Dec 14, 2023",Los Angeles,Electronics,2,$100.31,0.1,$180.56,Apple Pay,3.5,delivered

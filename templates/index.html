@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoAnalyst Pro - AI-Powered Analytics & BI Studio</title>
+
+  <!-- Modern Google Fonts: Outfit & Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <!-- Chart.js 4.4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Color Scheme Meta & Theme Initialization (Prevents FOUC) -->
+  <meta name="color-scheme" content="dark light">
+  <script>
+    (function() {
+      try {
+        var pref = localStorage.getItem('analytica_theme_pref') || 'system';
+        var isDark = pref === 'dark' || (pref === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme-pref', pref);
+      } catch(e) {}
+    })();
+  </script>
+
+  <!-- Custom Vanilla CSS Design System -->
+  <link rel="stylesheet" href="/static/css/style.css">
+
+  <!-- 3-Mode Theme Manager & Live 3D Background Engine -->
+  <script src="/static/js/theme-3d.js"></script>
+</head>
+
+<body class="app-body">
+
+  <!-- Live 3D Perspective Background Canvas -->
+  <canvas id="bg-3d-canvas" class="bg-3d-canvas"></canvas>
+
+  <!-- Enterprise Application Shell -->
+  <div class="app-shell">
+
+    <!-- ============================================================ -->
+    <!-- LEFT NAVIGATION SIDEBAR                                      -->
+    <!-- ============================================================ -->
+    <aside class="app-sidebar" id="app-sidebar">
+
+      <!-- Brand & Workspace Header -->
+      <div class="sidebar-header">
+        <div class="brand-row">
+          <div class="brand-icon-box">
+            <svg class="brand-logo-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="brandLogoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#4f46e5"/>
+                  <stop offset="100%" stop-color="#06b6d4"/>
+                </linearGradient>
+                <linearGradient id="barGradWhite" x1="0" y1="28" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#ffffff" stop-opacity="0.95"/>
+                </linearGradient>
+              </defs>
+              <rect width="32" height="32" rx="8" fill="url(#brandLogoGrad)"/>
+              <rect x="6" y="18" width="4" height="8" rx="1.5" fill="url(#barGradWhite)"/>
+              <rect x="13" y="13" width="4" height="13" rx="1.5" fill="url(#barGradWhite)"/>
+              <rect x="20" y="8" width="4" height="18" rx="1.5" fill="#ffffff"/>
+              <path d="M 7 15 L 14 10 L 22 5" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="22" cy="5" r="2.2" fill="#38bdf8"/>
+            </svg>
+          </div>
+          <div class="brand-details">
+            <span class="brand-title">AutoAnalyst</span>
+            <span class="brand-tier">ENTERPRISE BI</span>
+          </div>
+        </div>
+
+        <!-- Workspace Context Card -->
+        <div class="sidebar-workspace-chip">
+          <div class="ws-chip-icon">📁</div>
+          <div class="ws-chip-text">
+            <span class="ws-chip-sub">ACTIVE WORKSPACE</span>
+            <span class="ws-chip-title" id="sidebar-workspace-name">Analytica Core</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Primary Sidebar Navigation Menu -->
+      <nav class="sidebar-nav" aria-label="Main Navigation">
+
+        <div class="sidebar-nav-section-title">ANALYTICS & BI</div>
+
+        <!-- 1. Dashboards -->
+        <button class="nav-item active" data-view="view-dashboards" id="nav-dashboards"
+          onclick="switchView('view-dashboards')">
+          <span class="nav-item-icon">📊</span>
+          <span class="nav-item-label">Dashboards</span>
+          <span class="nav-badge live">Live</span>
+        </button>
+
+        <!-- 2. Data Connect & Sources -->
+        <button class="nav-item" data-view="view-connect" id="nav-connect" onclick="switchView('view-connect')">
+          <span class="nav-item-icon">🔌</span>
+          <span class="nav-item-label">Data Connect</span>
+          <span class="nav-badge count" id="sidebar-sources-badge">4 Demos</span>
+        </button>
+
+        <!-- 3. Data Prep & Cleansing -->
+        <button class="nav-item" data-view="view-prep" id="nav-prep" onclick="switchView('view-prep')">
+          <span class="nav-item-icon">🧹</span>
+          <span class="nav-item-label">Data Prep & Clean</span>
+          <span class="nav-badge health" id="sidebar-health-badge">--</span>
+        </button>
+
+        <!-- 4. Reports & Exploratory Analysis -->
+        <button class="nav-item" data-view="view-reports" id="nav-reports" onclick="switchView('view-reports')">
+          <span class="nav-item-icon">📈</span>
+          <span class="nav-item-label">Reports & Explore</span>
+        </button>
+
+        <!-- 5. AI & Machine Learning Lab -->
+        <button class="nav-item" data-view="view-ml" id="nav-ml" onclick="switchView('view-ml')">
+          <span class="nav-item-icon">🧠</span>
+          <span class="nav-item-label">AI & ML Insights</span>
+          <span class="nav-badge ai">AutoML</span>
+        </button>
+
+        <!-- 6. Data Table Grid View -->
+        <button class="nav-item" data-view="view-table" id="nav-table" onclick="switchView('view-table')">
+          <span class="nav-item-icon">📑</span>
+          <span class="nav-item-label">Data Table View</span>
+        </button>
+
+        <div class="sidebar-nav-section-title" style="margin-top: 1.4rem;">AI AGENTS</div>
+
+        <!-- 7. Ask AI Agent -->
+        <button class="nav-item" data-view="view-ai" id="nav-ai" onclick="switchView('view-ai')">
+          <span class="nav-item-icon">✨</span>
+          <span class="nav-item-label">Ask AI Agent</span>
+          <span class="nav-badge ai">AI Copilot</span>
+        </button>
+
+        <div class="sidebar-nav-section-title" style="margin-top: 1.4rem;">ACCOUNT</div>
+
+        <!-- 8. Logout Button (Located at Yellow Marker) -->
+        <button class="nav-item nav-logout-item" id="sidebar-logout-btn" onclick="handleLogout()" title="Sign Out of AutoAnalyst">
+          <span class="nav-item-icon">🚪</span>
+          <span class="nav-item-label">Sign Out</span>
+        </button>
+
+      </nav>
+
+      <!-- Sidebar Bottom Footer: Shows Logged-in User's Name -->
+      <div class="sidebar-footer">
+        <div class="sidebar-user-card" id="sidebar-user-card" title="Logged-in User Profile">
+          <div class="sidebar-user-avatar" id="sidebar-user-avatar">DA</div>
+          <div class="sidebar-user-info">
+            <span class="sidebar-user-name" id="sidebar-user-name">Loading...</span>
+          </div>
+        </div>
+        <button class="btn-sidebar-collapse" id="btn-sidebar-collapse" onclick="toggleSidebar()" title="Toggle Sidebar">
+          ◀
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- ============================================================ -->
+    <!-- MAIN APPLICATION WRAPPER (Top Bar + Dynamic Workspace Views) -->
+    <!-- ============================================================ -->
+    <div class="app-main-wrap">
+
+      <!-- TOP APPLICATION BAR (Minimalist Icon-First Header) -->
+      <header class="app-topbar">
+
+        <!-- Left: Workspace & Active Dataset Indicator -->
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" onclick="toggleSidebar()" title="Toggle Menu">☰</button>
+
+          <div class="topbar-breadcrumb" data-tooltip="Active BI Workspace: Analytica Core">
+            <span class="crumb-icon">🏢</span>
+            <span class="crumb-active" id="active-dataset-label">No dataset active</span>
+            <div class="active-status-dot-wrap" title="Dataset State">
+              <span class="status-dot" id="active-status-dot"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center: Global BI Search & Quick Query -->
+        <div class="topbar-search" data-tooltip="Search reports, metrics & tables (⌘K)">
+          <span class="search-lens">🔍</span>
+          <input type="text" id="topbar-search-input" class="search-field"
+            placeholder="Search reports, metrics, drivers, anomalies..." oninput="handleGlobalSearch(this.value)">
+          <span class="search-shortcut">⌘K</span>
+        </div>
+
+        <!-- Right: Action Suite (Icon-Only with Rich Tooltips) -->
+        <div class="topbar-actions">
+
+          <!-- 1. Ask AI Copilot Icon Button -->
+          <button class="topbar-icon-btn btn-ai-sparkle" onclick="openAskAI()"
+            data-tooltip="Ask AI Copilot" aria-label="Ask AI Copilot">
+            <span class="topbar-icon">✨</span>
+          </button>
+
+          <!-- 2. One-Click Run Auto-Pipeline Icon Button -->
+          <button class="topbar-icon-btn btn-pipeline-bolt" id="btn-topbar-run-pipeline" onclick="runCompleteAutoPipeline()"
+            data-tooltip="Run Full Auto-Pipeline" aria-label="Run Full Auto-Pipeline">
+            <span class="topbar-icon">⚡</span>
+          </button>
+
+          <!-- 3. Export & Share Dropdown Icon Button -->
+          <div class="topbar-dropdown" id="export-dropdown-wrap">
+            <button class="topbar-icon-btn btn-export-drop" onclick="toggleExportMenu(event)"
+              data-tooltip="Export & Share Dataset" aria-label="Export & Share">
+              <span class="topbar-icon">📥</span>
+            </button>
+            <div class="topbar-menu" id="export-dropdown-menu">
+              <button class="menu-item" id="btn-export-csv" onclick="downloadCleanCSV()">
+                <span class="item-icon">📊</span>
+                <div class="item-text">
+                  <span class="item-title">Cleaned CSV</span>
+                  <span class="item-desc">Download sanitized dataset</span>
+                </div>
+              </button>
+              <button class="menu-item" id="btn-export-script" onclick="downloadPythonScript()">
+                <span class="item-icon">🐍</span>
+                <div class="item-text">
+                  <span class="item-title">Python Pipeline Script</span>
+                  <span class="item-desc">Reproducible code file</span>
+                </div>
+              </button>
+              <div class="menu-divider"></div>
+              <button class="menu-item" onclick="window.print()">
+                <span class="item-icon">🖨️</span>
+                <div class="item-text">
+                  <span class="item-title">Print / PDF Report</span>
+                  <span class="item-desc">Executive summary page</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- 4. 3-Mode Theme Switcher (Icons Only) -->
+          <div class="theme-switch-control" role="group" aria-label="Theme Selection">
+            <button class="theme-btn theme-icon-btn" data-theme-val="light" onclick="setThemeMode('light')"
+              data-tooltip="Light Mode" aria-label="Light Mode">
+              <span class="theme-icon">☀️</span>
+            </button>
+            <button class="theme-btn theme-icon-btn" data-theme-val="dark" onclick="setThemeMode('dark')"
+              data-tooltip="Dark Mode" aria-label="Dark Mode">
+              <span class="theme-icon">🌙</span>
+            </button>
+            <button class="theme-btn theme-icon-btn active" data-theme-val="system" onclick="setThemeMode('system')"
+              data-tooltip="Device Theme (OS)" data-tooltip-pos="left" aria-label="Device Theme">
+              <span class="theme-icon">💻</span>
+            </button>
+          </div>
+
+        </div>
+
+      </header>
+
+      <!-- ============================================================ -->
+      <!-- WORKSPACE VIEWS CONTAINER (Switched via Sidebar Navigation)  -->
+      <!-- ============================================================ -->
+      <main class="app-workspace-body">
+
+        <!-- ======================================================== -->
+        <!-- VIEW 1: DASHBOARDS (Live Interactive BI Executive Canvas) -->
+        <!-- ======================================================== -->
+        <section class="workspace-view active" id="view-dashboards">
+
+          <!-- View Sub-Header with Sub-Tabs Navigation -->
+          <div class="view-header-bar">
+            <div>
+              <h2 class="view-title">📊 Live Interactive Dashboard Studio</h2>
+              <p class="view-subtitle">Real-time visual monitoring, customizable chart modes, multi-dimensional
+                drill-downs, and data inspector.</p>
+            </div>
+
+            <!-- Sub-Tabs Navigation -->
+            <div class="subtabs-bar">
+              <button class="subtab-item active" data-subtab="dash-overview"
+                onclick="switchSubTab('view-dashboards', 'dash-overview')">
+                📌 Executive Overview
+              </button>
+              <button class="subtab-item" data-subtab="dash-studio"
+                onclick="switchSubTab('view-dashboards', 'dash-studio')">
+                🎨 Visual Studio
+              </button>
+              <button class="subtab-item" data-subtab="dash-anomalies"
+                onclick="switchSubTab('view-dashboards', 'dash-anomalies')">
+                ⚠️ Anomalies & Risk
+              </button>
+              <button class="subtab-item" data-subtab="dash-forecast"
+                onclick="switchSubTab('view-dashboards', 'dash-forecast')">
+                🔮 Predictive Forecast
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Interactive Slice & Dice Filter Bar -->
+          <div class="filter-bar">
+            <div class="filter-group">
+              <span class="filter-label">Primary Metric:</span>
+              <select class="filter-select" id="dash-metric-select" onchange="updateDashboardVisuals()"></select>
+            </div>
+
+            <div class="filter-group">
+              <span class="filter-label">Category Dimension:</span>
+              <select class="filter-select" id="dash-category-select" onchange="updateDashboardVisuals()"></select>
+            </div>
+
+            <!-- Interactive Chart Customizer Studio -->
+            <div class="filter-group">
+              <span class="filter-label">Breakdown Chart Type:</span>
+              <select class="filter-select" id="dash-chart-type-select" onchange="updateDashboardVisuals()">
+                <option value="doughnut" selected>🍩 Doughnut Chart</option>
+                <option value="bar">📊 Bar Chart</option>
+                <option value="polarArea">🧭 Polar Area</option>
+                <option value="radar">🕸️ Radar Chart</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <span class="filter-label">Color Theme:</span>
+              <select class="filter-select" id="dash-color-theme-select" onchange="updateDashboardVisuals()">
+                <option value="neon" selected>⚡ Cyberpunk Neon</option>
+                <option value="emerald">🌿 Emerald Slate</option>
+                <option value="sunset">🌅 Sunset Amber</option>
+                <option value="violet">🔮 Electric Violet</option>
+              </select>
+            </div>
+
+            <div class="filter-group" style="margin-left: auto;">
+              <span class="filter-label">Data View:</span>
+              <select class="filter-select" id="dash-view-mode" onchange="toggleCleanedRawView()">
+                <option value="cleaned" selected>Cleaned Dataset</option>
+                <option value="raw">Raw Dataset</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 1: Executive Overview -->
+          <div class="subtab-pane active" id="pane-dash-overview">
+
+            <!-- Dynamic Top KPI Scorecards -->
+            <div class="grid-4" style="margin-bottom: 1.5rem;" id="kpi-cards-grid">
+              <div class="stat-card">
+                <div class="stat-label">Active Records</div>
+                <div class="stat-value" id="kpi-total-records">0</div>
+                <div class="stat-subtext">Processed & Imputed</div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-label" id="kpi-metric-1-label">Total Metric Sum</div>
+                <div class="stat-value" id="kpi-metric-1-val">$0</div>
+                <div class="stat-delta positive">Active Metric</div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-label" id="kpi-metric-2-label">Average Value</div>
+                <div class="stat-value" id="kpi-metric-2-val">$0</div>
+                <div class="stat-subtext">Per record mean</div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-label">Data Quality Score</div>
+                <div class="stat-value" id="kpi-health-score" style="color: #34d399;">99.8%</div>
+                <div class="stat-delta positive">Production Ready</div>
+              </div>
+            </div>
+
+            <!-- Live Charts Grid -->
+            <div class="grid-2" style="margin-bottom: 1.5rem;">
+              <!-- Trend / Time-Series Line Chart -->
+              <div class="chart-card">
+                <div class="chart-header">
+                  <div>
+                    <h3 id="dash-trend-chart-title">Time Trend & Forecast</h3>
+                    <p style="color: var(--text-muted); font-size: 0.76rem;">Historical trajectory with rolling moving
+                      average & 14-day projection</p>
+                  </div>
+                  <span class="bullet-badge" id="trend-direction-badge">Trend</span>
+                </div>
+                <div class="chart-container-box">
+                  <canvas id="chart-dash-trend"></canvas>
+                </div>
+              </div>
+
+              <!-- Category Breakdown Chart (Customizable Type) -->
+              <div class="chart-card">
+                <div class="chart-header">
+                  <div>
+                    <h3 id="dash-category-chart-title">Dimensional Breakdown</h3>
+                    <p style="color: var(--text-muted); font-size: 0.76rem;">Segment distribution across categories</p>
+                  </div>
+                  <span class="bullet-badge" id="chart-type-badge">Custom Studio</span>
+                </div>
+                <div class="chart-container-box">
+                  <canvas id="chart-dash-breakdown"></canvas>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- SUB-TAB 2: Visual Studio (Chart Type Switcher & Full Screen Visuals) -->
+          <div class="subtab-pane" id="pane-dash-studio">
+            <div class="glass-card" style="margin-bottom: 1.5rem;">
+              <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                  <h3 style="font-size: 1.25rem;">🎨 Interactive Visual Studio Canvas</h3>
+                  <p style="color: var(--text-secondary); font-size: 0.88rem;">Customize your analytical presentation
+                    with fluid multi-type transformations.</p>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="pill-btn active" onclick="setDashboardChartType('doughnut')">🍩 Doughnut</button>
+                  <button class="pill-btn" onclick="setDashboardChartType('bar')">📊 Bar</button>
+                  <button class="pill-btn" onclick="setDashboardChartType('polarArea')">🧭 Polar Area</button>
+                  <button class="pill-btn" onclick="setDashboardChartType('radar')">🕸️ Radar</button>
+                </div>
+              </div>
+              <div class="chart-container-box" style="height: 480px;">
+                <canvas id="chart-dash-studio-canvas"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 3: Anomalies & Risk -->
+          <div class="subtab-pane" id="pane-dash-anomalies">
+            <div class="chart-card" style="margin-bottom: 1.5rem;">
+              <div class="chart-header">
+                <div>
+                  <h3>Multi-Attribute Anomaly Radar Inspector</h3>
+                  <p style="color: var(--text-muted); font-size: 0.78rem;">Comparing most anomalous outlier profiles
+                    against standard normalized baseline</p>
+                </div>
+                <span class="bullet-badge" style="background: rgba(245, 158, 11, 0.18); color: #fbbf24;">Isolation
+                  Forest Radar</span>
+              </div>
+              <div class="chart-container-box" style="height: 400px;">
+                <canvas id="chart-anomaly-radar"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-card">
+              <h3 style="margin-bottom: 0.8rem; font-size: 1.1rem;">Isolation Forest Flagged Anomalies</h3>
+              <div id="anomaly-summary-container"></div>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 4: Predictive Forecast -->
+          <div class="subtab-pane" id="pane-dash-forecast">
+            <div class="grid-2">
+              <div class="chart-card">
+                <div class="chart-header">
+                  <div>
+                    <h3>14-Day Forward Trajectory Forecast</h3>
+                    <p style="color: var(--text-muted); font-size: 0.78rem;">Autoregressive trend line with 95%
+                      confidence intervals</p>
+                  </div>
+                  <span class="bullet-badge" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">Predictive
+                    AI</span>
+                </div>
+                <div class="chart-container-box" style="height: 380px;">
+                  <canvas id="chart-forecast-canvas"></canvas>
+                </div>
+              </div>
+
+              <div class="chart-card">
+                <div class="chart-header">
+                  <div>
+                    <h3>Predictive Key Drivers</h3>
+                    <p style="color: var(--text-muted); font-size: 0.78rem;">Random Forest feature importance ranking
+                    </p>
+                  </div>
+                  <span class="bullet-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">Random
+                    Forest</span>
+                </div>
+                <div class="chart-container-box" style="height: 380px;">
+                  <canvas id="chart-forecast-drivers"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- VIEW 2: DATA CONNECT (Ingestion, Upload & Messy Catalogs)-->
+        <!-- ======================================================== -->
+        <section class="workspace-view" id="view-connect">
+
+          <div class="view-header-bar">
+            <div>
+              <h2 class="view-title">🔌 Data Connect & Sources</h2>
+              <p class="view-subtitle">Connect and blend data from local files (CSV, TSV, Excel, JSON) or pre-configured
+                benchmark datasets.</p>
+            </div>
+          </div>
+
+          <!-- Dropzone & Raw Text Paste -->
+          <div class="grid-2" style="margin-bottom: 2rem;">
+            <div class="dropzone-container" id="dropzone">
+              <input type="file" id="file-uploader" class="file-input" accept=".csv,.tsv,.xlsx,.xls,.json">
+              <div class="dropzone-icon">📂</div>
+              <div class="dropzone-title">Drag & Drop Your Raw Dataset Here</div>
+              <div class="dropzone-subtitle">Supports CSV, TSV, Excel (.xlsx, .xls) and JSON up to 32MB</div>
+              <button class="btn-primary" type="button" onclick="document.getElementById('file-uploader').click()">
+                Browse Local File
+              </button>
+            </div>
+
+            <!-- Pre-loaded Dirty Datasets -->
+            <div class="glass-card">
+              <h3 style="margin-bottom: 1rem; font-size: 1.15rem;">⚡ Instant Demo: Pre-loaded Messy Datasets</h3>
+              <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.2rem;">
+                Test the automated data analyst engine immediately with realistic dirty datasets containing currency
+                symbols, messy dates, missing records, casing bugs, and extreme outliers.
+              </p>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div class="sample-card" onclick="loadSample('ecommerce')">
+                  <div class="sample-card-header">
+                    <div class="sample-card-icon">🛒</div>
+                    <h4>E-Commerce Sales</h4>
+                  </div>
+                  <p>Currencies ($/€), mixed date formats, return outliers, city casing bugs.</p>
+                  <button class="btn-sample">Load E-Commerce</button>
+                </div>
+
+                <div class="sample-card" onclick="loadSample('healthcare')">
+                  <div class="sample-card-header">
+                    <div class="sample-card-icon">🏥</div>
+                    <h4>Clinical Healthcare</h4>
+                  </div>
+                  <p>Blood pressures ('120/80 mmHg'), age outliers, units ('mg/dL'), nulls.</p>
+                  <button class="btn-sample">Load Healthcare</button>
+                </div>
+
+                <div class="sample-card" onclick="loadSample('saas')">
+                  <div class="sample-card-header">
+                    <div class="sample-card-icon">💼</div>
+                    <h4>SaaS Churn & MRR</h4>
+                  </div>
+                  <p>Inconsistent subscription tiers, MRR currencies, boolean churn flags.</p>
+                  <button class="btn-sample">Load SaaS</button>
+                </div>
+
+                <div class="sample-card" onclick="loadSample('real_estate')">
+                  <div class="sample-card-header">
+                    <div class="sample-card-icon">🏡</div>
+                    <h4>Real Estate Market</h4>
+                  </div>
+                  <p>Home prices with '$', 'sqft' string values, missing spec variables.</p>
+                  <button class="btn-sample">Load Housing</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Raw Dataset Initial Health Audit & Preview -->
+          <div id="raw-audit-results" style="display: none;">
+            <div class="health-hero">
+              <div class="health-score-dial">
+                <div class="dial-circle" id="raw-dial-circle">
+                  <span class="dial-score" id="raw-health-score">--</span>
+                  <span class="dial-label">Health Score</span>
+                </div>
+                <div class="health-details">
+                  <h3 id="raw-audit-title">Raw Data Health Inspection Complete</h3>
+                  <p id="raw-audit-summary">Auditing missingness, type entropy, casing inconsistencies, duplicate
+                    records, and outliers.</p>
+                </div>
+              </div>
+              <div>
+                <button class="btn-primary" onclick="proceedToCleaning()"
+                  style="font-size: 1.05rem; padding: 0.9rem 2rem;">
+                  Proceed to Data Prep Studio →
+                </button>
+              </div>
+            </div>
+
+            <!-- Raw Metric Cards -->
+            <div class="grid-4" style="margin-bottom: 1.5rem;">
+              <div class="stat-card">
+                <div class="stat-label">Total Rows & Volume</div>
+                <div class="stat-value" id="raw-stat-rows">0</div>
+                <div class="stat-subtext" id="raw-stat-cols">0 columns detected</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Missing Cells</div>
+                <div class="stat-value" id="raw-stat-missing">0</div>
+                <div class="stat-subtext" id="raw-stat-missing-pct">0% missingness</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Duplicate Rows</div>
+                <div class="stat-value" id="raw-stat-dups">0</div>
+                <div class="stat-subtext" id="raw-stat-dups-pct">0% duplicate rate</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Dirty Type Columns</div>
+                <div class="stat-value" id="raw-stat-dirty-types">0</div>
+                <div class="stat-subtext">Currencies / Dates stored as text</div>
+              </div>
+            </div>
+
+            <!-- Raw Data Preview Table -->
+            <div class="glass-card">
+              <h3 style="margin-bottom: 0.8rem; font-size: 1.1rem;">Raw Dataset Sample (Uncleaned)</h3>
+              <div class="table-container">
+                <table class="modern-table" id="raw-preview-table">
+                  <thead></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- VIEW 3: DATA PREP & CLEANING (Pipeline, Recipes & Audit) -->
+        <!-- ======================================================== -->
+        <section class="workspace-view" id="view-prep">
+
+          <div class="view-header-bar">
+            <div>
+              <h2 class="view-title">🧹 Data Prep & Cleansing Studio</h2>
+              <p class="view-subtitle">Autonomous data quality sniffer, intelligent type casting, outlier winsorization,
+                and missing value imputation.</p>
+            </div>
+
+            <!-- Sub-Tabs for Data Prep -->
+            <div class="subtabs-bar">
+              <button class="subtab-item active" data-subtab="prep-audit"
+                onclick="switchSubTab('view-prep', 'prep-audit')">
+                🔍 Quality Health Audit
+              </button>
+              <button class="subtab-item" data-subtab="prep-recipes"
+                onclick="switchSubTab('view-prep', 'prep-recipes')">
+                ⚙️ Cleaning Recipes & Audit Log
+              </button>
+              <button class="subtab-item" data-subtab="prep-script" onclick="switchSubTab('view-prep', 'prep-script')">
+                🐍 Python Pipeline Script
+              </button>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 1: Quality Health Audit & Action Banner -->
+          <div class="subtab-pane active" id="pane-prep-audit">
+
+            <div class="glass-card"
+              style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.2rem;">One-Click Autonomous Cleaning</h3>
+                <p style="color: var(--text-secondary); font-size: 0.88rem;">Applies smart type casting, winsorization
+                  outlier clipping, median/mode imputation, and temporal engineering.</p>
+              </div>
+              <div style="display: flex; gap: 0.75rem;">
+                <button class="btn-primary" id="btn-run-clean" onclick="triggerCleanPipeline()">
+                  ⚡ Run Auto-Clean Pipeline
+                </button>
+              </div>
+            </div>
+
+            <!-- Before vs After Results (Shown after clean) -->
+            <div id="clean-results-section" style="display: none;">
+              <div class="health-hero"
+                style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(15, 23, 42, 0.9) 100%); border-color: rgba(16, 185, 129, 0.3);">
+                <div class="health-score-dial">
+                  <div class="dial-circle good" id="cleaned-dial-circle">
+                    <span class="dial-score" id="cleaned-health-score">99.8</span>
+                    <span class="dial-label">Cleaned Score</span>
+                  </div>
+                  <div class="health-details">
+                    <h3 style="color: #34d399;">Dataset Successfully Cleaned & Standardized</h3>
+                    <p id="cleaned-delta-summary">Health score increased significantly. Ready for statistical modeling
+                      and executive dashboarding.</p>
+                  </div>
+                </div>
+                <div>
+                  <button class="btn-primary" onclick="proceedToEDA()"
+                    style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    Explore Statistical EDA →
+                  </button>
+                </div>
+              </div>
+
+              <!-- Before-vs-After Comparison Metrics -->
+              <div class="comparison-grid">
+                <div class="comparison-card">
+                  <div class="comp-header">Cleanliness Health Score</div>
+                  <div class="comp-delta">
+                    <span class="comp-before" id="comp-score-before">--</span>
+                    <span class="comp-arrow">→</span>
+                    <span class="comp-after" id="comp-score-after">--</span>
+                  </div>
+                </div>
+
+                <div class="comparison-card">
+                  <div class="comp-header">Missing Cells Count</div>
+                  <div class="comp-delta">
+                    <span class="comp-before" id="comp-missing-before">--</span>
+                    <span class="comp-arrow">→</span>
+                    <span class="comp-after" id="comp-missing-after">0</span>
+                  </div>
+                </div>
+
+                <div class="comparison-card">
+                  <div class="comp-header">Duplicate Rows Purged</div>
+                  <div class="comp-delta">
+                    <span class="comp-before" id="comp-dups-before">--</span>
+                    <span class="comp-arrow">→</span>
+                    <span class="comp-after" id="comp-dups-after">0</span>
+                  </div>
+                </div>
+
+                <div class="comparison-card">
+                  <div class="comp-header">Outliers Winsorized</div>
+                  <div class="comp-delta">
+                    <span class="comp-before">Raw</span>
+                    <span class="comp-arrow">→</span>
+                    <span class="comp-after" id="comp-outliers-after">--</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- SUB-TAB 2: Cleaning Recipes & Transformation Audit Log -->
+          <div class="subtab-pane" id="pane-prep-recipes">
+            <div class="grid-2" style="margin-bottom: 1.5rem;">
+              <div class="glass-card">
+                <h3 style="margin-bottom: 0.8rem; font-size: 1.05rem;">📜 Transformation Audit Log</h3>
+                <div class="log-container" id="cleaning-log-box"></div>
+              </div>
+
+              <!-- Cleaned Data Table Sample -->
+              <div class="glass-card">
+                <h3 style="margin-bottom: 0.8rem; font-size: 1.1rem;">Cleaned Dataset Sample</h3>
+                <div class="table-container">
+                  <table class="modern-table" id="cleaned-preview-table">
+                    <thead></thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 3: Standalone Python Script -->
+          <div class="subtab-pane" id="pane-prep-script">
+            <div class="glass-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div>
+                  <h3 style="font-size: 1.15rem;">🐍 Reproducible Python Cleaning Script</h3>
+                  <p style="color: var(--text-muted); font-size: 0.84rem;">Standalone script that reproduces this exact
+                    pipeline in Jupyter notebooks or automated production jobs.</p>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="pill-btn" onclick="copyPythonScript()">📋 Copy Script</button>
+                  <button class="pill-btn active" onclick="downloadPythonScript()">📥 Download .py</button>
+                </div>
+              </div>
+              <div class="log-container" style="max-height: 480px;">
+                <pre id="python-script-preview" style="color: #a5b4fc; font-size: 0.82rem; line-height: 1.6;"></pre>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- VIEW 4: REPORTS & EXPLORE (Correlations, Scatter, Stats) -->
+        <!-- ======================================================== -->
+        <section class="workspace-view" id="view-reports">
+
+          <div class="view-header-bar">
+            <div>
+              <h2 class="view-title">📈 Reports & Exploratory Data Analysis</h2>
+              <p class="view-subtitle">In-depth descriptive statistics, distribution histograms, and Pearson & Spearman
+                correlation matrices.</p>
+            </div>
+
+            <!-- Sub-Tabs for Reports & Explore -->
+            <div class="subtabs-bar">
+              <button class="subtab-item active" data-subtab="reports-corr"
+                onclick="switchSubTab('view-reports', 'reports-corr')">
+                🔥 Correlation & Scatter
+              </button>
+              <button class="subtab-item" data-subtab="reports-hist"
+                onclick="switchSubTab('view-reports', 'reports-hist')">
+                📊 Frequency Histograms
+              </button>
+              <button class="subtab-item" data-subtab="reports-stats"
+                onclick="switchSubTab('view-reports', 'reports-stats')">
+                📐 Descriptive Statistics
+              </button>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 1: Correlation Matrix & Pairwise Scatter Explorer -->
+          <div class="subtab-pane active" id="pane-reports-corr">
+
+            <div class="grid-2" style="margin-bottom: 1.5rem;">
+              <div class="chart-card">
+                <div class="chart-header">
+                  <div>
+                    <h3>Correlation Heatmap (Pearson r)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.78rem;">Click any cell to plot the pairwise scatter
+                      regression below</p>
+                  </div>
+                  <span class="bullet-badge" id="corr-feature-count">-- variables</span>
+                </div>
+                <div class="table-container" style="max-height: 320px; overflow: auto;">
+                  <table class="heatmap-table" id="correlation-matrix-table"></table>
+                </div>
+              </div>
+
+              <div class="glass-card">
+                <h3 style="margin-bottom: 0.8rem; font-size: 1.1rem;">Top Strongly Correlated Relationships</h3>
+                <p style="color: var(--text-muted); font-size: 0.84rem; margin-bottom: 1rem;">Significant linear &
+                  monotonic relationships between continuous variables:</p>
+                <div id="top-correlations-container"></div>
+              </div>
+            </div>
+
+            <!-- Interactive Bivariate Scatter Explorer -->
+            <div class="chart-card" id="scatter-explorer-card" style="margin-bottom: 1.5rem;">
+              <div class="chart-header">
+                <div>
+                  <h3 id="scatter-explorer-title">Pairwise Scatter & Bivariate Regression Explorer</h3>
+                  <p style="color: var(--text-muted); font-size: 0.78rem;" id="scatter-explorer-subtitle">Click any
+                    correlation cell above or select variables below to inspect relationship</p>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                  <select class="filter-select" id="scatter-x-select" onchange="renderPairwiseScatter()"></select>
+                  <span style="color: var(--text-muted);">vs</span>
+                  <select class="filter-select" id="scatter-y-select" onchange="renderPairwiseScatter()"></select>
+                </div>
+              </div>
+              <div class="chart-container-box">
+                <canvas id="chart-pairwise-scatter"></canvas>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- SUB-TAB 2: Frequency Distribution Histograms -->
+          <div class="subtab-pane" id="pane-reports-hist">
+            <div class="chart-card" style="margin-bottom: 1.5rem;">
+              <div class="chart-header">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                  <h3>Feature Distribution & Histogram</h3>
+                  <select class="filter-select" id="distribution-metric-select"
+                    onchange="renderSelectedDistribution()"></select>
+                </div>
+                <span class="bullet-badge" id="distribution-shape-badge">Normal</span>
+              </div>
+              <div class="chart-container-box" style="height: 420px;">
+                <canvas id="chart-distribution"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 3: Numerical Summary Statistics -->
+          <div class="subtab-pane" id="pane-reports-stats">
+            <div class="glass-card">
+              <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">Comprehensive Numerical Summary Statistics</h3>
+              <div class="table-container">
+                <table class="modern-table" id="eda-num-stats-table">
+                  <thead>
+                    <tr>
+                      <th>Feature</th>
+                      <th>Count</th>
+                      <th>Mean</th>
+                      <th>Std Dev</th>
+                      <th>Min</th>
+                      <th>25% (Q1)</th>
+                      <th>Median</th>
+                      <th>75% (Q3)</th>
+                      <th>Max</th>
+                      <th>IQR</th>
+                      <th>Skewness</th>
+                      <th>Shape Assessment</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- VIEW 5: AI & MACHINE LEARNING INSIGHTS LAB               -->
+        <!-- ======================================================== -->
+        <section class="workspace-view" id="view-ml">
+
+          <div class="view-header-bar">
+            <div>
+              <h2 class="view-title">🧠 AI & Machine Learning Insights Brain</h2>
+              <p class="view-subtitle">Unsupervised K-Means clustering, Isolation Forest anomaly detection, and Random
+                Forest feature importance.</p>
+            </div>
+          </div>
+
+          <!-- Executive Summary Story Cards -->
+          <div class="glass-card" style="margin-bottom: 1.5rem;">
+            <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;">Executive Narrative Summary</h3>
+            <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.2rem;">Automated analytical
+              takeaways and strategic business insights synthesized from the dataset:</p>
+            <div id="executive-bullets-container"></div>
+          </div>
+
+          <!-- Clustering & Key Drivers Grid -->
+          <div class="grid-2" style="margin-bottom: 1.5rem;">
+            <!-- K-Means 2D PCA Scatter -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <div>
+                  <h3>Entity Clusters (PCA 2D Projection)</h3>
+                  <p style="color: var(--text-muted); font-size: 0.78rem;" id="pca-variance-label">Optimal K determined
+                    via Silhouette Score</p>
+                </div>
+                <span class="bullet-badge" id="clustering-k-badge">K = 3</span>
+              </div>
+              <div class="chart-container-box">
+                <canvas id="chart-pca-clusters"></canvas>
+              </div>
+              <div id="cluster-personas-container" style="margin-top: 1.2rem;"></div>
+            </div>
+
+            <!-- Key Drivers (Random Forest Feature Importance) -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <div>
+                  <h3>Key Driver Analysis (Feature Importance)</h3>
+                  <p style="color: var(--text-muted); font-size: 0.78rem;" id="driver-target-label">Factors impacting
+                    primary metric</p>
+                </div>
+                <span class="bullet-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">Random
+                  Forest</span>
+              </div>
+              <div class="chart-container-box">
+                <canvas id="chart-feature-importance"></canvas>
+              </div>
+
+              <!-- Anomaly Explorer mini list -->
+              <div style="margin-top: 1.2rem;">
+                <h4 style="font-size: 0.95rem; margin-bottom: 0.6rem; color: var(--accent-amber);">Isolation Forest
+                  Anomaly Flags</h4>
+                <div id="anomaly-summary-container-ml"></div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- VIEW 6: DATA TABLE VIEW (Full Data Grid & Inspector)     -->
+        <!-- ======================================================== -->
+        <section class="workspace-view" id="view-table">
+
+          <div class="view-header-bar">
+            <div>
+              <h2 class="view-title">📑 Data Table Grid & Inspector</h2>
+              <p class="view-subtitle">Full-width data exploration, multi-column search, sorting, and pagination.</p>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="table-toolbar">
+              <h3 style="font-size: 1.15rem;">📋 Live Data Inspector</h3>
+              <div class="search-input-wrapper">
+                <input type="text" id="inspector-search" class="search-input"
+                  placeholder="Search any column or value..." oninput="handleTableSearch()">
+              </div>
+              <div class="pagination-controls">
+                <button class="btn-page" id="btn-page-prev" onclick="changeInspectorPage(-1)">‹ Prev</button>
+                <span id="inspector-page-indicator">Page 1 of 1</span>
+                <button class="btn-page" id="btn-page-next" onclick="changeInspectorPage(1)">Next ›</button>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table class="modern-table" id="inspector-table">
+                <thead></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- VIEW 7: ASK AI AGENT (AI Conversational Studio)          -->
+        <!-- ======================================================== -->
+        <section class="workspace-view" id="view-ai">
+
+          <div class="view-header-bar">
+            <div>
+              <h2 class="view-title">✨ Ask AI Agent (Conversational Analytics Studio)</h2>
+              <p class="view-subtitle">Autonomous data conversational intelligence. Ask questions about your business
+                data in natural language.</p>
+            </div>
+          </div>
+
+          <div class="glass-card" style="max-width: 900px; margin: 0 auto;">
+
+            <div class="agent-hero-banner">
+              <div class="agent-avatar-star">✨</div>
+              <div>
+                <h3>Analytica AI Copilot</h3>
+                <p>Grounding analytical intelligence directly in your active dataset.</p>
+              </div>
+            </div>
+
+            <!-- Quick Prompt Pills -->
+            <div class="copilot-pills" style="margin-bottom: 1.5rem;">
+              <button class="pill-btn" onclick="sendFullAIAgentQuery('What are the primary revenue drivers?')">🎯 Top
+                Drivers</button>
+              <button class="pill-btn" onclick="sendFullAIAgentQuery('Explain our entity clusters and personas')">👥
+                Cluster Personas</button>
+              <button class="pill-btn" onclick="sendFullAIAgentQuery('Are there any fraud or anomaly flags?')">⚠️
+                Anomaly Risks</button>
+              <button class="pill-btn" onclick="sendFullAIAgentQuery('Give me the 14-day trend forecast')">📈 14-Day
+                Forecast</button>
+              <button class="pill-btn" onclick="sendFullAIAgentQuery('Summarize data quality and cleaning status')">🧼
+                Data Health</button>
+            </div>
+
+            <!-- Full Page Chat Messages Stream -->
+            <div class="full-ai-chat-stream" id="full-ai-chat-messages"
+              style="max-height: 440px; overflow-y: auto; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.85rem;">
+              <div class="chat-bubble ai">
+                👋 Hello! I am your <strong>AutoAnalyst AI Copilot</strong>. You can ask me any question about
+                your data — from primary drivers and clustering personas to anomaly risks and forecasts!
+              </div>
+            </div>
+
+            <!-- Input Bar -->
+            <form class="copilot-input-bar" onsubmit="handleFullAISubmit(event)">
+              <input type="text" id="full-ai-input" class="copilot-input"
+                placeholder="Ask anything about your data in plain English..." autocomplete="off">
+              <button type="submit" class="copilot-send-btn">Ask AI</button>
+            </form>
+
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- FLOATING AI ANALYST COPILOT CHAT DRAWER (Persistent Access)  -->
+  <!-- ============================================================ -->
+  <div class="copilot-launcher" id="copilot-launcher" onclick="toggleCopilotDrawer()" title="Open AI Analyst Copilot">
+    <div class="copilot-pulse"></div>
+    <span class="copilot-icon">🤖</span>
+    <span class="copilot-btn-text">Ask AI</span>
+  </div>
+
+  <div class="copilot-drawer" id="copilot-drawer">
+    <div class="copilot-header">
+      <div class="copilot-title-group">
+        <div class="copilot-badge-icon">🤖</div>
+        <div>
+          <h3>AI Analyst Copilot</h3>
+          <p>Instant answers grounded in your active dataset</p>
+        </div>
+      </div>
+      <button class="btn-close-copilot" onclick="toggleCopilotDrawer()">✕</button>
+    </div>
+
+    <!-- Suggested Question Pills -->
+    <div class="copilot-pills">
+      <button class="pill-btn" onclick="sendCopilotQuery('What are the primary revenue drivers?')">🎯 Top
+        Drivers</button>
+      <button class="pill-btn" onclick="sendCopilotQuery('Explain our entity clusters and personas')">👥 Cluster
+        Personas</button>
+      <button class="pill-btn" onclick="sendCopilotQuery('Are there any fraud or anomaly flags?')">⚠️ Anomaly
+        Risks</button>
+      <button class="pill-btn" onclick="sendCopilotQuery('Give me the 14-day trend forecast')">📈 14-Day
+        Forecast</button>
+      <button class="pill-btn" onclick="sendCopilotQuery('Summarize data quality and cleaning status')">🧼 Data
+        Health</button>
+    </div>
+
+    <!-- Chat Message Stream -->
+    <div class="copilot-messages" id="copilot-messages">
+      <div class="chat-bubble ai">
+        👋 Hello! I am your <strong>AutoAnalyst AI Copilot</strong>. Ask me anything about your dataset's drivers,
+        anomalies, clusters, or forecasts, or click any prompt pill above!
+      </div>
+    </div>
+
+    <!-- Input Bar -->
+    <form class="copilot-input-bar" onsubmit="handleCopilotSubmit(event)">
+      <input type="text" id="copilot-input" class="copilot-input" placeholder="Ask a question about this data..."
+        autocomplete="off">
+      <button type="submit" class="copilot-send-btn" id="copilot-send-btn">Send</button>
+    </form>
+  </div>
+
+  <!-- Global Loading Spinner Overlay -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loading-message">Analyzing & Preprocessing Dataset...</div>
+  </div>
+
+  <!-- Main Modular JS Application -->
+  <script src="/static/js/app.js"></script>
+</body>
+
+</html>

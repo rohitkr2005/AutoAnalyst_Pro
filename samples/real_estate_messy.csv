@@ -1,0 +1,409 @@
+Property_ID,Neighborhood,Property_Type,Bedrooms,Bathrooms,Living_Area_SqFt,Year_Built,Listing_Price,Days_On_Market,Garage_Capacity
+PROP-8024,Downtown,Single Family,5,2.5,"3,144 SQ FT",1984,"1,132,600 USD",142,0
+PROP-8372,DOWNTOWN,condo,5,2.5,3310 sqft,1959,"$1,513,600",95,1
+PROP-8078,Westside,Penthouse,3,1.5,"3,155 SQ FT",2007,"1,383,400 USD",9,0
+PROP-8320,lakeside,Townhouse,4,1.5,"3,170 SQ FT",2023,"$1,626,700",172,None
+PROP-8367,East End,Condo,1,2,1362 sqft,1954,"640,700 USD",64,1
+PROP-8243,Lakeside,,4,3,2210 sqft,1990,"$749,400",123,None
+PROP-8173,  Midtown  ,,5,3.5,4229 sqft,2023,"$1,523,300",50,2
+PROP-8056,lakeside,townhouse,3,3.5,"1,069 SQ FT",1993,"393,600 USD",132,N/A
+PROP-8020,N/A,Single Family,4,2,684 sqft,2021,"371,500 USD",68,3
+PROP-8207,  Midtown  ,Townhouse,5,2,"2,588 SQ FT",2010,"1,224,200 USD",174,None
+PROP-8152,Lakeside,townhouse,5,2.5,832 SQ FT,1965,"547,000 USD",116,2
+PROP-8385,midtown,Townhouse,1,3,3291 sqft,1967,N/A,10,3
+PROP-8026,east end,condo,1,2,"2,081 SQ FT",2022,"$1,099,400",1,0
+PROP-8318,  Midtown  ,Townhouse,3,2,"1,988 SQ FT",2016,"$738,700",35,3
+PROP-8281,Lakeside,single family,4,3,4685 sqft,1969,"1,444,800 USD",95,3
+PROP-8088,downtown,townhouse,2,1,"1,614 SQ FT",1999,null,9,3
+PROP-8338,N/A,Duplex,2,3.5,"4,050 SQ FT",1972,null,29,N/A
+PROP-8224,East End,Penthouse,5,2.5,873 SQ FT,1985,"522,200 USD",78,None
+PROP-8220,downtown,,4,3.5,2593 sqft,2001,"$855,500",170,1
+PROP-8266,Suburbs North,single family,1,2.5,,N/A,"$1,740,800",99,N/A
+PROP-8029,  Midtown  ,Condo,4,3,4711 sqft,1970,N/A,84,1
+PROP-8139,Lakeside,single family,4,2.5,2974,1982,"1,612,600 USD",153,N/A
+PROP-8245,,single family,2,N/A,null,1991,"$891,100",45,1
+PROP-8211,midtown,Duplex,5,1,"2,482 SQ FT",1999,"1,296,200 USD",7,1
+PROP-8225,downtown,Penthouse,5,3,4346 sqft,1954,"$1,970,400",117,2
+PROP-8397,Westside,Townhouse,2,3,"4,486 SQ FT",1988,"$1,312,500",20,None
+PROP-8237,east end,Single Family,3,3,1324 sqft,1995,"761,700 USD",140,1
+PROP-8172,lakeside,Duplex,4,2,3368 sqft,1997,"$949,600",14,None
+PROP-8344,Lakeside,Townhouse,1,3,1492,2019,"$570,400",62,3
+PROP-8206,westside,Townhouse,5,1,1330,2012,"$785,400",84,None
+PROP-8234,Lakeside,Single Family,4,2.5,4024 sqft,1986,"$1,189,300",13,2
+PROP-8186,lakeside,Duplex,4,1.5,"3,234 SQ FT",N/A,1700800.0,122,None
+PROP-8055,East End,townhouse,5,1.5,3287,2004,"1,021,400 USD",57,N/A
+PROP-8371,  Midtown  ,,1,3.5,1276,2015,N/A,136,1
+PROP-8168,,,2,2.5,"1,862 SQ FT",1961,"931,800 USD",N/A,N/A
+PROP-8333,East End,Duplex,3,2.5,2013 sqft,2011,"$688,600",120,None
+PROP-8240,lakeside,Duplex,2,3.5,1192 sqft,2018,"$584,500",70,2
+PROP-8145,N/A,condo,1,2,"4,348 SQ FT",1960,2274000.0,65,N/A
+PROP-8305,Westside,Duplex,5,2,,1997,call for price,119,3
+PROP-8215,Downtown,single family,1,3,"1,543 SQ FT",1975,"$479,700",9,3
+PROP-8216,N/A,Single Family,1,1,1536 sqft,2020,753100.0,8,1
+PROP-8184,  Midtown  ,townhouse,1,1,4160 sqft,1992,"1,446,300 USD",41,None
+PROP-8239,Downtown,Townhouse,3,2.5,1130,1956,"$459,500",134,N/A
+PROP-8297,westside,Penthouse,2,1.5,1198,1962,589100.0,35,N/A
+PROP-8001,midtown,Condo,1,3.5,"4,031 SQ FT",1970,"$1,163,400",180,N/A
+PROP-8290,westside,Condo,4,2,N/A,1998,910900.0,-5,None
+PROP-8072,Downtown,townhouse,,2.5,"4,305 SQ FT",1976,"2,231,100 USD",100,0
+PROP-8228,  Midtown  ,townhouse,4,2,1099 sqft,2004,"$542,800",58,0
+PROP-8354,downtown,Condo,3,1.5,2587 sqft,1981,"$656,800",117,2
+PROP-8335,Downtown,Condo,5,1.5,null,2007,"$1,197,300",42,1
+PROP-8281,Lakeside,single family,4,3,4685 sqft,1969,"1,444,800 USD",95,3
+PROP-8070,DOWNTOWN,condo,1,1,?,2016,call for price,34,N/A
+PROP-8292,  Midtown  ,Single Family,4,1.5,2891 sqft,2004,"1,544,800 USD",55,N/A
+PROP-8257,east end,Condo,4,4.0,3319 sqft,2013,"955,600 USD",91,2
+PROP-8365,midtown,single family,4,1.5,null,1978,518100.0,161,1
+PROP-8069,Downtown,Single Family,1,2.5,"3,919 SQ FT",2022,"1,914,700 USD",64,None
+PROP-8251,Suburbs North,,2,2,"2,300 SQ FT",1951,"$602,500",146,N/A
+PROP-8289,Suburbs North,,1,2,"2,016 SQ FT",1966,"$990,700",76,3
+PROP-8125,N/A,Condo,1,3,2648 sqft,1991,call for price,160,None
+PROP-8268,,single family,3,1.5,"2,778 SQ FT",1999,"$1,135,900",172,None
+PROP-8288,,Townhouse,2,3.5,"3,291 SQ FT",1954,"$1,030,800",34,None
+PROP-8113,DOWNTOWN,condo,2,1.5,4693,1991,"$1,748,500",148,0
+PROP-8083,east end,Townhouse,2,1,"1,342 SQ FT",1993,"$480,500",152,None
+PROP-8048,DOWNTOWN,,3,1,"4,439 SQ FT",2024,"1,859,100 USD",162,None
+PROP-8299,Westside,single family,5,3.5,?,unknown,"1,083,900 USD",98,2
+PROP-8381,DOWNTOWN,Single Family,5,2.5,"1,045 SQ FT",2014,611100.0,37,2
+PROP-8190,Lakeside,townhouse,5,3,2791 sqft,1962,call for price,52,0
+PROP-8393,downtown,,3,2,2629 sqft,1966,"1,097,600 USD",67,N/A
+PROP-8307,Lakeside,Townhouse,3,3.5,3766 sqft,2012,"1,662,400 USD",95,N/A
+PROP-8058,East End,Condo,1,1.5,859,1997,"$454,500",161,1
+PROP-8302,Downtown,,3,2,2876,1997,"$1,271,100",61,None
+PROP-8097,East End,townhouse,4,3,1559 sqft,1960,"$810,900",160,0
+PROP-8193,midtown,Single Family,2,1,"1,027 SQ FT",2012,"$323,300",67,3
+PROP-8015,midtown,Single Family,2,3.5,,2004,"662,900 USD",176,N/A
+PROP-8359,East End,,1,1,"3,831 SQ FT",N/A,"1,110,400 USD",167,3
+PROP-8339,Suburbs North,single family,5,1.5,"3,013 SQ FT",2011,"$1,291,800",168,None
+PROP-8390,Lakeside,Townhouse,,2,3190 sqft,1958,"$1,346,600",47,None
+PROP-8389,Westside,single family,3,1,2821 sqft,2005,"985,300 USD",174,1
+PROP-8036,Suburbs North,Condo,5,1.5,3873,1958,"$1,559,500",3,N/A
+PROP-8195,midtown,Single Family,2,2,2227 sqft,2000,"$1,097,800",103,1
+PROP-8093,east end,Single Family,5,1,"4,294 SQ FT",1989,"$1,635,400",173,None
+PROP-8151,DOWNTOWN,Condo,2,2,3943 sqft,1992,"$1,998,100",121,0
+PROP-8104,  Midtown  ,Condo,4,1,1370,1974,"$403,500",171,N/A
+PROP-8007,N/A,townhouse,3,3.5,2574,1800,"$812,000",173,2
+PROP-8016,Downtown,condo,2,2.5,"1,490 SQ FT",1972,"$634,900",16,2
+PROP-8143,,Single Family,3,2,1618 sqft,1994,"506,400 USD",41,None
+PROP-8079,midtown,Townhouse,3,1,"4,694 SQ FT",1963,"2,175,600 USD",91,3
+PROP-8270,East End,,5,3,3511 sqft,2008,"1,319,800 USD",155,1
+PROP-8045,westside,Townhouse,4,3.5,682 SQ FT,1800,"$308,500",27,None
+PROP-8375,lakeside,Penthouse,2,3.5,4073 sqft,1954,"$1,572,000",161,0
+PROP-8327,,Condo,1,2,2533,2003,null,171,N/A
+PROP-8185,DOWNTOWN,,4,3,4683 sqft,2023,"$1,768,300",25,None
+PROP-8163,Westside,Penthouse,1,2,?,1964,1208700.0,111,None
+PROP-8002,Lakeside,Townhouse,2,3.5,823,1966,"$425,400",127,1
+PROP-8034,,Condo,5,3,952 sqft,1956,"487,700 USD",68,N/A
+PROP-8295,Westside,Townhouse,4,3,740 sqft,1950,"$346,300",177,None
+PROP-8077,Westside,Condo,5,3,1457,1980,"$721,800",165,2
+PROP-8017,,Duplex,5,1.5,2903 sqft,1950,"$1,505,900",5,0
+PROP-8326,Downtown,Duplex,4,3.5,666 SQ FT,2002,"$389,900",38,3
+PROP-8182,Suburbs North,Penthouse,5,1.5,null,1959,"1,524,200 USD",174,N/A
+PROP-8092,,Duplex,3,3.5,2220 sqft,2003,"$731,700",174,3
+PROP-8249,westside,Condo,3,1.5,961 SQ FT,2014,"$307,700",10,0
+PROP-8149,downtown,,3,3.5,4130 sqft,1990,"1,574,700 USD",37,0
+PROP-8022,westside,single family,1,2.5,1232,1969,N/A,73,None
+PROP-8324,Suburbs North,townhouse,1,2.5,808 SQ FT,1991,"$332,500",134,3
+PROP-8363,Westside,Duplex,2,3,2552 sqft,2022,"$1,207,800",109,2
+PROP-8280,East End,Duplex,5,1,3270,2000,"$1,252,100",89,3
+PROP-8392,Lakeside,townhouse,4,2,3909 sqft,1969,"$1,203,100",5,None
+PROP-8351,East End,single family,1,2,3125,2003,1649500.0,135,None
+PROP-8250,Lakeside,condo,5,3,"1,775 SQ FT",1956,"583,700 USD",30,0
+PROP-8350,downtown,Penthouse,1,3.5,"2,185 SQ FT",2019,"$768,900",140,0
+PROP-8147,East End,Duplex,2,2.5,"2,514 SQ FT",1981,"$1,335,700",25,N/A
+PROP-8314,lakeside,Single Family,4,1,2378 sqft,2016,"$1,098,600",N/A,0
+PROP-8107,Suburbs North,townhouse,5,3,"3,392 SQ FT",1967,"$1,670,300",109,0
+PROP-8177,DOWNTOWN,Single Family,1,1.5,"1,405 SQ FT",1979,"$648,700",-5,N/A
+PROP-8261,N/A,Townhouse,3,1.0,3484,2003,"$1,453,500",121,2
+PROP-8391,east end,single family,4,1.5,4072 sqft,1988,N/A,76,N/A
+PROP-8181,midtown,Single Family,5,4.0,"2,269 SQ FT",1991,"$1,095,900",-5,N/A
+PROP-8309,westside,single family,1,2.5,1447,1988,492300.0,81,1
+PROP-8263,N/A,Duplex,5,2.5,2934,2005,"1,102,000 USD",136,0
+PROP-8298,downtown,Duplex,3,3.5,750 sqft,1800,"$254,900",103,2
+PROP-8282,downtown,Duplex,5,2.5,4732 sqft,1950,"2,392,500 USD",9,1
+PROP-8263,N/A,Duplex,5,2.5,2934,2005,"1,102,000 USD",136,0
+PROP-8176,Downtown,Penthouse,3,1,"2,237 SQ FT",1996,"$801,300",128,0
+PROP-8275,downtown,townhouse,2,1,"2,810 SQ FT",1990,"$739,700",124,3
+PROP-8231,DOWNTOWN,townhouse,1,1.5,"3,243 SQ FT",1965,"818,500 USD",177,1
+PROP-8095,lakeside,townhouse,4,3.5,"4,430 SQ FT",1963,"$1,625,100",69,0
+PROP-8308,N/A,single family,3,2,1916,2004,"1,048,900 USD",4,3
+PROP-8334,east end,townhouse,5,1,2976,1965,"$1,407,100",150,1
+PROP-8199,downtown,single family,2,3.5,"3,414 SQ FT",1981,"$1,273,800",86,N/A
+PROP-8128,Westside,townhouse,5,1,2672 sqft,1990,"1,439,100 USD",76,None
+PROP-8127,Lakeside,Duplex,5,3,4024,2022,1374900.0,121,0
+PROP-8110,Westside,Townhouse,5,2.5,907,1993,"$346,000",70,2
+PROP-8169,downtown,condo,3,2,758 sqft,1952,"305,600 USD",180,N/A
+PROP-8376,lakeside,Duplex,3,1,"3,918 SQ FT",2016,1784200.0,69,0
+PROP-8121,  Midtown  ,townhouse,1,1.5,null,1800,"$1,421,800",137,N/A
+PROP-8284,,Duplex,1,3,2566 sqft,2016,707400.0,161,None
+PROP-8138,DOWNTOWN,Townhouse,3,1,"3,556 SQ FT",1998,1432700.0,69,None
+PROP-8229,lakeside,Penthouse,-1,2.5,3926 sqft,2017,"$1,831,900",99,N/A
+PROP-8196,Westside,Single Family,2,3.5,4142 sqft,2001,$0,108,2
+PROP-8364,Westside,Condo,4,2.5,"3,655 SQ FT",2008,call for price,87,N/A
+PROP-8175,N/A,townhouse,2,2.5,1729 sqft,1800,"916,500 USD",39,1
+PROP-8328,DOWNTOWN,single family,5,1,4042 sqft,1985,"$1,430,800",91,None
+PROP-8089,  Midtown  ,condo,4,3.5,3841 sqft,1800,"1,531,400 USD",119,None
+PROP-8119,Downtown,Duplex,1,1,"2,285 SQ FT",1973,"$668,600",36,None
+PROP-8361,east end,Condo,4,N/A,3529 sqft,1968,"1,399,400 USD",143,None
+PROP-8205,East End,Single Family,1,1,4095 sqft,2023,$0,157,0
+PROP-8262,east end,Townhouse,2,1.5,"2,714 SQ FT",2020,1045400.0,56,1
+PROP-8148,midtown,Duplex,4,1.5,"1,963 SQ FT",1996,"$551,200",135,None
+PROP-8259,east end,townhouse,4,1.5,"2,659 SQ FT",1957,"1,142,500 USD",141,0
+PROP-8214,midtown,Townhouse,2,1.5,"2,421 SQ FT",1968,null,65,N/A
+PROP-8236,,Single Family,4,2.5,3987,1959,"$2,036,900",69,0
+PROP-8209,Suburbs North,Condo,4,3,2727,1957,"1,352,200 USD",98,1
+PROP-8090,lakeside,townhouse,3,1,"2,115 SQ FT",1986,"$688,700",43,3
+PROP-8132,downtown,,3,1,902 sqft,2013,"$519,600",45,None
+PROP-8020,N/A,Single Family,4,2,684 sqft,2021,"371,500 USD",68,3
+PROP-8386,N/A,,5,3.5,2425 sqft,1980,"883,900 USD",115,None
+PROP-8274,Suburbs North,Single Family,4,1.5,3761,2002,1798700.0,69,0
+PROP-8051,N/A,Single Family,5,1.5,3223 sqft,1993,"$1,541,300",14,0
+PROP-8235,East End,Duplex,4,1.5,3952,1978,"$1,344,700",61,1
+PROP-8028,east end,Penthouse,2,2,2484,1977,"957,000 USD",132,1
+PROP-8235,East End,Duplex,4,1.5,3952,1978,"$1,344,700",61,1
+PROP-8317,downtown,,5,2,"1,020 SQ FT",2011,"$500,700",79,N/A
+PROP-8010,N/A,townhouse,5,1.5,4331 sqft,1988,"$1,254,400",35,None
+PROP-8117,DOWNTOWN,Single Family,3,3,"3,485 SQ FT",1992,"$1,068,800",158,3
+PROP-8106,east end,Townhouse,2,1,"1,816 SQ FT",2004,"636,100 USD",86,N/A
+PROP-8222,lakeside,Single Family,3,1.5,4090,1953,null,25,3
+PROP-8167,east end,condo,3,2,2772 sqft,1950,1096000.0,137,N/A
+PROP-8366,midtown,Condo,4,2.5,3382 sqft,1999,"$1,190,300",172,N/A
+PROP-8086,DOWNTOWN,,3,3,2858 sqft,2012,"1,225,100 USD",40,3
+PROP-8040,DOWNTOWN,Condo,5,2.5,1676 sqft,2019,"$849,600",70,1
+PROP-8311,  Midtown  ,townhouse,2,N/A,"1,509 SQ FT",N/A,"$758,200",112,2
+PROP-8254,Lakeside,townhouse,4,1.5,1950,1966,"$1,003,100",103,2
+PROP-8310,east end,single family,4,1,"4,262 SQ FT",2023,call for price,135,0
+PROP-8103,Westside,Townhouse,2,2.5,689 sqft,1998,"$375,300",59,None
+PROP-8170,Downtown,Condo,2,2.5,1404 sqft,1950,"713,200 USD",81,3
+PROP-8009,  Midtown  ,single family,4,2,4779,1993,"1,938,900 USD",N/A,3
+PROP-8377,east end,Condo,4,3,1145,1993,"$440,500",135,2
+PROP-8165,downtown,,2,1.0,1230 sqft,2010,"$408,300",34,0
+PROP-8091,lakeside,Condo,1,1,"3,935 SQ FT",1998,"$1,112,800",100,3
+PROP-8204,East End,Single Family,2,3.5,"3,210 SQ FT",2000,"1,146,800 USD",125,N/A
+PROP-8062,Suburbs North,,4,3,null,2019,1688000.0,103,1
+PROP-8004,lakeside,Duplex,N/A,2,2221 sqft,1950,"$710,800",129,None
+PROP-8060,Downtown,Condo,2,3,1948 sqft,1978,"$913,200",19,None
+PROP-8013,downtown,single family,3,3,3172,1995,"1,232,600 USD",158,2
+PROP-8100,  Midtown  ,condo,2,4.0,4316 sqft,1976,"1,036,300 USD",67,1
+PROP-8187,Lakeside,Duplex,1,1.5,4346 sqft,1974,"$1,629,000",N/A,N/A
+PROP-8356,Lakeside,single family,4,3,1994 sqft,1992,"721,700 USD",98,3
+PROP-8101,midtown,Single Family,5,2,"2,861 SQ FT",1965,"1,136,100 USD",104,1
+PROP-8023,DOWNTOWN,Townhouse,4,2.5,"1,580 SQ FT",1962,"$696,200",52,3
+PROP-8008,westside,Duplex,1,3.5,"1,325 SQ FT",1974,658500.0,46,3
+PROP-8179,  Midtown  ,Townhouse,5,1.5,,2001,836100.0,139,N/A
+PROP-8336,Downtown,Single Family,3,N/A,2294 sqft,1978,"$792,400",108,3
+PROP-8226,downtown,Duplex,4,3,1719 sqft,1980,"$541,800",74,2
+PROP-8096,midtown,Townhouse,5,3,"1,093 SQ FT",1968,"$494,900",89,1
+PROP-8161,N/A,townhouse,4,3.0,"1,629 SQ FT",2000,"770,200 USD",89,2
+PROP-8232,east end,Penthouse,1,1.5,4623,1990,"1,948,700 USD",121,2
+PROP-8395,Westside,townhouse,2,3.5,"2,231 SQ FT",2018,601400.0,11,N/A
+PROP-8019,westside,condo,3,3.5,4091,1994,null,43,None
+PROP-8260,east end,single family,4,3.5,4693,1992,"1,279,900 USD",N/A,3
+PROP-8141,Lakeside,Townhouse,1,3.5,"2,200 SQ FT",1954,"$962,000",132,1
+PROP-8136,East End,Townhouse,4,1.0,1064,1954,482000.0,149,3
+PROP-8064,  Midtown  ,Duplex,1,2.5,"1,803 SQ FT",1996,"$572,300",8,3
+PROP-8053,downtown,Duplex,3,3.0,,2021,"764,900 USD",72,3
+PROP-8156,east end,single family,1,1.5,1235 sqft,2012,327100.0,75,0
+PROP-8005,,Condo,1,3,"1,911 SQ FT",1969,"$566,700",88,0
+PROP-8109,Westside,condo,4,1,"1,452 SQ FT",2017,"$486,500",96,None
+PROP-8120,lakeside,Single Family,5,2.5,?,1973,"$1,744,700",52,1
+PROP-8134,Suburbs North,Single Family,2,1.5,3397 sqft,2009,"$1,231,800",169,2
+PROP-8306,westside,Penthouse,4,3.5,4786 sqft,1953,"$2,095,900",176,1
+PROP-8202,Suburbs North,Condo,5,2.5,"3,403 SQ FT",1800,"$1,088,500",159,None
+PROP-8123,Suburbs North,townhouse,4,2.5,"2,853 SQ FT",2004,"$1,581,100",72,0
+PROP-8286,N/A,Single Family,3,3,2538,1990,$0,91,N/A
+PROP-8087,Lakeside,Townhouse,,2.5,3267 sqft,2000,1389600.0,22,N/A
+PROP-8144,East End,Condo,5,3,721 SQ FT,1974,N/A,146,0
+PROP-8107,Suburbs North,townhouse,5,3,"3,392 SQ FT",1967,"$1,670,300",109,0
+PROP-8208,Lakeside,single family,4,3.5,4329,1998,"$2,091,400",145,0
+PROP-8014,Westside,townhouse,3,1.5,3607,1954,"1,927,000 USD",152,None
+PROP-8056,lakeside,townhouse,3,3.5,"1,069 SQ FT",1993,"393,600 USD",132,N/A
+PROP-8003,westside,,1,3.5,2076 sqft,1954,682600.0,161,0
+PROP-8285,midtown,single family,2,3,3290,1950,"$1,591,200",60,N/A
+PROP-8345,east end,condo,2,1.5,"1,065 SQ FT",1986,N/A,117,2
+PROP-8124,downtown,single family,5,1,4028 sqft,2012,"1,367,600 USD",19,2
+PROP-8219,Lakeside,Single Family,5,1.5,"1,434 SQ FT",1992,"620,900 USD",N/A,3
+PROP-8303,East End,Penthouse,4,2.5,"3,973 SQ FT",1966,"$1,912,200",72,N/A
+PROP-8319,east end,Penthouse,2,1.5,"2,463 SQ FT",1990,"$1,323,600",93,1
+PROP-8332,westside,Duplex,2,1,"1,404 SQ FT",2024,"$582,800",80,None
+PROP-8142,DOWNTOWN,single family,4,3,1094 sqft,2006,509300.0,164,1
+PROP-8080,Suburbs North,condo,3,3.5,3709 sqft,1976,"1,502,200 USD",112,0
+PROP-8133,east end,,3,3.5,"2,092 SQ FT",1977,"$854,300",130,0
+PROP-8353,east end,Single Family,5,N/A,3875 sqft,N/A,"1,558,000 USD",999,0
+PROP-8379,Westside,,3,3,"3,301 SQ FT",1951,"$912,900",116,3
+PROP-8039,,condo,4,3.5,1147 sqft,1997,"647,100 USD",11,2
+PROP-8267,lakeside,Townhouse,2,1.5,2607 sqft,1980,1273300.0,132,None
+PROP-8130,Westside,Penthouse,3,2.5,"4,639 SQ FT",1971,"$1,608,200",8,0
+PROP-8112,Lakeside,Duplex,4,3.5,"1,638 SQ FT",1980,"$528,800",53,N/A
+PROP-8044,N/A,condo,3,3.5,2616 sqft,1984,"$765,600",40,2
+PROP-8384,East End,condo,5,3.5,"2,490 SQ FT",1962,"806,700 USD",124,1
+PROP-8108,Westside,,-1,1.5,"1,052 SQ FT",1975,"402,200 USD",103,N/A
+PROP-8159,East End,single family,2,2,3792 sqft,2022,"$1,269,900",81,None
+PROP-8360,Suburbs North,,1,3,1101 sqft,2019,"432,800 USD",100,None
+PROP-8387,N/A,townhouse,2,1,"2,320 SQ FT",1994,"$1,201,900",172,N/A
+PROP-8279,downtown,condo,5,2,1483 sqft,2003,"490,900 USD",114,0
+PROP-8280,East End,Duplex,5,1,3270,2000,"$1,252,100",89,3
+PROP-8052,DOWNTOWN,Duplex,1,1,1910 sqft,1989,"718,700 USD",157,0
+PROP-8068,Lakeside,townhouse,3,2.5,1776,1975,"534,300 USD",18,N/A
+PROP-8118,Downtown,townhouse,4,2.5,3454,2007,"1,894,000 USD",31,None
+PROP-8316,westside,townhouse,1,1.5,"1,265 SQ FT",1997,"$662,000",71,N/A
+PROP-8252,midtown,Single Family,5,2.5,2517 sqft,2012,"$1,244,200",8,N/A
+PROP-8340,Suburbs North,single family,1,3.5,"2,695 SQ FT",2021,1388700.0,134,0
+PROP-8325,Lakeside,townhouse,3,1.5,3031,1950,"1,604,800 USD",47,0
+PROP-8025,Downtown,condo,3,1.5,"3,589 SQ FT",1981,"1,599,100 USD",95,None
+PROP-8031,westside,single family,2,2.5,"1,818 SQ FT",1994,"815,600 USD",15,None
+PROP-8271,  Midtown  ,Single Family,5,2,671 SQ FT,1957,"323,600 USD",26,N/A
+PROP-8312,N/A,single family,1,1,"4,597 SQ FT",unknown,"$1,101,600",61,2
+PROP-8394,DOWNTOWN,single family,5,2,2097 sqft,2002,"1,189,400 USD",54,3
+PROP-8242,downtown,condo,4,2.5,3490 sqft,1971,"$1,500,900",36,2
+PROP-8178,Suburbs North,,1,3.5,659 sqft,1965,"$294,400",999,0
+PROP-8054,east end,condo,5,2,"2,200 SQ FT",1979,"$666,900",58,N/A
+PROP-8374,Suburbs North,Penthouse,3,1.5,null,2007,362700.0,30,N/A
+PROP-8383,Westside,single family,2,N/A,1952 sqft,2016,"$542,700",61,3
+PROP-8135,downtown,Townhouse,4,3.5,2999 sqft,1988,"892,900 USD",173,N/A
+PROP-8278,  Midtown  ,Condo,4,2,3611,1998,"$1,843,400",63,N/A
+PROP-8050,westside,Condo,4,3,1829,1977,"$991,800",169,1
+PROP-8081,Downtown,Single Family,2,1.5,763 sqft,1995,"405,400 USD",146,2
+PROP-8066,Downtown,condo,5,1.5,1460 sqft,1974,"840,800 USD",59,3
+PROP-8042,lakeside,Single Family,2,2,878 sqft,1994,"$502,600",25,1
+PROP-8256,lakeside,townhouse,1,1.0,"1,813 SQ FT",1998,"$962,800",147,2
+PROP-8264,lakeside,Condo,2,3,"3,563 SQ FT",2017,"$953,700",93,1
+PROP-8198,N/A,Condo,1,3,"1,850 SQ FT",1998,"$872,600",117,None
+PROP-8329,Suburbs North,single family,3,2,"3,465 SQ FT",2017,"$1,640,900",72,None
+PROP-8063,East End,condo,2,3.5,3615 sqft,1968,"$1,656,000",127,N/A
+PROP-8094,downtown,single family,3,2.5,"1,754 SQ FT",1966,"$880,200",6,N/A
+PROP-8171,East End,Condo,5,3,"1,883 SQ FT",1989,"$903,800",48,0
+PROP-8085,Downtown,Condo,1,3.5,"2,815 SQ FT",2023,"$760,700",178,0
+PROP-8293,lakeside,,1,1.5,1299 sqft,1991,"$369,900",140,N/A
+PROP-8341,lakeside,Duplex,5,2,1130 sqft,1994,"$594,400",89,N/A
+PROP-8246,lakeside,Duplex,5,3,951 SQ FT,2007,"$597,800",60,3
+PROP-8273,westside,townhouse,3,2.5,"3,014 SQ FT",1966,"$1,043,700",65,N/A
+PROP-8073,,Penthouse,3,1.5,"3,062 SQ FT",1974,N/A,33,N/A
+PROP-8158,downtown,,2,2.5,938 sqft,2023,"$301,800",81,2
+PROP-8035,East End,townhouse,4,1,"3,926 SQ FT",2007,1545100.0,111,N/A
+PROP-8230,Suburbs North,single family,4,2,755 SQ FT,1980,295100.0,91,None
+PROP-8313,,single family,2,3,926,1962,"395,900 USD",87,None
+PROP-8140,east end,Duplex,,2.5,815 sqft,1989,"408,200 USD",162,0
+PROP-8265,Suburbs North,Penthouse,5,3.5,2337 sqft,1953,"1,177,500 USD",175,N/A
+PROP-8092,,Duplex,3,3.5,2220 sqft,2003,"$731,700",174,3
+PROP-8227,downtown,Townhouse,1,3.5,2392 sqft,1996,"1,173,600 USD",139,None
+PROP-8300,,Townhouse,4,1.5,"4,205 SQ FT",unknown,"$1,026,500",24,3
+PROP-8241,DOWNTOWN,condo,4,1,3952,2019,"1,144,600 USD",125,None
+PROP-8277,downtown,Single Family,1,1,"4,025 SQ FT",1989,"1,482,200 USD",109,1
+PROP-8296,Downtown,single family,3,2.5,3824,2003,"$1,894,700",179,N/A
+PROP-8388,midtown,,3,2.5,"3,119 SQ FT",2020,793300.0,142,0
+PROP-8322,N/A,Single Family,4,3.5,708 sqft,1958,"$357,100",121,3
+PROP-8037,Westside,single family,5,1.0,3767,unknown,$0,53,3
+PROP-8247,Lakeside,townhouse,5,3,?,1984,"1,202,600 USD",60,None
+PROP-8291,east end,single family,3,1.5,1519 sqft,1996,"836,900 USD",46,None
+PROP-8043,DOWNTOWN,Townhouse,4,2.5,"4,435 SQ FT",1993,"$1,620,700",9,N/A
+PROP-8355,downtown,townhouse,5,1.5,"2,077 SQ FT",N/A,742500.0,175,N/A
+PROP-8258,Westside,Condo,2,1,1744 sqft,unknown,570700.0,15,2
+PROP-8071,downtown,single family,2,1,4472 sqft,1981,"1,648,000 USD",99,N/A
+PROP-8304,East End,Duplex,1,2,"3,770 SQ FT",2001,"$1,245,900",21,2
+PROP-8217,N/A,single family,3,3,N/A,1977,1065300.0,46,3
+PROP-8032,lakeside,condo,3,1.5,2714,1973,"$764,500",164,3
+PROP-8301,  Midtown  ,townhouse,4,2.5,"2,308 SQ FT",2014,"616,600 USD",179,2
+PROP-8233,,Duplex,5,1.5,"1,112 SQ FT",1978,"$495,000",84,0
+PROP-8162,Westside,Penthouse,4,3.5,4343 sqft,1970,"1,523,700 USD",45,2
+PROP-8047,midtown,Townhouse,5,1,3551,2018,"$1,083,600",27,None
+PROP-8041,lakeside,Single Family,4,1.5,N/A,1994,"$461,400",91,N/A
+PROP-8057,Lakeside,Condo,3,2,"1,881 SQ FT",unknown,"$996,100",133,3
+PROP-8155,  Midtown  ,,4,1,4768 sqft,1980,"2,556,100 USD",154,N/A
+PROP-8191,Lakeside,Townhouse,5,3,3044 sqft,2003,"$1,164,100",29,None
+PROP-8082,DOWNTOWN,single family,5,1,"4,410 SQ FT",2016,"$1,455,800",N/A,2
+PROP-8061,downtown,Duplex,5,1,1596,N/A,"$913,700",137,N/A
+PROP-8183,Lakeside,,4,3,1720 sqft,1986,"568,300 USD",98,2
+PROP-8146,  Midtown  ,Townhouse,3,3.5,4307 sqft,2020,"2,302,900 USD",71,N/A
+PROP-8197,DOWNTOWN,Condo,3,2,"3,893 SQ FT",1950,"$1,529,800",22,None
+PROP-8221,lakeside,Duplex,2,3,3732 sqft,1957,"1,008,000 USD",32,0
+PROP-8323,midtown,Single Family,1,1.5,1847 sqft,1970,718600.0,171,3
+PROP-8084,Suburbs North,Townhouse,2,3.5,"2,422 SQ FT",1958,"$1,046,000",60,None
+PROP-8122,east end,condo,5,3.5,1452,unknown,call for price,999,N/A
+PROP-8368,DOWNTOWN,Duplex,4,2.5,3879 sqft,2012,1423900.0,60,0
+PROP-8067,westside,Single Family,1,1,1762,2011,"476,400 USD",75,2
+PROP-8253,east end,condo,1,3.5,null,2010,"$497,100",65,N/A
+PROP-8276,  Midtown  ,single family,2,1.5,1531 sqft,1977,731000.0,149,None
+PROP-8012,Downtown,,2,2.5,"3,445 SQ FT",1965,"1,143,200 USD",56,1
+PROP-8098,Lakeside,Condo,4,3.5,4577 sqft,1800,"1,500,700 USD",63,None
+PROP-8150,downtown,townhouse,4,4.0,3442 sqft,2016,"$1,628,100",128,3
+PROP-8349,westside,Duplex,5,1,"2,983 SQ FT",2001,"$1,398,500",9,N/A
+PROP-8321,Downtown,Townhouse,4,2.5,1047 sqft,1992,"459,000 USD",153,0
+PROP-8074,DOWNTOWN,condo,1,2,2711 sqft,1965,"628,100 USD",64,1
+PROP-8399,midtown,Duplex,1,2,1823 sqft,2012,960300.0,54,None
+PROP-8238,midtown,Penthouse,2,2.5,707 SQ FT,2008,"275,600 USD",76,None
+PROP-8111,Suburbs North,Penthouse,4,3,"3,251 SQ FT",1989,call for price,93,N/A
+PROP-8201,East End,Duplex,4,3,3156 sqft,1980,"$815,900",15,3
+PROP-8126,midtown,,2,N/A,1302 sqft,2011,"449,600 USD",63,N/A
+PROP-8065,N/A,Single Family,5,1.5,3185,1971,"$1,642,300",83,1
+PROP-8315,lakeside,Townhouse,4,2.5,738 sqft,1800,394600.0,86,N/A
+PROP-8269,midtown,Townhouse,1,1.5,1970 sqft,1994,"$879,300",89,2
+PROP-8203,Lakeside,,2,2.5,"4,230 SQ FT",1963,"$1,937,600",35,3
+PROP-8046,lakeside,single family,1,2,1845,1997,"$904,100",159,2
+PROP-8076,westside,Single Family,3,1,"3,762 SQ FT",1992,"$1,104,600",92,3
+PROP-8137,DOWNTOWN,Condo,3,2,2620 sqft,1964,"$955,900",170,N/A
+PROP-8348,downtown,Townhouse,2,3,"1,605 SQ FT",1991,"$696,800",-5,None
+PROP-8115,westside,Penthouse,3,3.5,3921 sqft,1961,"$1,783,000",142,1
+PROP-8272,Westside,condo,4,1.5,2459 sqft,1991,$0,N/A,1
+PROP-8000,Downtown,condo,2,3,"2,769 SQ FT",2024,"1,346,800 USD",32,None
+PROP-8033,N/A,condo,2,3,3799 sqft,1990,"$1,092,100",163,2
+PROP-8099,east end,Townhouse,3,3,"1,234 SQ FT",1957,"$715,400",57,1
+PROP-8153,N/A,Condo,2,2.5,3325 sqft,1972,call for price,97,None
+PROP-8006,Suburbs North,Penthouse,5,2.5,"4,196 SQ FT",1990,"1,727,200 USD",40,1
+PROP-8157,,Single Family,1,1.5,3473,1976,"$1,192,300",155,None
+PROP-8337,Westside,Townhouse,3,2.5,1952,1953,"$876,600",162,None
+PROP-8373,,Penthouse,4,2,"2,186 SQ FT",2013,"$750,900",99,0
+PROP-8347,DOWNTOWN,single family,4,1,2558,1991,"1,289,600 USD",159,3
+PROP-8131,Lakeside,townhouse,3,1,825 SQ FT,1800,"460,600 USD",161,N/A
+PROP-8154,lakeside,Penthouse,5,3.5,"1,503 SQ FT",1974,626400.0,142,3
+PROP-8330,DOWNTOWN,condo,5,3,"4,291 SQ FT",1955,null,127,1
+PROP-8075,East End,single family,4,3.5,1182 sqft,1800,"$491,500",27,0
+PROP-8248,DOWNTOWN,Penthouse,2,1.5,1381 sqft,unknown,"371,200 USD",101,None
+PROP-8027,East End,Townhouse,2,2.5,3536,2009,"$1,039,300",149,N/A
+PROP-8378,Suburbs North,Condo,4,2.5,"4,118 SQ FT",2014,"1,069,700 USD",137,2
+PROP-8192,Westside,townhouse,1,1,"2,467 SQ FT",1971,"1,210,900 USD",76,N/A
+PROP-8194,Suburbs North,Duplex,2,2,4066,2015,"$1,751,900",132,N/A
+PROP-8283,east end,Penthouse,2,3,"3,224 SQ FT",1980,"$1,009,300",86,1
+PROP-8352,  Midtown  ,single family,1,2,2795 sqft,1955,"$1,387,700",54,0
+PROP-8160,Downtown,Condo,2,3,"2,828 SQ FT",1800,"$707,600",88,3
+PROP-8174,  Midtown  ,Penthouse,2,1,2245,2011,"962,300 USD",73,2
+PROP-8346,downtown,townhouse,5,3,1916 sqft,1995,"$1,054,600",139,0
+PROP-8287,midtown,condo,3,N/A,656 sqft,2024,"$368,700",70,None
+PROP-8358,  Midtown  ,Duplex,5,3.5,2312 sqft,1954,"$1,325,900",1,1
+PROP-8189,midtown,Single Family,5,2.5,4656 sqft,1965,"$1,441,200",25,2
+PROP-8188,lakeside,Single Family,4,1.5,2379,2009,"845,500 USD",67,0
+PROP-8343,Lakeside,condo,3,1.5,1536,1969,524100.0,81,None
+PROP-8210,East End,Condo,1,2.5,3852,1999,"$1,975,200",138,3
+PROP-8382,east end,Condo,2,1.5,736 sqft,1955,"420,000 USD",151,3
+PROP-8213,downtown,condo,3,2,"3,818 SQ FT",2002,951700.0,4,1
+PROP-8038,Lakeside,Duplex,1,2.5,3838 sqft,2010,"$1,478,500",44,3
+PROP-8331,downtown,Single Family,4,2.5,,1968,1805300.0,7,None
+PROP-8102,N/A,single family,5,1.5,"4,527 SQ FT",1976,"1,962,700 USD",106,0
+PROP-8396,lakeside,townhouse,1,3.5,2398 sqft,2023,"1,152,000 USD",162,0
+PROP-8212,N/A,Single Family,5,2.0,777 SQ FT,1962,"$452,100",94,2
+PROP-8116,midtown,Single Family,4,3,947 SQ FT,2016,"575,200 USD",64,None
+PROP-8398,Downtown,,1,2.5,"2,834 SQ FT",2000,"$808,700",25,2
+PROP-8342,  Midtown  ,Single Family,3,3,"4,378 SQ FT",1993,"2,245,200 USD",46,2
+PROP-8105,Lakeside,condo,4,2,1175 sqft,2011,"$485,300",7,None
+PROP-8114,Westside,condo,1,3.5,4007 sqft,1978,"$977,300",31,None
+PROP-8244,N/A,townhouse,4,2,3931,1955,"$1,339,100",75,2
+PROP-8223,westside,Townhouse,2,3.5,"4,721 SQ FT",2021,"2,193,900 USD",138,1
+PROP-8166,,townhouse,5,1,4089,2021,2042800.0,149,None
+PROP-8255,DOWNTOWN,townhouse,4,2,"1,815 SQ FT",2003,"$532,400",N/A,None
+PROP-8049,East End,condo,3,1,N/A,2014,"$2,418,600",169,None
+PROP-8218,Lakeside,townhouse,1,1.5,3709 sqft,1968,"$1,552,900",146,None
+PROP-8180,lakeside,Single Family,4,1.5,4485 sqft,1800,2143100.0,167,N/A
+PROP-8369,Westside,Condo,5,2.5,840,2007,"508,200 USD",8,3
+PROP-8011,DOWNTOWN,,1,1,"1,562 SQ FT",N/A,"$425,200",161,2
+PROP-8030,Westside,Condo,4,2.5,2346 sqft,1800,"805,400 USD",119,N/A
+PROP-8370,  Midtown  ,condo,2,1,"2,609 SQ FT",unknown,"919,900 USD",8,N/A
+PROP-8200,DOWNTOWN,condo,,3.5,1859 sqft,1957,"784,000 USD",151,N/A
+PROP-8362,  Midtown  ,single family,5,1,"1,836 SQ FT",2004,"663,000 USD",24,3
+PROP-8294,  Midtown  ,Penthouse,3,3,3021,1997,"$1,522,500",3,N/A
+PROP-8357,east end,condo,5,1.5,"4,676 SQ FT",1968,2529400.0,175,1
+PROP-8021,east end,,5,1.5,3081,1971,"$1,411,600",14,2
+PROP-8164,Suburbs North,Penthouse,4,2.0,3637 sqft,2007,"$1,215,600",55,3
+PROP-8129,Suburbs North,townhouse,3,1,1730 sqft,1985,"$645,800",56,1
+PROP-8018,east end,single family,1,2.5,2703 sqft,2021,"$984,500",153,1
+PROP-8380,,single family,2,3,"1,781 SQ FT",1981,"$862,100",178,2
+PROP-8059,Westside,single family,2,2.5,4283 sqft,1981,1734400.0,60,0
