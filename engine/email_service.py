@@ -1,13 +1,42 @@
 """
 AutoAnalyst Pro - Email Notification & OTP Dispatch Service
-Handles OTP delivery via standard SMTP with a clean fallback simulation for local development.
+Supports multiple production-grade email dispatch channels:
+1. Supabase Auth API (Free built-in transactional email OTPs via SUPABASE_ANON_KEY)
+2. Direct SMTP (Gmail, Outlook, SendGrid, Amazon SES via SMTP credentials)
+3. Secure local simulation for offline development (strictly disabled in production)
 """
 
 import os
+import json
 import smtplib
+import urllib.request
+import urllib.error
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import Dict, Any
+from typing import Dict, Any, Tuple, Optional
+
+
+def is_production() -> bool:
+    """Detects if the application is running in a live cloud environment (e.g. Render)."""
+    return bool(
+        os.environ.get("RENDER") or
+        os.environ.get("PORT") or
+        os.environ.get("FLASK_ENV") == "production" or
+        os.environ.get("AUTOANALYST_ENV") == "production"
+    )
+
+
+def get_supabase_config() -> Tuple[str, Optional[str]]:
+    """Returns the Supabase Project URL and Public Anon Key if available."""
+    url = os.environ.get("SUPABASE_URL", "https://liahusmvkvpflhdhpsbr.supabase.co").rstrip("/")
+    key = os.environ.get("SUPABASE_ANON_KEY")
+    return url, key
+
+
+def is_supabase_auth_configured() -> bool:
+    """Checks whether Supabase public API key is provided."""
+    _, key = get_supabase_config()
+    return bool(key and key.strip())
 
 
 def is_smtp_configured() -> bool:
@@ -15,12 +44,53 @@ def is_smtp_configured() -> bool:
     return bool(os.environ.get("SMTP_SERVER") and os.environ.get("SMTP_EMAIL") and os.environ.get("SMTP_PASSWORD"))
 
 
+def _dispatch_supabase_auth_otp(email: str) -> Dict[str, Any]:
+    """
+    Dispatches a real email OTP using Supabase's built-in free transactional mailer.
+    Requires SUPABASE_ANON_KEY to be set in environment variables.
+    """
+    url, key = get_supabase_config()
+    endpoint = f"{url}/auth/v1/otp"
+    payload = json.dumps({"email": email, "create_user": True}).encode("utf-8")
+    req = urllib.request.Request(
+        endpoint,
+        data=payload,
+        headers={
+            "apikey": key,
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json"
+        }
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            if resp.status in (200, 201):
+                print(f"[AutoAnalyst Pro] Real email OTP dispatched via Supabase Auth to: {email}")
+                return {
+                    "success": True,
+                    "mode": "supabase",
+                    "message": f"Verification code sent via Supabase to {email}. Please check your inbox."
+                }
+    except urllib.error.HTTPError as e:
+        err_msg = e.read().decode("utf-8")
+        print(f"[Supabase Auth Error HTTP {e.code}] {err_msg}")
+        return {"success": False, "error": f"Supabase email error: {err_msg}"}
+    except Exception as e:
+        print(f"[Supabase Auth Connection Error] {e}")
+        return {"success": False, "error": str(e)}
+
+
 def send_verification_otp(email: str, full_name: str, otp_code: str) -> Dict[str, Any]:
     """
     Sends a 6-digit email verification OTP to new users during registration.
     """
+    # 1. Try Supabase Auth API if anon key is configured
+    if is_supabase_auth_configured():
+        supa_res = _dispatch_supabase_auth_otp(email)
+        if supa_res.get("success"):
+            return supa_res
+
+    # 2. Try standard SMTP if configured
     subject = f"AutoAnalyst Pro - Verify Your Email (Code: {otp_code})"
-    
     html_content = f"""
     <!DOCTYPE html>
     <html>
@@ -36,7 +106,7 @@ def send_verification_otp(email: str, full_name: str, otp_code: str) -> Dict[str
     </head>
     <body>
       <div class="container">
-        <div class="logo">⚡ AutoAnalyst Pro</div>
+        <div class="logo">AutoAnalyst Pro</div>
         <h2>Welcome, {full_name}!</h2>
         <p>Thank you for joining AutoAnalyst Pro. Please use the following One-Time Password (OTP) to verify your email address and activate your account:</p>
         <div class="otp-box">{otp_code}</div>
@@ -66,8 +136,14 @@ def send_recovery_email(email: str, full_name: str, username: str, otp_code: str
     """
     Sends an account recovery email containing both the registered username and the password reset OTP.
     """
-    subject = f"AutoAnalyst Pro - Account Recovery & Reset OTP (Code: {otp_code})"
+    # 1. Try Supabase Auth API if anon key is configured
+    if is_supabase_auth_configured():
+        supa_res = _dispatch_supabase_auth_otp(email)
+        if supa_res.get("success"):
+            return supa_res
 
+    # 2. Try standard SMTP if configured
+    subject = f"AutoAnalyst Pro - Account Recovery & Reset OTP (Code: {otp_code})"
     html_content = f"""
     <!DOCTYPE html>
     <html>
@@ -84,13 +160,13 @@ def send_recovery_email(email: str, full_name: str, username: str, otp_code: str
     </head>
     <body>
       <div class="container">
-        <div class="logo">⚡ AutoAnalyst Pro</div>
+        <div class="logo">AutoAnalyst Pro</div>
         <h2>Account Recovery Request</h2>
         <p>Hello {full_name},</p>
         <p>We received a request to recover your account credentials. Here are your account details:</p>
         
         <div class="info-card">
-          <strong>👤 Registered Username:</strong> <code style="font-size: 16px; color: #818cf8;">{username}</code>
+          <strong>Registered Username:</strong> <code style="font-size: 16px; color: #818cf8;">{username}</code>
         </div>
         
         <p>To reset your password, use the One-Time Password (OTP) below:</p>
@@ -122,7 +198,7 @@ def send_recovery_email(email: str, full_name: str, username: str, otp_code: str
 
 
 def _dispatch_email(to_email: str, subject: str, text_body: str, html_body: str, otp_code: str, purpose: str) -> Dict[str, Any]:
-    """Dispatches email via SMTP if configured, or outputs simulated delivery for local dev."""
+    """Dispatches email via SMTP if configured, or falls back safely without exposing credentials."""
     smtp_server = os.environ.get("SMTP_SERVER")
     smtp_port = int(os.environ.get("SMTP_PORT", 587))
     smtp_email = os.environ.get("SMTP_EMAIL")
@@ -152,13 +228,22 @@ def _dispatch_email(to_email: str, subject: str, text_body: str, html_body: str,
                 "message": f"Verification code sent to {to_email}."
             }
         except Exception as e:
-            print(f"[SMTP ERROR] Failed to send email via SMTP ({e}). Falling back to local simulation.")
+            print(f"[SMTP ERROR] Failed to send email via SMTP ({e}).")
 
-    # Local development / simulation mode
+    # Production safety enforcement: NEVER leak dev_otp to client or browser in production!
+    if is_production():
+        print(f"[SECURITY ALERT] Email provider not configured in production. Live OTP cannot be delivered to {to_email}.")
+        return {
+            "success": True,
+            "mode": "unconfigured",
+            "message": f"Verification code generated for {to_email}. Please configure SUPABASE_ANON_KEY or SMTP credentials in your Render Environment Variables to deliver real emails."
+            # dev_otp is strictly omitted in production for security
+        }
+
+    # Local development fallback (logged only to developer terminal, never exposed publicly)
     print("=" * 65)
-    print(f"[LOCAL DEV SIMULATED EMAIL DISPATCH]")
+    print(f"[LOCAL DEV OFFLINE OTP]")
     print(f"   To:       {to_email}")
-    print(f"   Subject:  {subject}")
     print(f"   Purpose:  {purpose}")
     print(f"   OTP Code: {otp_code}")
     print("=" * 65)
@@ -166,6 +251,6 @@ def _dispatch_email(to_email: str, subject: str, text_body: str, html_body: str,
     return {
         "success": True,
         "mode": "simulation",
-        "message": f"Verification code sent to {to_email}.",
-        "dev_otp": otp_code  # Exposed in dev mode for testing convenience
+        "message": f"Verification code sent to {to_email}."
+        # No dev_otp in API response to maintain zero exposure
     }

@@ -10,6 +10,8 @@ import os
 import json
 import random
 import sqlite3
+import urllib.request
+import urllib.error
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -472,6 +474,38 @@ def verify_otp(email: str, otp_code: str, purpose: str) -> Dict[str, Any]:
     row = cursor.fetchone()
 
     if not row:
+        # Check if Supabase Auth verified this token directly
+        supabase_url = os.environ.get("SUPABASE_URL", "https://liahusmvkvpflhdhpsbr.supabase.co").rstrip("/")
+        supabase_key = os.environ.get("SUPABASE_ANON_KEY")
+        if supabase_key and supabase_key.strip():
+            for v_type in ("email", "signup", "recovery", "magiclink"):
+                endpoint = f"{supabase_url}/auth/v1/verify"
+                req_data = json.dumps({"type": v_type, "email": email, "token": otp_code}).encode("utf-8")
+                req = urllib.request.Request(endpoint, data=req_data, headers={
+                    "apikey": supabase_key.strip(),
+                    "Authorization": f"Bearer {supabase_key.strip()}",
+                    "Content-Type": "application/json"
+                })
+                try:
+                    with urllib.request.urlopen(req, timeout=6) as resp:
+                        if resp.status in (200, 201):
+                            # Token validated by Supabase Auth! Fetch the stored registration payload
+                            cursor.execute("""
+                            SELECT id, payload FROM otp_verifications
+                            WHERE email = ? AND purpose = ? AND used = 0
+                            ORDER BY id DESC LIMIT 1
+                            """, (email, purpose))
+                            s_row = cursor.fetchone()
+                            if s_row:
+                                cursor.execute("UPDATE otp_verifications SET used = 1 WHERE id = ?", (s_row["id"],))
+                                conn.commit()
+                                payload = json.loads(s_row["payload"]) if s_row["payload"] else {}
+                                conn.close()
+                                return {"valid": True, "payload": payload}
+                            break
+                except Exception:
+                    continue
+
         conn.close()
         return {"valid": False, "message": "Invalid or expired verification code."}
 

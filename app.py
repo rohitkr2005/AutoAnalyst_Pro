@@ -36,6 +36,9 @@ app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024  # 32MB max upload size
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "autoanalyst-secure-session-key-2026-production")
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+if os.environ.get("RENDER") or os.environ.get("FLASK_ENV") == "production":
+    app.config["SESSION_COOKIE_SECURE"] = True
+
 
 # In-memory storage for active dataset session
 SESSION_DATA = {
@@ -129,11 +132,32 @@ def login_required(f):
     return decorated_function
 
 
+# ==========================================
+# SECURITY MIDDLEWARE & RATE LIMITING
+# ==========================================
+
+RATE_LIMIT_CACHE = {}
+
+def check_rate_limit(key: str, max_requests: int = 10, window_seconds: int = 60) -> bool:
+    """Sliding-window rate limiter per client IP/identifier. Returns True if allowed."""
+    now = time.time()
+    history = RATE_LIMIT_CACHE.get(key, [])
+    valid = [t for t in history if now - t < window_seconds]
+    if len(valid) >= max_requests:
+        RATE_LIMIT_CACHE[key] = valid
+        return False
+    valid.append(now)
+    RATE_LIMIT_CACHE[key] = valid
+    return True
+
+
 @app.after_request
-def add_cors_headers(response):
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
-    response.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
+def apply_security_headers(response):
+    """Enforces essential OWASP security headers across all HTTP responses."""
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     return response
 
 
@@ -145,7 +169,7 @@ def add_cors_headers(response):
 def login_page():
     if "user_id" in session:
         return redirect(url_for("index"))
-    return render_template("login.html")
+    return render_template("login.html", google_client_id=os.environ.get("GOOGLE_CLIENT_ID", ""))
 
 
 @app.route("/register")
@@ -156,6 +180,10 @@ def register_page():
 @app.route("/api/auth/login", methods=["POST"])
 def api_login():
     try:
+        client_ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+        if not check_rate_limit(f"login:{client_ip}", max_requests=10, window_seconds=60):
+            return jsonify({"status": "error", "message": "Too many login attempts. Please wait 1 minute before trying again."}), 429
+
         data = request.get_json() or {}
         username = data.get("username", "")
         password = data.get("password", "")
@@ -172,6 +200,68 @@ def api_login():
     except Exception as e:
         print(f"[Login Error] {e}", flush=True)
         return jsonify({"status": "error", "message": f"Server login error: {str(e)}"}), 500
+
+
+@app.route("/api/auth/google", methods=["POST"])
+def api_google_auth():
+    """Handles Google Identity Services / One-Tap authentication securely."""
+    try:
+        data = request.get_json() or {}
+        token = data.get("credential") or data.get("token") or ""
+        if not token:
+            return jsonify({"status": "error", "message": "Google credential token is missing."}), 400
+
+        # Verify Google JWT with Google's official tokeninfo endpoint
+        import urllib.request
+        import json
+        import secrets
+        verify_url = f"https://oauth2.googleapis.com/tokeninfo?id_token={token}"
+        req = urllib.request.Request(verify_url, headers={"User-Agent": "AutoAnalyst-Pro"})
+        try:
+            with urllib.request.urlopen(req, timeout=8) as resp:
+                if resp.status != 200:
+                    return jsonify({"status": "error", "message": "Invalid Google credential."}), 401
+                google_info = json.loads(resp.read().decode("utf-8"))
+        except Exception as e:
+            return jsonify({"status": "error", "message": "Google token validation failed. Ensure GOOGLE_CLIENT_ID matches."}), 401
+
+        email = google_info.get("email", "").strip().lower()
+        name = google_info.get("name", "").strip() or email.split("@")[0].title()
+        email_verified = str(google_info.get("email_verified", "")).lower() in ("true", "1")
+
+        if not email or not email_verified:
+            return jsonify({"status": "error", "message": "Google account email is not verified."}), 400
+
+        # Check if user already exists
+        user = get_user_by_email(email)
+        if not user:
+            # Register user automatically
+            base_user = email.split("@")[0].replace(".", "_")
+            auto_pwd = secrets.token_urlsafe(16)
+            reg_res = register_user(base_user, email, auto_pwd, name)
+            if not reg_res["success"]:
+                # Collision fallback
+                reg_res = register_user(f"{base_user}_{secrets.token_hex(2)}", email, auto_pwd, name)
+            if not reg_res["success"]:
+                return jsonify({"status": "error", "message": reg_res.get("message", "Failed to create account.")}), 500
+            user = reg_res["user"]
+
+        # Establish authenticated session
+        session["user_id"] = user["id"]
+        session["username"] = user["username"]
+        session["full_name"] = user["full_name"]
+        session["email"] = user["email"]
+        session["role"] = user["role"]
+
+        return jsonify({
+            "status": "success",
+            "message": f"Welcome, {user['full_name']}!",
+            "user": user
+        })
+    except Exception as e:
+        print(f"[Google Auth Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": f"Google authentication error: {str(e)}"}), 500
+
 
 
 @app.route("/api/auth/register", methods=["POST"])
@@ -251,6 +341,10 @@ def api_clear_user_history():
 def api_register_otp_request():
     """Validates registration details and dispatches a 6-digit email verification OTP."""
     try:
+        client_ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+        if not check_rate_limit(f"otp_req:{client_ip}", max_requests=5, window_seconds=300):
+            return jsonify({"status": "error", "message": "Too many verification requests. Please wait a few minutes before trying again."}), 429
+
         data = request.get_json() or {}
         username = data.get("username", "").strip()
         email = data.get("email", "").strip().lower()
@@ -278,11 +372,9 @@ def api_register_otp_request():
 
         resp_data = {
             "status": "success",
-            "message": f"Verification code sent to {email}. Please check your inbox.",
+            "message": email_res.get("message", f"Verification code sent to {email}. Please check your inbox."),
             "email": email
         }
-        if "dev_otp" in email_res:
-            resp_data["dev_otp"] = email_res["dev_otp"]
         return jsonify(resp_data)
     except Exception as e:
         print(f"[Register OTP Request Error] {e}", flush=True)
@@ -333,6 +425,10 @@ def api_register_otp_verify():
 def api_forgot_password_request():
     """Dispatches an email containing the registered username and a 6-digit password reset OTP."""
     try:
+        client_ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+        if not check_rate_limit(f"forgot_req:{client_ip}", max_requests=5, window_seconds=300):
+            return jsonify({"status": "error", "message": "Too many recovery requests. Please wait a few minutes before trying again."}), 429
+
         data = request.get_json() or {}
         email = data.get("email", "").strip().lower()
 
@@ -348,11 +444,9 @@ def api_forgot_password_request():
 
         resp_data = {
             "status": "success",
-            "message": f"Recovery details sent to {email}. The email contains your registered username and a 6-digit password reset code.",
+            "message": email_res.get("message", f"Recovery details sent to {email}. The email contains your registered username and a 6-digit password reset code."),
             "email": email
         }
-        if "dev_otp" in email_res:
-            resp_data["dev_otp"] = email_res["dev_otp"]
         return jsonify(resp_data)
     except Exception as e:
         print(f"[Forgot Password Request Error] {e}", flush=True)
