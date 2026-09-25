@@ -1,21 +1,143 @@
 """
 AutoAnalyst Pro - Authentication & User Persistence Layer
-Implements SQLite storage, Werkzeug password hashing, session tracking, and user activity logging.
+Implements dual-database architecture:
+- Supabase PostgreSQL (Cloud / Production) when DATABASE_URL is configured
+- SQLite local database (Offline / Development) as seamless fallback
+Includes password hashing, session tracking, and user activity logging.
 """
 
 import os
 import json
 import random
 import sqlite3
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
 
-DB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
+# Automatically load environment variables from .env in project root
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ENV_FILE = os.path.join(PROJECT_ROOT, ".env")
+if os.path.exists(ENV_FILE):
+    load_dotenv(ENV_FILE)
+load_dotenv()
+
+try:
+    import psycopg2
+    import psycopg2.extras
+    PSYCOPG2_AVAILABLE = True
+except ImportError:
+    PSYCOPG2_AVAILABLE = False
+
+DB_DIR = os.path.join(PROJECT_ROOT, "data")
 DB_PATH = os.path.join(DB_DIR, "users.db")
 
 
+def get_database_url() -> Optional[str]:
+    """Returns normalized PostgreSQL connection URL if configured in environment."""
+    url = os.environ.get("DATABASE_URL")
+    if url and url.strip():
+        url = url.strip()
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        return url
+    return None
+
+
+def is_postgres() -> bool:
+    """Returns True if PostgreSQL is enabled and driver is installed."""
+    return bool(get_database_url() and PSYCOPG2_AVAILABLE)
+
+
+class PGCursorWrapper:
+    """
+    Transparent cursor wrapper that adapts SQLite parameter placeholders (?)
+    to PostgreSQL placeholders (%s) and populates lastrowid for INSERT statements.
+    """
+    def __init__(self, cursor):
+        self._cursor = cursor
+        self.lastrowid = None
+
+    def execute(self, query: str, params=None):
+        pg_query = query.replace('?', '%s')
+        is_insert = pg_query.strip().upper().startswith("INSERT INTO")
+        has_returning = "RETURNING" in pg_query.upper()
+
+        if is_insert and not has_returning:
+            pg_query_with_return = pg_query.rstrip().rstrip(";") + " RETURNING id;"
+            try:
+                if params:
+                    self._cursor.execute(pg_query_with_return, params)
+                else:
+                    self._cursor.execute(pg_query_with_return)
+                row = self._cursor.fetchone()
+                if row:
+                    self.lastrowid = row["id"] if isinstance(row, dict) else row[0]
+                return self
+            except Exception:
+                pass
+
+        if params:
+            self._cursor.execute(pg_query, params)
+        else:
+            self._cursor.execute(pg_query)
+        return self
+
+    def fetchone(self):
+        return self._cursor.fetchone()
+
+    def fetchall(self):
+        return self._cursor.fetchall()
+
+    def close(self):
+        self._cursor.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+
+class PGConnectionWrapper:
+    """Connection wrapper for psycopg2 returning dictionary rows via RealDictCursor."""
+    def __init__(self, pg_conn):
+        self._conn = pg_conn
+
+    def cursor(self):
+        return PGCursorWrapper(self._conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor))
+
+    def commit(self):
+        self._conn.commit()
+
+    def rollback(self):
+        self._conn.rollback()
+
+    def close(self):
+        self._conn.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            self._conn.rollback()
+        else:
+            self._conn.commit()
+        self.close()
+
+
 def get_db_connection():
+    """
+    Provides a unified database connection.
+    Connects to Supabase PostgreSQL when DATABASE_URL is set;
+    falls back to local SQLite at data/users.db when offline/unset.
+    """
+    db_url = get_database_url()
+    if db_url and PSYCOPG2_AVAILABLE:
+        pg_conn = psycopg2.connect(db_url)
+        return PGConnectionWrapper(pg_conn)
+
     os.makedirs(DB_DIR, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -23,54 +145,92 @@ def get_db_connection():
 
 
 def init_auth_db():
-    """Initializes SQLite schema and creates default demo analyst account if missing."""
+    """Initializes schema (PostgreSQL or SQLite) and creates default demo analyst account if missing."""
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Users table
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL,
-        full_name TEXT NOT NULL,
-        role TEXT DEFAULT 'Data Analyst',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        last_login TIMESTAMP
-    )
-    """)
+    if is_postgres():
+        # PostgreSQL Schema for Supabase
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(100) UNIQUE NOT NULL,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            full_name VARCHAR(150) NOT NULL,
+            role VARCHAR(50) DEFAULT 'Data Analyst',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_login TIMESTAMP
+        );
+        """)
 
-    # User activity history table
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS user_activity (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        dataset_name TEXT NOT NULL,
-        records_count INTEGER NOT NULL,
-        health_score REAL NOT NULL,
-        action_type TEXT DEFAULT 'Analyzed Dataset',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users (id)
-    )
-    """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS user_activity (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+            dataset_name VARCHAR(255) NOT NULL,
+            records_count INTEGER NOT NULL,
+            health_score REAL NOT NULL,
+            action_type VARCHAR(100) DEFAULT 'Analyzed Dataset',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """)
 
-    # OTP Verifications table (Registration & Password Reset)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS otp_verifications (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT NOT NULL,
-        otp_code TEXT NOT NULL,
-        purpose TEXT NOT NULL,
-        payload TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        expires_at TIMESTAMP NOT NULL,
-        used INTEGER DEFAULT 0
-    )
-    """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS otp_verifications (
+            id SERIAL PRIMARY KEY,
+            email VARCHAR(255) NOT NULL,
+            otp_code VARCHAR(10) NOT NULL,
+            purpose VARCHAR(50) NOT NULL,
+            payload TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            expires_at TIMESTAMP NOT NULL,
+            used INTEGER DEFAULT 0
+        );
+        """)
+    else:
+        # SQLite Schema
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            full_name TEXT NOT NULL,
+            role TEXT DEFAULT 'Data Analyst',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_login TIMESTAMP
+        )
+        """)
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS user_activity (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            dataset_name TEXT NOT NULL,
+            records_count INTEGER NOT NULL,
+            health_score REAL NOT NULL,
+            action_type TEXT DEFAULT 'Analyzed Dataset',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+        """)
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS otp_verifications (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL,
+            otp_code TEXT NOT NULL,
+            purpose TEXT NOT NULL,
+            payload TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            expires_at TIMESTAMP NOT NULL,
+            used INTEGER DEFAULT 0
+        )
+        """)
 
     # Seed default demo account
-    cursor.execute("SELECT id FROM users WHERE username = 'admin'")
+    cursor.execute("SELECT id FROM users WHERE username = ?", ("admin",))
     if not cursor.fetchone():
         demo_hash = generate_password_hash("Password123!")
         cursor.execute("""
@@ -86,6 +246,7 @@ def init_auth_db():
 
     conn.commit()
     conn.close()
+
 
 
 def register_user(username: str, email: str, password: str, full_name: str) -> Dict[str, Any]:
@@ -297,8 +458,20 @@ def verify_otp(email: str, otp_code: str, purpose: str) -> Dict[str, Any]:
         return {"valid": False, "message": "Invalid or expired verification code."}
 
     # Check expiration
-    expires_at = datetime.strptime(row["expires_at"], "%Y-%m-%d %H:%M:%S")
-    if datetime.utcnow() > expires_at:
+    exp = row["expires_at"]
+    if isinstance(exp, str):
+        expires_at = datetime.strptime(exp, "%Y-%m-%d %H:%M:%S")
+    elif isinstance(exp, datetime):
+        expires_at = exp
+    else:
+        expires_at = datetime.strptime(str(exp), "%Y-%m-%d %H:%M:%S")
+
+    if hasattr(expires_at, "tzinfo") and expires_at.tzinfo is not None:
+        now = datetime.now(timezone.utc)
+    else:
+        now = datetime.utcnow()
+
+    if now > expires_at:
         cursor.execute("UPDATE otp_verifications SET used = 1 WHERE id = ?", (row["id"],))
         conn.commit()
         conn.close()
