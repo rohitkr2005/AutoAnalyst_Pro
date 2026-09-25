@@ -51,7 +51,15 @@ def _dispatch_supabase_auth_otp(email: str) -> Dict[str, Any]:
     """
     url, key = get_supabase_config()
     endpoint = f"{url}/auth/v1/otp"
-    payload = json.dumps({"email": email, "create_user": True}).encode("utf-8")
+    app_url = os.environ.get("RENDER_EXTERNAL_URL", "https://autoanalyst-pro.onrender.com").rstrip("/")
+    payload = json.dumps({
+        "email": email,
+        "create_user": True,
+        "email_redirect_to": f"{app_url}/login",
+        "options": {
+            "email_redirect_to": f"{app_url}/login"
+        }
+    }).encode("utf-8")
     req = urllib.request.Request(
         endpoint,
         data=payload,
@@ -64,7 +72,7 @@ def _dispatch_supabase_auth_otp(email: str) -> Dict[str, Any]:
     try:
         with urllib.request.urlopen(req, timeout=10) as resp:
             if resp.status in (200, 201):
-                print(f"[AutoAnalyst Pro] Real email OTP dispatched via Supabase Auth to: {email}")
+                print(f"[AutoAnalyst Pro] Real email verification dispatched via Supabase Auth to: {email}")
                 return {
                     "success": True,
                     "mode": "supabase",
@@ -73,6 +81,11 @@ def _dispatch_supabase_auth_otp(email: str) -> Dict[str, Any]:
     except urllib.error.HTTPError as e:
         err_msg = e.read().decode("utf-8")
         print(f"[Supabase Auth Error HTTP {e.code}] {err_msg}")
+        if e.code == 429:
+            return {
+                "success": False,
+                "error": "For security, Supabase limits emails to once every 60 seconds. Please wait a minute before requesting another email."
+            }
         return {"success": False, "error": f"Supabase email error: {err_msg}"}
     except Exception as e:
         print(f"[Supabase Auth Connection Error] {e}")
@@ -87,6 +100,9 @@ def send_verification_otp(email: str, full_name: str, otp_code: str) -> Dict[str
     if is_supabase_auth_configured():
         supa_res = _dispatch_supabase_auth_otp(email)
         if supa_res.get("success"):
+            return supa_res
+        if supa_res.get("error"):
+            # Return real error (e.g. rate limit 429) rather than falling back to unconfigured
             return supa_res
 
     # 2. Try standard SMTP if configured
@@ -140,6 +156,8 @@ def send_recovery_email(email: str, full_name: str, username: str, otp_code: str
     if is_supabase_auth_configured():
         supa_res = _dispatch_supabase_auth_otp(email)
         if supa_res.get("success"):
+            return supa_res
+        if supa_res.get("error"):
             return supa_res
 
     # 2. Try standard SMTP if configured
