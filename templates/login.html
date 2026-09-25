@@ -705,67 +705,6 @@
     </div>
   </div>
 
-  <!-- GOOGLE DIRECT SIGN IN MODAL -->
-  <div id="google-modal" class="auth-modal" style="display: none;">
-    <div class="auth-modal-backdrop" onclick="closeGoogleModal()"></div>
-    <div class="auth-modal-card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <svg width="22" height="22" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
-            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-          </svg>
-          <h3 style="font-size: 1.25rem; font-weight: 700; margin: 0;">Sign in with Google</h3>
-        </div>
-        <button type="button" onclick="closeGoogleModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; line-height: 1;">&times;</button>
-      </div>
-
-      <!-- Google Alert Banner -->
-      <div class="auth-alert" id="google-alert">
-        <span id="google-alert-icon" class="svg-icon"></span>
-        <span id="google-alert-message"></span>
-      </div>
-
-      <p style="font-size: 0.88rem; color: #94a3b8; margin-bottom: 1.25rem; line-height: 1.5;">
-        Continue with your Google account. Your account and workspace will be activated instantly:
-      </p>
-
-      <form onsubmit="handleDirectGoogleSubmit(event)">
-        <div class="form-group">
-          <label class="form-label" for="google-direct-email">Google Email Address</label>
-          <div class="input-wrapper">
-            <span class="input-icon svg-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-                <polyline points="22,6 12,13 2,6"></polyline>
-              </svg>
-            </span>
-            <input type="email" id="google-direct-email" class="form-input" placeholder="e.g. rkrm0209@gmail.com" required autocomplete="email">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="google-direct-name">Full Name (Optional)</label>
-          <div class="input-wrapper">
-            <span class="input-icon svg-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-            </span>
-            <input type="text" id="google-direct-name" class="form-input" placeholder="e.g. Rohit Kumar">
-          </div>
-        </div>
-
-        <button type="submit" class="btn-submit" id="btn-google-direct-submit">
-          Continue with Google →
-        </button>
-      </form>
-    </div>
-  </div>
-
   <!-- FORGOT USERNAME / PASSWORD MODAL -->
   <div id="forgot-modal" class="auth-modal" style="display: none;">
     <div class="auth-modal-backdrop" onclick="closeForgotModal()"></div>
@@ -872,27 +811,36 @@
   <script>
     // Configuration from server
     const SERVER_GOOGLE_CLIENT_ID = "{{ google_client_id or '' }}";
+    const SERVER_SUPABASE_URL = "{{ supabase_url or '' }}";
 
     let pendingRegisterData = null;
     let resendCooldown = 0;
     let resendTimer = null;
+    let googleTokenClient = null;
 
     // SVG icon constants for alert messages
     const SVG_ALERT_WARNING = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
     const SVG_ALERT_SUCCESS = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
 
-    // --- AUTOMATIC SUPABASE MAGIC LINK / EMAIL TOKEN VERIFICATION ---
+    // --- AUTOMATIC SUPABASE MAGIC LINK / OAUTH REDIRECT TOKEN VERIFICATION ---
     window.addEventListener('DOMContentLoaded', async () => {
+      initGoogleClient();
+
       const hash = window.location.hash;
       if (!hash) return;
 
       const hashStr = hash.startsWith('#') ? hash.substring(1) : hash;
       const params = new URLSearchParams(hashStr);
 
-      // Check for Supabase error returned in hash (e.g. otp_expired)
+      // Check for OAuth / Auth error returned in hash (e.g. provider not enabled or otp_expired)
       if (params.get('error') || params.get('error_code')) {
-        const desc = params.get('error_description') || params.get('error') || 'Email link is invalid or has expired.';
-        showAlert('Verification link status: ' + decodeURIComponent(desc).replace(/\+/g, ' ') + ' Please enter your email to request a new code.', false);
+        const rawDesc = params.get('error_description') || params.get('error') || 'Authentication service error.';
+        const desc = decodeURIComponent(rawDesc).replace(/\+/g, ' ');
+        if (desc.toLowerCase().includes('unsupported provider') || desc.toLowerCase().includes('provider is not enabled')) {
+          showAlert('Google provider is not yet enabled in your Supabase project (liahusmvkvpflhdhpsbr). Enable Google under Authentication → Providers in Supabase, or sign in below with your email & password.', false);
+        } else {
+          showAlert('Authentication notice: ' + desc, false);
+        }
         history.replaceState(null, null, window.location.pathname);
         return;
       }
@@ -900,7 +848,7 @@
       // Check for Supabase access_token returned in hash
       const accessToken = params.get('access_token');
       if (accessToken) {
-        showAlert('Email verified via link! Activating your session...', true);
+        showAlert('Google account verified via OAuth! Activating workspace session...', true);
         try {
           const res = await fetch('/api/auth/supabase-session', {
             method: 'POST',
@@ -918,7 +866,7 @@
             showAlert(data.message || 'Could not verify token. Please sign in with your credentials.', false);
           }
         } catch (e) {
-          showAlert('Network error while validating email link.', false);
+          showAlert('Network error while validating session token.', false);
         }
       }
     });
@@ -967,102 +915,107 @@
       }
     }
 
-    // --- GOOGLE SIGN IN HANDLER ---
-    function openGoogleModal() {
-      document.getElementById('google-modal').style.display = 'flex';
-      // Pre-fill email if user already entered it
-      const candidateEmail = document.getElementById('reg-email')?.value || document.getElementById('login-username')?.value || '';
-      if (candidateEmail && candidateEmail.includes('@')) {
-        document.getElementById('google-direct-email').value = candidateEmail;
+    // --- REAL GOOGLE SIGN IN (NO MANUAL EMAIL ALLOWED) ---
+    function initGoogleClient() {
+      const clientId = SERVER_GOOGLE_CLIENT_ID || window.GOOGLE_CLIENT_ID;
+      if (!clientId || !window.google || !window.google.accounts) return;
+
+      try {
+        // Initialize One-Tap ID token
+        google.accounts.id.initialize({
+          client_id: clientId,
+          callback: async (resp) => {
+            if (resp && resp.credential) {
+              await processGoogleCredential(resp.credential);
+            }
+          },
+          auto_select: false,
+          cancel_on_tap_outside: true
+        });
+
+        // Initialize OAuth2 Token Client for Google popup account chooser
+        if (google.accounts.oauth2) {
+          googleTokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: clientId,
+            scope: 'email profile openid',
+            callback: async (tokenResp) => {
+              if (tokenResp && tokenResp.access_token) {
+                await processGoogleAccessToken(tokenResp.access_token);
+              } else if (tokenResp && tokenResp.error) {
+                showAlert('Google sign-in was cancelled or encountered an error.');
+              }
+            }
+          });
+        }
+      } catch (err) {
+        console.warn('Google client init error:', err);
       }
-      hideGoogleAlert();
     }
 
-    function closeGoogleModal() {
-      document.getElementById('google-modal').style.display = 'none';
-      hideGoogleAlert();
-    }
-
-    function showGoogleAlert(msg, isSuccess = false) {
-      const alertBox = document.getElementById('google-alert');
-      const msgEl = document.getElementById('google-alert-message');
-      const iconEl = document.getElementById('google-alert-icon');
-      alertBox.className = 'auth-alert ' + (isSuccess ? 'success' : 'error');
-      alertBox.style.display = 'flex';
-      msgEl.textContent = msg;
-      iconEl.innerHTML = isSuccess ? SVG_ALERT_SUCCESS : SVG_ALERT_WARNING;
-    }
-
-    function hideGoogleAlert() {
-      document.getElementById('google-alert').style.display = 'none';
-    }
+    window.addEventListener('load', () => {
+      initGoogleClient();
+    });
 
     async function handleGoogleSignIn() {
       hideAlert();
       const clientId = SERVER_GOOGLE_CLIENT_ID || window.GOOGLE_CLIENT_ID;
 
-      // If Google Cloud Client ID is configured, trigger Google GIS prompt
-      if (window.google && window.google.accounts && window.google.accounts.id && clientId) {
-        try {
-          google.accounts.id.initialize({
-            client_id: clientId,
-            callback: async (resp) => {
-              if (resp && resp.credential) {
-                await processGoogleCredential(resp.credential);
-              }
-            }
-          });
+      // 1. If Google Client ID is configured, trigger Google's native account chooser popup
+      if (clientId && window.google && window.google.accounts) {
+        if (!googleTokenClient && google.accounts.oauth2) {
+          initGoogleClient();
+        }
+        if (googleTokenClient) {
+          showAlert('Opening Google account selector...', true);
+          googleTokenClient.requestAccessToken({ prompt: 'select_account' });
+          return;
+        } else if (google.accounts.id) {
+          showAlert('Checking signed-in Google account...', true);
           google.accounts.id.prompt((notification) => {
             if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-              openGoogleModal();
+              showAlert('Please allow popups in your browser to sign in with Google.');
             }
           });
           return;
-        } catch (err) {
-          console.warn("Google One-Tap error:", err);
         }
       }
 
-      // Open Google Direct Authentication Modal
-      openGoogleModal();
+      // 2. Fallback to Supabase Google OAuth Provider redirect
+      if (SERVER_SUPABASE_URL) {
+        showAlert('Redirecting to Google authentication...', true);
+        const redirectUrl = encodeURIComponent(window.location.origin + '/login');
+        window.location.href = `${SERVER_SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to=${redirectUrl}`;
+        return;
+      }
+
+      // 3. Clear feedback if neither Google Client ID nor Supabase OAuth is ready
+      showAlert('To sign in with Google, please configure GOOGLE_CLIENT_ID in your environment or enable the Google provider in your Supabase dashboard. Alternatively, use your email and password below.', false);
     }
 
-    async function handleDirectGoogleSubmit(e) {
-      e.preventDefault();
-      hideGoogleAlert();
-      const btn = document.getElementById('btn-google-direct-submit');
-      btn.disabled = true;
-      btn.textContent = 'Signing in with Google...';
-
-      const email = document.getElementById('google-direct-email').value.trim().toLowerCase();
-      const name = document.getElementById('google-direct-name').value.trim();
-
+    async function processGoogleAccessToken(accessToken) {
+      showAlert("Verifying Google account with Google...", true);
       try {
         const res = await fetch('/api/auth/google', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ google_email: email, google_name: name })
+          body: JSON.stringify({ access_token: accessToken })
         });
         const data = await safeParseJson(res);
         if (data.status === 'success') {
-          showGoogleAlert('Google profile verified! Opening workspace...', true);
+          showAlert("Google account verified! Opening workspace...", true);
           setTimeout(() => {
             window.location.href = '/';
           }, 600);
         } else {
-          showGoogleAlert(data.message || 'Google authentication error.');
-          btn.disabled = false;
-          btn.textContent = 'Continue with Google →';
+          showAlert(data.message || "Google authentication failed.");
         }
       } catch (err) {
-        showGoogleAlert('Connection error: ' + (err.message || 'Cannot reach server.'));
-        btn.disabled = false;
-        btn.textContent = 'Continue with Google →';
+        showAlert("Google authentication error: " + (err.message || "Cannot reach server."));
       }
     }
 
     async function processGoogleCredential(credential) {
-      showAlert("Verifying Google account...", true);
+      showAlert("Verifying Google token with Google...", true);
       try {
         const res = await fetch('/api/auth/google', {
           method: 'POST',

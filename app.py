@@ -169,7 +169,14 @@ def apply_security_headers(response):
 def login_page():
     if "user_id" in session:
         return redirect(url_for("index"))
-    return render_template("login.html", google_client_id=os.environ.get("GOOGLE_CLIENT_ID", ""))
+    from engine.email_service import get_supabase_config
+    supa_url, supa_key = get_supabase_config()
+    return render_template(
+        "login.html",
+        google_client_id=os.environ.get("GOOGLE_CLIENT_ID", ""),
+        supabase_url=supa_url,
+        supabase_anon_key=supa_key or ""
+    )
 
 
 @app.route("/register")
@@ -204,51 +211,78 @@ def api_login():
 
 @app.route("/api/auth/google", methods=["POST"])
 def api_google_auth():
-    """Handles Google Identity Services / One-Tap and direct Google authentication securely."""
+    """Handles Google Identity Services and Google OAuth tokens with cryptographic Google verification."""
     try:
         data = request.get_json() or {}
-        token = data.get("credential") or data.get("token") or ""
-        google_email = data.get("google_email", "").strip().lower()
+        token = (data.get("credential") or data.get("token") or data.get("id_token") or "").strip()
+        access_token = data.get("access_token", "").strip()
 
         import urllib.request
         import json
         import secrets
 
-        if google_email and "@" in google_email:
-            email = google_email
-            name = data.get("google_name", "").strip() or email.split("@")[0].replace(".", " ").title()
+        email = ""
+        name = ""
+
+        if access_token:
+            # Verify Google OAuth2 access token with Google's official userinfo endpoint
+            userinfo_url = "https://www.googleapis.com/oauth2/v3/userinfo"
+            req = urllib.request.Request(
+                userinfo_url,
+                headers={
+                    "Authorization": f"Bearer {access_token}",
+                    "User-Agent": "AutoAnalyst-Pro"
+                }
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=8) as resp:
+                    if resp.status != 200:
+                        return jsonify({"status": "error", "message": "Invalid or expired Google access token."}), 401
+                    google_info = json.loads(resp.read().decode("utf-8"))
+            except Exception as e:
+                return jsonify({"status": "error", "message": f"Google token verification failed: {str(e)}"}), 401
+
+            email = google_info.get("email", "").strip().lower()
+            name = google_info.get("name", "").strip() or email.split("@")[0].title()
+            email_verified = google_info.get("email_verified") is True or str(google_info.get("email_verified", "")).lower() in ("true", "1")
+            if not email or not email_verified:
+                return jsonify({"status": "error", "message": "Google account email is not verified by Google."}), 400
+
         elif token:
-            # Verify Google JWT with Google's official tokeninfo endpoint
+            # Verify Google OpenID Connect ID token with Google's official tokeninfo endpoint
             verify_url = f"https://oauth2.googleapis.com/tokeninfo?id_token={token}"
             req = urllib.request.Request(verify_url, headers={"User-Agent": "AutoAnalyst-Pro"})
             try:
                 with urllib.request.urlopen(req, timeout=8) as resp:
                     if resp.status != 200:
-                        return jsonify({"status": "error", "message": "Invalid Google credential."}), 401
+                        return jsonify({"status": "error", "message": "Invalid Google credential token."}), 401
                     google_info = json.loads(resp.read().decode("utf-8"))
             except Exception as e:
-                return jsonify({"status": "error", "message": "Google token validation failed. Ensure GOOGLE_CLIENT_ID matches."}), 401
+                return jsonify({"status": "error", "message": "Google token validation failed. Ensure the token is valid."}), 401
 
             email = google_info.get("email", "").strip().lower()
             name = google_info.get("name", "").strip() or email.split("@")[0].title()
-            email_verified = str(google_info.get("email_verified", "")).lower() in ("true", "1")
+            email_verified = google_info.get("email_verified") is True or str(google_info.get("email_verified", "")).lower() in ("true", "1")
             if not email or not email_verified:
-                return jsonify({"status": "error", "message": "Google account email is not verified."}), 400
+                return jsonify({"status": "error", "message": "Google account email is not verified by Google."}), 400
+
         else:
-            return jsonify({"status": "error", "message": "Google credential token or email is required."}), 400
+            return jsonify({
+                "status": "error",
+                "message": "A cryptographically verified Google token is required. Manual email input is not permitted."
+            }), 400
 
         # Check if user already exists
         user = get_user_by_email(email)
         if not user:
-            # Register user automatically
+            # Register user automatically with verified details
             base_user = email.split("@")[0].replace(".", "_")
             auto_pwd = secrets.token_urlsafe(16)
             reg_res = register_user(base_user, email, auto_pwd, name)
             if not reg_res["success"]:
-                # Collision fallback
                 reg_res = register_user(f"{base_user}_{secrets.token_hex(2)}", email, auto_pwd, name)
             if not reg_res["success"]:
-                return jsonify({"status": "error", "message": reg_res.get("message", "Failed to create account.")}), 500
+                return jsonify({"status": "error", "message": reg_res.get("message", "Failed to create user account.")}), 500
             user = reg_res["user"]
 
         # Establish authenticated session
@@ -260,7 +294,7 @@ def api_google_auth():
 
         return jsonify({
             "status": "success",
-            "message": f"Welcome, {user['full_name']}!",
+            "message": f"Welcome, {user['full_name']}! Google account verified.",
             "user": user
         })
     except Exception as e:
