@@ -1006,7 +1006,7 @@ function renderCleanResults(report, previewRows, cleanedCols, pythonScript) {
     report.transform_log.forEach(msg => {
       const entry = document.createElement('div');
       entry.className = 'log-entry';
-      entry.innerHTML = `<span class="log-icon">✓</span> <span>${escapeHtml(msg)}</span>`;
+      entry.innerHTML = `<span class="log-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span> <span>${escapeHtml(msg)}</span>`;
       logBox.appendChild(entry);
     });
   }
@@ -2084,7 +2084,9 @@ function renderUserHistory(history) {
   if (!history || history.length === 0) {
     listEl.innerHTML = `
       <div class="history-empty-state">
-        <div style="font-size: 2.2rem; margin-bottom: 0.75rem;">📂</div>
+        <div style="margin-bottom: 0.75rem; color: var(--text-muted); display: flex; justify-content: center;">
+          <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+        </div>
         <div style="font-weight: 600; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.3rem;">No Activity History Yet</div>
         <p style="color: var(--text-muted); font-size: 0.85rem;">Load a sample dataset, upload CSV/Excel, or run clean & ML pipelines to build your history log.</p>
       </div>
@@ -2094,12 +2096,17 @@ function renderUserHistory(history) {
 
   let html = '';
   history.forEach(item => {
-    let actionIcon = '📊';
+    let actionIcon = '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>';
     const action = item.action_type || '';
-    if (action.includes('Clean')) actionIcon = '🧹';
-    else if (action.includes('ML')) actionIcon = '🧠';
-    else if (action.includes('Upload')) actionIcon = '📁';
-    else if (action.includes('Demo') || action.includes('Sample')) actionIcon = '⚡';
+    if (action.includes('Clean')) {
+      actionIcon = '<svg viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>';
+    } else if (action.includes('ML')) {
+      actionIcon = '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>';
+    } else if (action.includes('Upload')) {
+      actionIcon = '<svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>';
+    } else if (action.includes('Demo') || action.includes('Sample')) {
+      actionIcon = '<svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>';
+    }
 
     html += `
       <div class="history-item">
@@ -2108,9 +2115,9 @@ function renderUserHistory(history) {
           <div class="history-item-details">
             <div class="history-item-title">${escapeHtml(item.dataset_name || 'Active Dataset')}</div>
             <div class="history-item-meta">
-              <span>📅 ${escapeHtml(item.created_at || 'Recent')}</span>
+              <span><svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 3px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>${escapeHtml(item.created_at || 'Recent')}</span>
               <span>•</span>
-              <span>🔢 ${item.records_count ? item.records_count.toLocaleString() : 0} rows</span>
+              <span><svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 3px;"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>${item.records_count ? item.records_count.toLocaleString() : 0} rows</span>
             </div>
           </div>
         </div>
