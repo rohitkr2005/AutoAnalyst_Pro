@@ -224,13 +224,25 @@
         </div>
 
         <!-- Center: Global BI Search & Quick Query -->
-        <div class="topbar-search" data-tooltip="Search reports, metrics & tables (⌘K)">
+        <div class="topbar-search" id="topbar-search-wrap" data-tooltip="Search reports, metrics & tables (⌘K)">
           <span class="search-lens">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </span>
           <input type="text" id="topbar-search-input" class="search-field"
-            placeholder="Search reports, metrics, drivers, anomalies..." oninput="handleGlobalSearch(this.value)">
+            placeholder="Search reports, metrics, drivers, anomalies..."
+            oninput="handleGlobalSearch(this.value)"
+            onfocus="openSearchPalette()"
+            autocomplete="off">
           <span class="search-shortcut">⌘K</span>
+
+          <!-- Interactive Spotlight Command Palette Dropdown -->
+          <div class="search-palette-dropdown" id="search-palette-dropdown" style="display: none;">
+            <div class="palette-header">
+              <span id="palette-result-count">Spotlight Quick Search</span>
+              <span class="palette-esc-hint">ESC to close</span>
+            </div>
+            <div class="palette-results-list" id="palette-results-list"></div>
+          </div>
         </div>
 
         <!-- Right: Action Suite (Icon-Only with Rich Tooltips) -->

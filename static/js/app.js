@@ -204,13 +204,22 @@ function setupNavigation() {
     if (exportDropdown && !exportDropdown.contains(e.target)) {
       document.getElementById('export-dropdown-menu')?.classList.remove('active');
     }
+    const searchWrap = document.getElementById('topbar-search-wrap');
+    if (searchWrap && !searchWrap.contains(e.target)) {
+      closeSearchPalette();
+    }
   });
 
-  // Global keyboard shortcut (⌘K or Ctrl+K for search)
+  // Global keyboard shortcut (⌘K or Ctrl+K for search, Escape to close)
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
       e.preventDefault();
-      document.getElementById('topbar-search-input')?.focus();
+      const input = document.getElementById('topbar-search-input');
+      input?.focus();
+      input?.select();
+      openSearchPalette();
+    } else if (e.key === 'Escape') {
+      closeSearchPalette();
     }
   });
 }
@@ -490,32 +499,332 @@ async function runCompleteAutoPipeline() {
   fetchInspectorRows();
 }
 
-// Global Quick Search
+// --- SPOTLIGHT GLOBAL SEARCH & COMMAND PALETTE ---
+let paletteActiveIndex = -1;
+
+function openSearchPalette() {
+  const dropdown = document.getElementById('search-palette-dropdown');
+  if (!dropdown) return;
+  dropdown.style.display = 'block';
+  const query = document.getElementById('topbar-search-input')?.value || '';
+  renderSearchPaletteResults(query);
+}
+
+function closeSearchPalette() {
+  const dropdown = document.getElementById('search-palette-dropdown');
+  if (dropdown) dropdown.style.display = 'none';
+  paletteActiveIndex = -1;
+}
+
 function handleGlobalSearch(query) {
-  if (!query) return;
-  const q = query.toLowerCase().trim();
-  if (q.includes('driver') || q.includes('feature')) {
-    switchView('view-ml');
-  } else if (q.includes('anom') || q.includes('outlier')) {
-    switchView('view-dashboards');
-    switchSubTab('view-dashboards', 'dash-anomalies');
-  } else if (q.includes('cluster') || q.includes('persona')) {
-    switchView('view-ml');
-  } else if (q.includes('clean') || q.includes('prep') || q.includes('script')) {
-    switchView('view-prep');
-  } else if (q.includes('table') || q.includes('raw') || q.includes('grid')) {
-    switchView('view-table');
-  } else if (q.includes('corr') || q.includes('scatter') || q.includes('hist')) {
-    switchView('view-reports');
-  } else {
-    // Search in table
-    const searchInput = document.getElementById('inspector-search');
-    if (searchInput) {
-      searchInput.value = query;
-      handleTableSearch();
+  openSearchPalette();
+  renderSearchPaletteResults(query);
+}
+
+function updatePaletteActiveItem(items) {
+  items.forEach((item, idx) => {
+    item.classList.toggle('active', idx === paletteActiveIndex);
+    if (idx === paletteActiveIndex) {
+      item.scrollIntoView({ block: 'nearest' });
     }
+  });
+}
+
+function renderSearchPaletteResults(query) {
+  const listEl = document.getElementById('palette-results-list');
+  const countEl = document.getElementById('palette-result-count');
+  if (!listEl) return;
+
+  const q = (query || '').toLowerCase().trim();
+  paletteActiveIndex = -1;
+  listEl.innerHTML = '';
+
+  const results = {
+    metrics: [],
+    insights: [],
+    views: [],
+    actions: []
+  };
+
+  const allViews = [
+    { title: 'Live Interactive Dashboard Studio', sub: 'Visual monitoring, custom charts, real-time slice & dice', view: 'view-dashboards', icon: 'M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z', badge: 'STUDIO' },
+    { title: 'Anomaly Radar & Outliers', sub: 'Z-score & IQR multivariate anomaly detection engine', view: 'view-dashboards', subTab: 'dash-anomalies', icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z', badge: 'ANOMALIES' },
+    { title: 'AutoML Drivers & Feature Importance', sub: 'Random Forest driver rankings and influence analysis', view: 'view-ml', icon: 'M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3.08A2.5 2.5 0 0 1 9.5 2Z', badge: 'AUTOML' },
+    { title: 'Customer Persona & K-Means Clusters', sub: 'Unsupervised clustering and segmentation radar', view: 'view-ml', icon: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z', badge: 'CLUSTERS' },
+    { title: 'Statistical EDA & Correlation Heatmap', sub: 'Pearson & Spearman correlation matrix and distributions', view: 'view-reports', icon: 'M3 3v18h18 M19 9l-5 5-4-4-3 3', badge: 'EDA' },
+    { title: 'Data Cleaning & Preprocessing Studio', sub: 'Type sanitization, outlier imputation, and Python export', view: 'view-prep', icon: 'M12 3l1.912 5.813a2 2 0 0 0 1.275 1.275L21 12l-5.813 1.912a2 2 0 0 0-1.275 1.275L12 21l-1.912-5.813a2 2 0 0 0-1.275-1.275L3 12l5.813-1.912a2 2 0 0 0 1.275-1.275L12 3z', badge: 'PREP' },
+    { title: 'Full Data Inspector & Table', sub: 'Search, filter, paginate, and sort dataset records', view: 'view-table', icon: 'M3 3h18v18H3z M3 9h18 M3 15h18 M9 3v18 M15 3v18', badge: 'DATA' },
+    { title: 'Dataset Connectors & CSV Uploader', sub: 'Switch sample datasets, upload local CSV, or connect sources', view: 'view-connect', icon: 'M4 6c0 1.657 3.582 3 8 3s8-1.343 8-3-3.582-3-8-3-8 1.343-8 3z M4 6v6c0 1.657 3.582 3 8 3s8-1.343 8-3V6', badge: 'CONNECT' }
+  ];
+
+  const allActions = [
+    { title: 'Run Full Auto-Pipeline', sub: 'Execute Ingest → Clean → EDA → AutoML in one click', action: 'pipeline', badge: 'ACTION' },
+    { title: 'Ask AI Analyst Copilot', sub: 'Ask questions about trends, metrics, and key drivers', action: 'ai', badge: 'AI COPILOT' },
+    { title: 'Export Cleaned Dataset (CSV)', sub: 'Download transformed and sanitized dataset to CSV', action: 'export-csv', badge: 'EXPORT' },
+    { title: 'Export PDF / Executive Report', sub: 'Generate printable executive report with charts & KPI cards', action: 'export-pdf', badge: 'REPORT' }
+  ];
+
+  const cols = (appState.cleanedColumns && appState.cleanedColumns.length) ? appState.cleanedColumns : (appState.columns || []);
+  const numStats = (appState.edaData && appState.edaData.numeric_stats) ? appState.edaData.numeric_stats : {};
+
+  if (!q) {
+    if (countEl) countEl.textContent = 'Suggested Quick Jumps & Tools';
+    results.views = allViews.slice(0, 5);
+    results.actions = allActions.slice(0, 2);
+  } else {
+    results.views = allViews.filter(v =>
+      v.title.toLowerCase().includes(q) ||
+      v.sub.toLowerCase().includes(q) ||
+      v.badge.toLowerCase().includes(q)
+    );
+
+    results.actions = allActions.filter(a =>
+      a.title.toLowerCase().includes(q) ||
+      a.sub.toLowerCase().includes(q)
+    );
+
+    cols.forEach(col => {
+      const colName = typeof col === 'string' ? col : (col.name || String(col));
+      const colType = (typeof col === 'object' && col.type) ? col.type : (numStats[colName] ? 'numeric' : 'categorical');
+      if (colName.toLowerCase().includes(q) || colType.toLowerCase().includes(q)) {
+        const stat = numStats[colName];
+        let subText = `Type: ${colType.toUpperCase()}`;
+        if (stat) {
+          subText += ` • Mean: ${stat.mean} • Median: ${stat.median} • Range: [${stat.min} to ${stat.max}]`;
+        }
+        results.metrics.push({
+          title: colName,
+          sub: subText,
+          colType: colType,
+          isNumeric: !!stat,
+          metricName: colName
+        });
+      }
+    });
+
+    const topCorrs = (appState.edaData && appState.edaData.correlation && appState.edaData.correlation.top_correlations) ? appState.edaData.correlation.top_correlations : [];
+    topCorrs.forEach(pair => {
+      if (pair.feature_a.toLowerCase().includes(q) || pair.feature_b.toLowerCase().includes(q) || 'correlation'.includes(q) || 'driver'.includes(q)) {
+        results.insights.push({
+          title: `${pair.feature_a} ⟷ ${pair.feature_b}`,
+          sub: `Correlation: r = ${pair.pearson_r} (${pair.strength} ${pair.direction})`,
+          feature_a: pair.feature_a,
+          feature_b: pair.feature_b
+        });
+      }
+    });
+
+    const totalFound = results.metrics.length + results.insights.length + results.views.length + results.actions.length;
+    if (countEl) countEl.textContent = `${totalFound} results for "${escapeHtml(query)}"`;
+  }
+
+  let html = '';
+
+  if (results.metrics.length > 0) {
+    html += `<div class="palette-section-title">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+      Dataset Columns & Metrics (${results.metrics.length})
+    </div>`;
+    results.metrics.slice(0, 8).forEach(m => {
+      html += `
+        <div class="palette-item" onclick="onPaletteSelectMetric('${escapeHtml(m.metricName)}')">
+          <div class="palette-item-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          </div>
+          <div class="palette-item-content">
+            <div class="palette-item-title">${escapeHtml(m.title)}</div>
+            <div class="palette-item-subtitle">${escapeHtml(m.sub)}</div>
+          </div>
+          <span class="palette-item-badge">PLOT IN STUDIO →</span>
+        </div>
+      `;
+    });
+  }
+
+  if (results.insights.length > 0) {
+    html += `<div class="palette-section-title">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m12 6 4 6h-8z"/></svg>
+      Key Drivers & Correlations (${results.insights.length})
+    </div>`;
+    results.insights.slice(0, 4).forEach(ins => {
+      html += `
+        <div class="palette-item" onclick="onPaletteSelectCorrelation('${escapeHtml(ins.feature_a)}', '${escapeHtml(ins.feature_b)}')">
+          <div class="palette-item-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </div>
+          <div class="palette-item-content">
+            <div class="palette-item-title">${escapeHtml(ins.title)}</div>
+            <div class="palette-item-subtitle">${escapeHtml(ins.sub)}</div>
+          </div>
+          <span class="palette-item-badge">VIEW SCATTER →</span>
+        </div>
+      `;
+    });
+  }
+
+  if (results.views.length > 0) {
+    html += `<div class="palette-section-title">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+      Views & Dashboards
+    </div>`;
+    results.views.forEach(v => {
+      html += `
+        <div class="palette-item" onclick="onPaletteSelectView('${v.view}', '${v.subTab || ''}')">
+          <div class="palette-item-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="palette-item-content">
+            <div class="palette-item-title">${escapeHtml(v.title)}</div>
+            <div class="palette-item-subtitle">${escapeHtml(v.sub)}</div>
+          </div>
+          <span class="palette-item-badge">${v.badge}</span>
+        </div>
+      `;
+    });
+  }
+
+  if (results.actions.length > 0) {
+    html += `<div class="palette-section-title">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Quick Actions
+    </div>`;
+    results.actions.forEach(a => {
+      html += `
+        <div class="palette-item" onclick="onPaletteSelectAction('${a.action}')">
+          <div class="palette-item-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          </div>
+          <div class="palette-item-content">
+            <div class="palette-item-title">${escapeHtml(a.title)}</div>
+            <div class="palette-item-subtitle">${escapeHtml(a.sub)}</div>
+          </div>
+          <span class="palette-item-badge">${a.badge}</span>
+        </div>
+      `;
+    });
+  }
+
+  if (q) {
+    html += `
+      <div class="palette-section-title">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Data Records
+      </div>
+      <div class="palette-item" onclick="onPaletteSearchTable('${escapeHtml(q)}')">
+        <div class="palette-item-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div class="palette-item-content">
+          <div class="palette-item-title">Search Data Table rows for "<strong>${escapeHtml(q)}</strong>"</div>
+          <div class="palette-item-subtitle">Filters all dataset rows and highlights matches in Data Inspector</div>
+        </div>
+        <span class="palette-item-badge">FILTER TABLE →</span>
+      </div>
+    `;
+  }
+
+  if (!html) {
+    html = `
+      <div class="palette-empty">
+        <div>No matching metrics, drivers, or views found for "<strong>${escapeHtml(q)}</strong>".</div>
+        <div style="margin-top: 6px; font-size: 0.76rem;">Try searching for a column name, "driver", "anomaly", "correlation", or "clean".</div>
+      </div>
+    `;
+  }
+
+  listEl.innerHTML = html;
+}
+
+function onPaletteSelectMetric(metricName) {
+  closeSearchPalette();
+  switchView('view-dashboards');
+  const metricSelect = document.getElementById('dash-metric-select');
+  if (metricSelect) {
+    let found = false;
+    for (let i = 0; i < metricSelect.options.length; i++) {
+      if (metricSelect.options[i].value === metricName) {
+        metricSelect.selectedIndex = i;
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      const opt = document.createElement('option');
+      opt.value = metricName;
+      opt.textContent = metricName;
+      metricSelect.appendChild(opt);
+      metricSelect.value = metricName;
+    }
+    renderStudioChart();
   }
 }
+
+function onPaletteSelectCorrelation(featureA, featureB) {
+  closeSearchPalette();
+  switchView('view-reports');
+  if (typeof onCorrelationCellClick === 'function') {
+    onCorrelationCellClick(featureA, featureB);
+  }
+}
+
+function onPaletteSelectView(viewId, subTab) {
+  closeSearchPalette();
+  switchView(viewId);
+  if (subTab) {
+    switchSubTab(viewId, subTab);
+  }
+}
+
+function onPaletteSelectAction(action) {
+  closeSearchPalette();
+  if (action === 'pipeline') {
+    runCompleteAutoPipeline();
+  } else if (action === 'ai') {
+    openAskAI();
+  } else if (action === 'export-csv') {
+    exportCleanedCSV();
+  } else if (action === 'export-pdf') {
+    exportPDFReport();
+  }
+}
+
+function onPaletteSearchTable(query) {
+  closeSearchPalette();
+  switchView('view-table');
+  const searchInput = document.getElementById('inspector-search');
+  if (searchInput) {
+    searchInput.value = query;
+    handleTableSearch();
+  }
+}
+
+// Attach keyboard navigation to search input
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('topbar-search-input');
+  if (searchInput) {
+    searchInput.addEventListener('keydown', (e) => {
+      const items = document.querySelectorAll('.palette-item');
+      if (!items.length) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        paletteActiveIndex = (paletteActiveIndex + 1) % items.length;
+        updatePaletteActiveItem(items);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        paletteActiveIndex = (paletteActiveIndex - 1 + items.length) % items.length;
+        updatePaletteActiveItem(items);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (paletteActiveIndex >= 0 && items[paletteActiveIndex]) {
+          items[paletteActiveIndex].click();
+        } else if (items[0]) {
+          items[0].click();
+        }
+      }
+    });
+  }
+});
 
 function resizeAllCharts() {
   setTimeout(() => {
