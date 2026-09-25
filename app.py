@@ -51,6 +51,51 @@ SESSION_DATA = {
 }
 
 
+def init_app_services():
+    """Initializes database schema and sample datasets safely on startup (both local and Gunicorn)."""
+    try:
+        init_auth_db()
+        print("[AutoAnalyst Pro] Database initialized successfully.", flush=True)
+    except Exception as e:
+        print(f"[AutoAnalyst Pro] Database initialization warning: {e}", flush=True)
+    try:
+        init_all_samples()
+        print("[AutoAnalyst Pro] Sample datasets verified.", flush=True)
+    except Exception as e:
+        print(f"[AutoAnalyst Pro] Sample datasets initialization warning: {e}", flush=True)
+
+
+# Run service initialization on application start
+init_app_services()
+
+
+@app.route("/api/health", methods=["GET"])
+def api_health():
+    """Diagnostic health check endpoint for monitoring cloud deployments."""
+    from engine.auth import is_postgres, get_db_connection
+    status = {
+        "status": "healthy",
+        "database_type": "postgresql" if is_postgres() else "sqlite",
+        "database_connected": False,
+        "users_count": 0,
+        "error": None
+    }
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT count(*) FROM users")
+        row = cur.fetchone()
+        status["users_count"] = row[0] if isinstance(row, (tuple, list)) else (row.get("count") if isinstance(row, dict) else list(row.values())[0])
+        status["database_connected"] = True
+        conn.close()
+    except Exception as e:
+        status["database_connected"] = False
+        status["status"] = "degraded"
+        status["error"] = str(e)
+    return jsonify(status), 200 if status["database_connected"] else 503
+
+
+
 def sanitize_for_json(val):
     """Recursively converts NumPy / Pandas objects and NaNs/Infs to JSON-safe primitives."""
     if isinstance(val, (np.integer, np.int64, np.int32)):
@@ -110,38 +155,46 @@ def register_page():
 
 @app.route("/api/auth/login", methods=["POST"])
 def api_login():
-    data = request.get_json() or {}
-    username = data.get("username", "")
-    password = data.get("password", "")
-    result = authenticate_user(username, password)
-    if result["success"]:
-        user = result["user"]
-        session["user_id"] = user["id"]
-        session["username"] = user["username"]
-        session["full_name"] = user["full_name"]
-        session["email"] = user["email"]
-        session["role"] = user["role"]
-        return jsonify({"status": "success", "user": user})
-    return jsonify({"status": "error", "message": result["message"]}), 401
+    try:
+        data = request.get_json() or {}
+        username = data.get("username", "")
+        password = data.get("password", "")
+        result = authenticate_user(username, password)
+        if result["success"]:
+            user = result["user"]
+            session["user_id"] = user["id"]
+            session["username"] = user["username"]
+            session["full_name"] = user["full_name"]
+            session["email"] = user["email"]
+            session["role"] = user["role"]
+            return jsonify({"status": "success", "user": user})
+        return jsonify({"status": "error", "message": result["message"]}), 401
+    except Exception as e:
+        print(f"[Login Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": f"Server login error: {str(e)}"}), 500
 
 
 @app.route("/api/auth/register", methods=["POST"])
 def api_register():
-    data = request.get_json() or {}
-    username = data.get("username", "")
-    email = data.get("email", "")
-    password = data.get("password", "")
-    full_name = data.get("full_name", "")
-    result = register_user(username, email, password, full_name)
-    if result["success"]:
-        user = result["user"]
-        session["user_id"] = user["id"]
-        session["username"] = user["username"]
-        session["full_name"] = user["full_name"]
-        session["email"] = user["email"]
-        session["role"] = user["role"]
-        return jsonify({"status": "success", "user": user})
-    return jsonify({"status": "error", "message": result["message"]}), 400
+    try:
+        data = request.get_json() or {}
+        username = data.get("username", "")
+        email = data.get("email", "")
+        password = data.get("password", "")
+        full_name = data.get("full_name", "")
+        result = register_user(username, email, password, full_name)
+        if result["success"]:
+            user = result["user"]
+            session["user_id"] = user["id"]
+            session["username"] = user["username"]
+            session["full_name"] = user["full_name"]
+            session["email"] = user["email"]
+            session["role"] = user["role"]
+            return jsonify({"status": "success", "user": user})
+        return jsonify({"status": "error", "message": result["message"]}), 400
+    except Exception as e:
+        print(f"[Register Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": f"Server registration error: {str(e)}"}), 500
 
 
 @app.route("/api/auth/logout", methods=["POST", "GET"])
@@ -156,151 +209,177 @@ def api_logout():
 def api_me():
     if "user_id" not in session:
         return jsonify({"status": "error", "authenticated": False}), 401
-    user = get_user_by_id(session["user_id"])
-    history = get_user_history(session["user_id"], limit=5)
-    return jsonify({
-        "status": "success",
-        "authenticated": True,
-        "user": user,
-        "recent_history": history
-    })
+    try:
+        user = get_user_by_id(session["user_id"])
+        history = get_user_history(session["user_id"], limit=5)
+        return jsonify({
+            "status": "success",
+            "authenticated": True,
+            "user": user,
+            "recent_history": history
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 @app.route("/api/user/history", methods=["GET"])
 @login_required
 def api_get_user_history():
     """Retrieves full analysis history for the logged-in user."""
-    history = get_user_history(session["user_id"], limit=50)
-    return jsonify({"status": "success", "history": history})
+    try:
+        history = get_user_history(session["user_id"], limit=50)
+        return jsonify({"status": "success", "history": history})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 @app.route("/api/user/history", methods=["DELETE"])
 @login_required
 def api_clear_user_history():
     """Clears analysis history for the logged-in user."""
-    success = clear_user_history(session["user_id"])
-    return jsonify({
-        "status": "success" if success else "error",
-        "message": "Analysis history cleared successfully." if success else "Failed to clear history."
-    })
+    try:
+        success = clear_user_history(session["user_id"])
+        return jsonify({
+            "status": "success" if success else "error",
+            "message": "Analysis history cleared successfully." if success else "Failed to clear history."
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 @app.route("/api/auth/register-otp/request", methods=["POST"])
 def api_register_otp_request():
     """Validates registration details and dispatches a 6-digit email verification OTP."""
-    data = request.get_json() or {}
-    username = data.get("username", "").strip()
-    email = data.get("email", "").strip().lower()
-    password = data.get("password", "")
-    full_name = data.get("full_name", "").strip() or username
+    try:
+        data = request.get_json() or {}
+        username = data.get("username", "").strip()
+        email = data.get("email", "").strip().lower()
+        password = data.get("password", "")
+        full_name = data.get("full_name", "").strip() or username
 
-    if not username or not email or not password:
-        return jsonify({"status": "error", "message": "Username, email, and password are required."}), 400
+        if not username or not email or not password:
+            return jsonify({"status": "error", "message": "Username, email, and password are required."}), 400
 
-    if len(password) < 6:
-        return jsonify({"status": "error", "message": "Password must be at least 6 characters long."}), 400
+        if len(password) < 6:
+            return jsonify({"status": "error", "message": "Password must be at least 6 characters long."}), 400
 
-    existing_by_email = get_user_by_email(email)
-    if existing_by_email:
-        return jsonify({"status": "error", "message": "An account with this email address already exists. Please log in or reset your password."}), 400
+        existing_by_email = get_user_by_email(email)
+        if existing_by_email:
+            return jsonify({"status": "error", "message": "An account with this email address already exists. Please log in or reset your password."}), 400
 
-    payload = {
-        "username": username,
-        "email": email,
-        "password": password,
-        "full_name": full_name
-    }
-    otp_code = create_otp(email, purpose="register", payload=payload, expiry_minutes=10)
-    email_res = send_verification_otp(email, full_name, otp_code)
+        payload = {
+            "username": username,
+            "email": email,
+            "password": password,
+            "full_name": full_name
+        }
+        otp_code = create_otp(email, purpose="register", payload=payload, expiry_minutes=10)
+        email_res = send_verification_otp(email, full_name, otp_code)
 
-    resp_data = {
-        "status": "success",
-        "message": f"Verification code sent to {email}. Please check your inbox.",
-        "email": email
-    }
-    if "dev_otp" in email_res:
-        resp_data["dev_otp"] = email_res["dev_otp"]
-    return jsonify(resp_data)
+        resp_data = {
+            "status": "success",
+            "message": f"Verification code sent to {email}. Please check your inbox.",
+            "email": email
+        }
+        if "dev_otp" in email_res:
+            resp_data["dev_otp"] = email_res["dev_otp"]
+        return jsonify(resp_data)
+    except Exception as e:
+        print(f"[Register OTP Request Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": f"Server error: {str(e)}"}), 500
 
 
 @app.route("/api/auth/register-otp/verify", methods=["POST"])
 def api_register_otp_verify():
     """Validates the 6-digit OTP and creates the verified user account."""
-    data = request.get_json() or {}
-    email = data.get("email", "").strip().lower()
-    otp_code = data.get("otp_code", "").strip()
+    try:
+        data = request.get_json() or {}
+        email = data.get("email", "").strip().lower()
+        otp_code = data.get("otp_code", "").strip()
 
-    if not email or not otp_code:
-        return jsonify({"status": "error", "message": "Email and verification code are required."}), 400
+        if not email or not otp_code:
+            return jsonify({"status": "error", "message": "Email and verification code are required."}), 400
 
-    v_res = verify_otp(email, otp_code, purpose="register")
-    if not v_res["valid"]:
-        return jsonify({"status": "error", "message": v_res["message"]}), 400
+        v_res = verify_otp(email, otp_code, purpose="register")
+        if not v_res["valid"]:
+            return jsonify({"status": "error", "message": v_res["message"]}), 400
 
-    payload = v_res.get("payload", {})
-    username = payload.get("username")
-    password = payload.get("password")
-    full_name = payload.get("full_name", username)
+        payload = v_res.get("payload", {})
+        username = payload.get("username")
+        password = payload.get("password")
+        full_name = payload.get("full_name", username)
 
-    if not username or not password:
-        return jsonify({"status": "error", "message": "Registration data expired. Please restart registration."}), 400
+        if not username or not password:
+            return jsonify({"status": "error", "message": "Registration data expired. Please restart registration."}), 400
 
-    reg_res = register_user(username, email, password, full_name)
-    if not reg_res["success"]:
-        return jsonify({"status": "error", "message": reg_res["message"]}), 400
+        reg_res = register_user(username, email, password, full_name)
+        if not reg_res["success"]:
+            return jsonify({"status": "error", "message": reg_res["message"]}), 400
 
-    user = reg_res["user"]
-    session["user_id"] = user["id"]
-    session["username"] = user["username"]
-    session["full_name"] = user["full_name"]
-    session["email"] = user["email"]
-    session["role"] = user["role"]
+        user = reg_res["user"]
+        session["user_id"] = user["id"]
+        session["username"] = user["username"]
+        session["full_name"] = user["full_name"]
+        session["email"] = user["email"]
+        session["role"] = user["role"]
 
-    return jsonify({"status": "success", "message": "Account created and email verified!", "user": user})
+        return jsonify({"status": "success", "message": "Account created and email verified!", "user": user})
+    except Exception as e:
+        print(f"[Register OTP Verify Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": f"Server error: {str(e)}"}), 500
 
 
 @app.route("/api/auth/forgot-password/request", methods=["POST"])
 def api_forgot_password_request():
     """Dispatches an email containing the registered username and a 6-digit password reset OTP."""
-    data = request.get_json() or {}
-    email = data.get("email", "").strip().lower()
+    try:
+        data = request.get_json() or {}
+        email = data.get("email", "").strip().lower()
 
-    if not email:
-        return jsonify({"status": "error", "message": "Please enter your registered email address."}), 400
+        if not email:
+            return jsonify({"status": "error", "message": "Please enter your registered email address."}), 400
 
-    user = get_user_by_email(email)
-    if not user:
-        return jsonify({"status": "error", "message": "No account found registered with this email address."}), 404
+        user = get_user_by_email(email)
+        if not user:
+            return jsonify({"status": "error", "message": "No account found registered with this email address."}), 404
 
-    otp_code = create_otp(email, purpose="reset_password", payload={"user_id": user["id"], "username": user["username"]}, expiry_minutes=10)
-    email_res = send_recovery_email(email, user["full_name"], user["username"], otp_code)
+        otp_code = create_otp(email, purpose="reset_password", payload={"user_id": user["id"], "username": user["username"]}, expiry_minutes=10)
+        email_res = send_recovery_email(email, user["full_name"], user["username"], otp_code)
 
-    resp_data = {
-        "status": "success",
-        "message": f"Recovery details sent to {email}. The email contains your registered username and a 6-digit password reset code.",
-        "email": email
-    }
-    if "dev_otp" in email_res:
-        resp_data["dev_otp"] = email_res["dev_otp"]
-    return jsonify(resp_data)
+        resp_data = {
+            "status": "success",
+            "message": f"Recovery details sent to {email}. The email contains your registered username and a 6-digit password reset code.",
+            "email": email
+        }
+        if "dev_otp" in email_res:
+            resp_data["dev_otp"] = email_res["dev_otp"]
+        return jsonify(resp_data)
+    except Exception as e:
+        print(f"[Forgot Password Request Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": f"Server error: {str(e)}"}), 500
 
 
 @app.route("/api/auth/forgot-password/reset", methods=["POST"])
 def api_forgot_password_reset():
     """Resets the account password using the verified reset OTP."""
-    data = request.get_json() or {}
-    email = data.get("email", "").strip().lower()
-    otp_code = data.get("otp_code", "").strip()
-    new_password = data.get("new_password", "")
+    try:
+        data = request.get_json() or {}
+        email = data.get("email", "").strip().lower()
+        otp_code = data.get("otp_code", "").strip()
+        new_password = data.get("new_password", "")
 
-    if not email or not otp_code or not new_password:
-        return jsonify({"status": "error", "message": "Email, verification code, and new password are required."}), 400
+        if not email or not otp_code or not new_password:
+            return jsonify({"status": "error", "message": "Email, verification code, and new password are required."}), 400
 
-    reset_res = reset_password_with_otp(email, otp_code, new_password)
-    if not reset_res["success"]:
-        return jsonify({"status": "error", "message": reset_res["message"]}), 400
+        reset_res = reset_password_with_otp(email, otp_code, new_password)
+        if not reset_res["success"]:
+            return jsonify({"status": "error", "message": reset_res["message"]}), 400
 
-    return jsonify({"status": "success", "message": reset_res["message"]})
+        return jsonify({"status": "success", "message": reset_res["message"]})
+    except Exception as e:
+        print(f"[Forgot Password Reset Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": f"Server error: {str(e)}"}), 500
+
 
 
 

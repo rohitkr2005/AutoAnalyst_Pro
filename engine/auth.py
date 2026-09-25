@@ -132,11 +132,29 @@ def get_db_connection():
     Provides a unified database connection.
     Connects to Supabase PostgreSQL when DATABASE_URL is set;
     falls back to local SQLite at data/users.db when offline/unset.
+    Automatically handles IPv4 pooler fallback for IPv6-restricted cloud containers (like Render).
     """
     db_url = get_database_url()
     if db_url and PSYCOPG2_AVAILABLE:
-        pg_conn = psycopg2.connect(db_url)
-        return PGConnectionWrapper(pg_conn)
+        try:
+            pg_conn = psycopg2.connect(db_url, connect_timeout=5)
+            return PGConnectionWrapper(pg_conn)
+        except Exception as e:
+            # Check if this was a Supabase Direct URL (IPv6-only, which fails on Render IPv4)
+            if "db." in db_url and ".supabase.co" in db_url:
+                import re
+                m = re.match(r"postgresql://([^:]+):([^@]+)@db\.([^.]+)\.supabase\.co(?::\d+)?/(.+)", db_url)
+                if m:
+                    user, pwd, ref, dbname = m.groups()
+                    pooler_url = f"postgresql://postgres.{ref}:{pwd}@aws-0-ap-south-1.pooler.supabase.com:5432/{dbname}"
+                    try:
+                        print(f"[AutoAnalyst Pro] Direct connection failed ({e}). Auto-switching to Supabase IPv4 Pooler...", flush=True)
+                        pg_conn = psycopg2.connect(pooler_url, connect_timeout=8)
+                        return PGConnectionWrapper(pg_conn)
+                    except Exception as e2:
+                        print(f"[AutoAnalyst Pro] Supabase IPv4 Pooler also failed: {e2}", flush=True)
+            # Re-raise original error if pooler fallback could not resolve it
+            raise e
 
     os.makedirs(DB_DIR, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)

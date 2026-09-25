@@ -639,6 +639,14 @@
       document.getElementById('auth-alert').style.display = 'none';
     }
 
+    async function safeParseJson(res) {
+      try {
+        return await res.json();
+      } catch (e) {
+        return { status: 'error', message: `Server error (HTTP ${res.status}). Database or server is not reachable.` };
+      }
+    }
+
     async function handleLoginSubmit(e) {
       e.preventDefault();
       hideAlert();
@@ -655,7 +663,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password })
         });
-        const data = await res.json();
+        const data = await safeParseJson(res);
         if (data.status === 'success') {
           showAlert('Authentication successful! Loading workspace...', true);
           setTimeout(() => {
@@ -667,7 +675,7 @@
           btn.textContent = 'Sign In to Workspace →';
         }
       } catch (err) {
-        showAlert('Network or server connection error.');
+        showAlert('Network error: ' + (err.message || 'Cannot reach server.'));
         btn.disabled = false;
         btn.textContent = 'Sign In to Workspace →';
       }
@@ -694,7 +702,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(pendingRegisterData)
         });
-        const data = await res.json();
+        const data = await safeParseJson(res);
 
         if (data.status === 'success') {
           showAlert(data.message, true);
@@ -713,7 +721,7 @@
           showAlert(data.message || 'Registration check failed.');
         }
       } catch (err) {
-        showAlert('Network or server connection error.');
+        showAlert('Network error: ' + (err.message || 'Could not reach server.'));
       } finally {
         btn.disabled = false;
         btn.textContent = 'Verify Email & Continue →';
@@ -742,7 +750,7 @@
             otp_code: otpCode
           })
         });
-        const data = await res.json();
+        const data = await safeParseJson(res);
 
         if (data.status === 'success') {
           showAlert('Account verified and created! Launching workspace...', true);
@@ -755,7 +763,7 @@
           btn.textContent = 'Confirm OTP & Activate Account →';
         }
       } catch (err) {
-        showAlert('Network or server connection error.');
+        showAlert('Network error: ' + (err.message || 'Could not reach server.'));
         btn.disabled = false;
         btn.textContent = 'Confirm OTP & Activate Account →';
       }
@@ -851,7 +859,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email })
         });
-        const data = await res.json();
+        const data = await safeParseJson(res);
 
         if (data.status === 'success') {
           recoveryEmail = email;
@@ -870,7 +878,7 @@
           showForgotAlert(data.message || 'No account found with this email.');
         }
       } catch (err) {
-        showForgotAlert('Network or server connection error.');
+        showForgotAlert('Network error: ' + (err.message || 'Could not reach server.'));
       } finally {
         btn.disabled = false;
         btn.textContent = 'Send Username & Reset Code →';
@@ -905,7 +913,7 @@
             new_password: newPassword
           })
         });
-        const data = await res.json();
+        const data = await safeParseJson(res);
 
         if (data.status === 'success') {
           showForgotAlert('Password reset successfully! Returning to Sign In...', true);
@@ -918,7 +926,7 @@
           showForgotAlert(data.message || 'Could not reset password. Invalid or expired code.');
         }
       } catch (err) {
-        showForgotAlert('Network or server connection error.');
+        showForgotAlert('Network error: ' + (err.message || 'Could not reach server.'));
       } finally {
         btn.disabled = false;
         btn.textContent = 'Update Password & Sign In →';

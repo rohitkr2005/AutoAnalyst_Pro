@@ -53,6 +53,8 @@ temp/
 scratch/
 
 # Testing & Coverage
+test_*.py
+verify_*.py
 .cache
 .pytest_cache/
 nosetests.xml
