@@ -615,7 +615,7 @@ function renderSearchPaletteResults(query) {
 
   const allActions = [
     { title: 'Run Full Auto-Pipeline', sub: 'Execute Ingest → Clean → EDA → AutoML in one click', action: 'pipeline', badge: 'ACTION' },
-    { title: 'Ask AI Analyst Copilot', sub: 'Ask questions about trends, metrics, and key drivers', action: 'ai', badge: 'AI COPILOT' },
+    { title: 'Ask AnalystIQ', sub: 'Ask questions about trends, metrics, and key drivers', action: 'ai', badge: 'ANALYSTIQ' },
     { title: 'Export Cleaned Dataset (CSV)', sub: 'Download transformed and sanitized dataset to CSV', action: 'export-csv', badge: 'EXPORT' },
     { title: 'Export PDF / Executive Report', sub: 'Generate printable executive report with charts & KPI cards', action: 'export-pdf', badge: 'REPORT' }
   ];
@@ -2216,7 +2216,7 @@ async function handleCopilotSubmit(e) {
     }
   } catch (err) {
     removeChatTyping(typingId);
-    appendChatMessage('Unable to reach analytics copilot backend.', 'ai');
+    appendChatMessage('Unable to reach AnalystIQ backend.', 'ai');
   }
 }
 
@@ -3068,8 +3068,15 @@ async function handleMultiFileUpload(event) {
       if (!res.ok) {
         let errMsg = `Upload failed with status ${res.status}`;
         try {
-          const errData = await res.json();
-          if (errData.message) errMsg = errData.message;
+          const rawText = await res.text();
+          try {
+            const errData = JSON.parse(rawText);
+            if (errData.message) errMsg = errData.message;
+          } catch (_) {
+            if (rawText && rawText.length < 200 && !rawText.includes('<html')) {
+              errMsg = rawText;
+            }
+          }
         } catch (_) {}
         throw new Error(errMsg);
       }
@@ -3236,7 +3243,7 @@ async function executeDaxCopilot() {
   }
 
   try {
-    const res = await fetch('/api/model/dax/copilot', {
+    const res = await fetch('/api/model/dax/analystiq', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt: prompt })
@@ -3257,7 +3264,7 @@ async function executeDaxCopilot() {
         if (tableCard) tableCard.style.display = 'none';
         if (scalarCard) {
           scalarCard.style.display = 'block';
-          document.getElementById('dax-scalar-label').textContent = data.explanation || 'AI Copilot DAX Result';
+          document.getElementById('dax-scalar-label').textContent = data.explanation || 'AnalystIQ DAX Result';
           document.getElementById('dax-scalar-value').textContent = data.formatted;
           document.getElementById('dax-scalar-formula').textContent = data.generated_dax;
         }
@@ -3265,7 +3272,7 @@ async function executeDaxCopilot() {
         if (scalarCard) scalarCard.style.display = 'none';
         if (tableCard) {
           tableCard.style.display = 'block';
-          document.getElementById('dax-chart-title').textContent = data.chart?.title || data.explanation || 'DAX Visual Synthesis';
+          document.getElementById('dax-chart-title').textContent = data.chart?.title || data.explanation || 'AnalystIQ Visual Synthesis';
 
           // Table
           const thead = document.querySelector('#dax-table-output thead');
@@ -3298,11 +3305,11 @@ async function executeDaxCopilot() {
         }
       }
     } else {
-      alert(data.message || 'DAX Copilot could not parse prompt.');
+      alert(data.message || 'AnalystIQ could not parse prompt.');
     }
   } catch (err) {
-    console.error('DAX Copilot error:', err);
-    alert('DAX Copilot encountered an error.');
+    console.error('AnalystIQ error:', err);
+    alert('AnalystIQ encountered an error.');
   } finally {
     if (btn) {
       btn.disabled = false;

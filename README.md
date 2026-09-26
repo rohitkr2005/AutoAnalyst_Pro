@@ -6,7 +6,7 @@
 [![Chart.js](https://img.shields.io/badge/Chart.js-4.4%2B-FF6384.svg?logo=chartdotjs&logoColor=white)](https://www.chartjs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **AutoAnalyst Pro** is an autonomous data science and business intelligence platform designed to automate the complete workflow of a data analyst. From ingesting messy, raw tabular data to automated cleansing, statistical exploratory data analysis (EDA), machine learning modeling, and an interactive executive live dashboard—complete with an AI Copilot for conversational data intelligence.
+> **AutoAnalyst Pro** is an autonomous data science and business intelligence platform designed to automate the complete workflow of a data analyst. From ingesting messy, raw tabular data to automated cleansing, statistical exploratory data analysis (EDA), machine learning modeling, and an interactive executive live dashboard—complete with AnalystIQ™ for conversational data intelligence.
 
 ---
 
@@ -34,7 +34,7 @@
 - **Feature Importance / Key Driver Analysis**: Random Forest ensemble modeling to identify which independent variables exert the strongest leverage on primary outcomes.
 - **Time-Series Forecasting**: Moving-average trajectory projections with trend confidence intervals.
 
-### 5. ✨ Conversational AI Copilot
+### 5. ✨ Conversational AnalystIQ™ Engine
 - **Natural Language Data Querying**: Ask questions about your dataset in plain English and receive instant, grounded statistical interpretations, driver breakdowns, persona summaries, and anomaly alerts.
 
 ### 6. 🎨 3-Mode Theme System & Live 3D Perspective Canvas
@@ -75,7 +75,7 @@ Raw & Messy Input (CSV / TSV / XLSX / JSON)
 [Stage 4: Automated Machine Learning]      ──> K-Means Clustering, PCA, Isolation Forest, Random Forest Drivers
    │
    ▼
-[Stage 5: Live BI Dashboard & AI Copilot]  ──> Interactive Visual Canvas, Chat Copilot, Export Suite
+[Stage 5: Live BI Dashboard & AnalystIQ]  ──> Interactive Visual Canvas, AnalystIQ Studio, Export Suite
 ```
 
 ---
@@ -174,7 +174,7 @@ Run the included automated test suites to verify backend endpoints, data transfo
 # Run server REST API tests
 python test_server_api.py
 
-# Run user authentication, session, and AI Copilot tests
+# Run user authentication, session, and AnalystIQ tests
 python test_auth_and_features.py
 ```
 

@@ -168,8 +168,8 @@
           <span class="nav-item-icon">
             <svg viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
           </span>
-          <span class="nav-item-label">Ask AI Agent</span>
-          <span class="nav-badge ai">AI Copilot</span>
+          <span class="nav-item-label">Ask AnalystIQ</span>
+          <span class="nav-badge ai">AnalystIQ</span>
         </button>
 
         <div class="sidebar-nav-section-title" style="margin-top: 1.4rem;">ACCOUNT & LOGS</div>
@@ -264,9 +264,9 @@
         <!-- Right: Action Suite (Icon-Only with Rich Tooltips) -->
         <div class="topbar-actions">
 
-          <!-- 1. Ask AI Copilot Icon Button -->
+          <!-- 1. Ask AnalystIQ Icon Button -->
           <button class="topbar-icon-btn btn-ai-sparkle" onclick="openAskAI()"
-            data-tooltip="Ask AI Copilot" aria-label="Ask AI Copilot">
+            data-tooltip="Ask AnalystIQ" aria-label="Ask AnalystIQ">
             <span class="topbar-icon">
               <svg viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
             </span>
@@ -1056,23 +1056,23 @@
               </div>
             </div>
 
-            <!-- AI DAX Copilot Conversational Bar -->
+            <!-- AnalystIQ Automated DAX Engine Bar -->
             <div style="background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(236,72,153,0.08) 100%); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 1.1rem; margin-bottom: 1.25rem;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
                 <div style="font-size: 0.92rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px;">
                   <svg viewBox="0 0 24 24" width="16" height="16" stroke="#818cf8" stroke-width="2" fill="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                  <span>Automated AI DAX Copilot (Natural Language)</span>
+                  <span>AnalystIQ Automated DAX Engine (Natural Language)</span>
                 </div>
                 <span style="font-size: 0.72rem; color: #34d399; font-weight: 600; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); padding: 2px 10px; border-radius: 999px;">Fully Automated</span>
               </div>
-              <p style="font-size: 0.8rem; color: #94a3b8; margin: 0 0 0.75rem 0;">Ask anything in plain English like <code style="color:#cbd5e1; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px;">"sales by region"</code>, <code style="color:#cbd5e1; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px;">"profit margin by category"</code>, or <code style="color:#cbd5e1; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px;">"total customer count"</code> — the AI writes, compiles, and visualizes the DAX formula instantly.</p>
+              <p style="font-size: 0.8rem; color: #94a3b8; margin: 0 0 0.75rem 0;">Ask anything in plain English like <code style="color:#cbd5e1; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px;">"sales by region"</code>, <code style="color:#cbd5e1; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px;">"profit margin by category"</code>, or <code style="color:#cbd5e1; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px;">"total customer count"</code> — AnalystIQ writes, compiles, and visualizes the DAX formula instantly.</p>
               <div style="display: flex; gap: 0.6rem; align-items: center;">
                 <input type="text" id="dax-copilot-input" class="search-field" style="flex: 1; font-size: 0.88rem; padding: 0.6rem 0.9rem;"
-                  placeholder='Ask AI: e.g. "total sales by region", "profit margin by category", or "top 5 orders by revenue"'
+                  placeholder='Ask AnalystIQ: e.g. "total sales by region", "profit margin by category", or "top 5 orders by revenue"'
                   onkeydown="if(event.key === 'Enter') executeDaxCopilot()">
                 <button type="button" class="btn-primary" id="btn-run-dax-copilot" onclick="executeDaxCopilot()" style="padding: 0.6rem 1.25rem; font-size: 0.84rem; display: flex; align-items: center; gap: 6px; white-space: nowrap; background: linear-gradient(135deg, #6366f1, #8b5cf6);">
                   <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                  <span>Ask Copilot</span>
+                  <span>Ask AnalystIQ</span>
                 </button>
               </div>
             </div>
@@ -1582,7 +1582,7 @@
                 <svg viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
               </div>
               <div>
-                <h3>Analytica AI Copilot</h3>
+                <h3>AutoAnalyst AnalystIQ™</h3>
                 <p>Grounding analytical intelligence directly in your active dataset.</p>
               </div>
             </div>
@@ -1615,7 +1615,7 @@
             <div class="full-ai-chat-stream" id="full-ai-chat-messages"
               style="max-height: 440px; overflow-y: auto; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.85rem;">
               <div class="chat-bubble ai">
-                Welcome to <strong>AutoAnalyst AI Copilot</strong>. You can ask me any question about
+                Welcome to <strong>AutoAnalyst AnalystIQ™</strong>. You can ask me any question about
                 your data — from primary drivers and clustering personas to anomaly risks and forecasts!
               </div>
             </div>
@@ -1624,7 +1624,7 @@
             <form class="copilot-input-bar" onsubmit="handleFullAISubmit(event)">
               <input type="text" id="full-ai-input" class="copilot-input"
                 placeholder="Ask anything about your data in plain English..." autocomplete="off">
-              <button type="submit" class="copilot-send-btn">Ask AI</button>
+              <button type="submit" class="copilot-send-btn">Ask AnalystIQ</button>
             </form>
 
           </div>
@@ -1638,14 +1638,14 @@
   </div>
 
   <!-- ============================================================ -->
-  <!-- FLOATING AI ANALYST COPILOT CHAT DRAWER (Persistent Access)  -->
+  <!-- FLOATING AI ANALYST IQ CHAT DRAWER (Persistent Access)       -->
   <!-- ============================================================ -->
-  <div class="copilot-launcher" id="copilot-launcher" onclick="toggleCopilotDrawer()" title="Open AI Analyst Copilot">
+  <div class="copilot-launcher" id="copilot-launcher" onclick="toggleCopilotDrawer()" title="Open AnalystIQ Assistant">
     <div class="copilot-pulse"></div>
     <span class="copilot-icon">
       <svg viewBox="0 0 24 24"><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M12 8V4H8"></path><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>
     </span>
-    <span class="copilot-btn-text">Ask AI</span>
+    <span class="copilot-btn-text">Ask AnalystIQ</span>
   </div>
 
   <div class="copilot-drawer" id="copilot-drawer">
@@ -1655,7 +1655,7 @@
           <svg viewBox="0 0 24 24"><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M12 8V4H8"></path><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>
         </div>
         <div>
-          <h3>AI Analyst Copilot</h3>
+          <h3>AnalystIQ Intelligent Assistant</h3>
           <p>Instant answers grounded in your active dataset</p>
         </div>
       </div>
@@ -1691,14 +1691,14 @@
     <!-- Chat Message Stream -->
     <div class="copilot-messages" id="copilot-messages">
       <div class="chat-bubble ai">
-        Welcome to <strong>AutoAnalyst AI Copilot</strong>. Ask me anything about your dataset's drivers,
+        Welcome to <strong>AnalystIQ</strong>. Ask me anything about your dataset's drivers,
         anomalies, clusters, or forecasts, or click any prompt pill above!
       </div>
     </div>
 
     <!-- Input Bar -->
     <form class="copilot-input-bar" onsubmit="handleCopilotSubmit(event)">
-      <input type="text" id="copilot-input" class="copilot-input" placeholder="Ask a question about this data..."
+      <input type="text" id="copilot-input" class="copilot-input" placeholder="Ask AnalystIQ a question about this data..."
         autocomplete="off">
       <button type="submit" class="copilot-send-btn" id="copilot-send-btn">Send</button>
     </form>

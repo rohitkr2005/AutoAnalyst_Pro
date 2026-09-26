@@ -406,6 +406,7 @@ def get_user_by_id(user_id: int) -> Optional[Dict[str, Any]]:
 
 def record_user_activity(user_id: int, dataset_name: str, records_count: int, health_score: float, action_type: str = "Analyzed Dataset"):
     """Records user dataset analysis in activity history."""
+    conn = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -414,9 +415,19 @@ def record_user_activity(user_id: int, dataset_name: str, records_count: int, he
         VALUES (?, ?, ?, ?, ?)
         """, (user_id, dataset_name, records_count, health_score, action_type))
         conn.commit()
-        conn.close()
     except Exception as e:
+        if conn:
+            try:
+                conn.rollback()
+            except Exception:
+                pass
         print(f"Error logging user activity: {e}")
+    finally:
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass
 
 
 def get_user_history(user_id: int, limit: int = 30) -> List[Dict[str, Any]]:

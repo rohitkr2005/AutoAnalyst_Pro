@@ -50,6 +50,16 @@ def request_entity_too_large(error):
     }), 413
 
 
+@app.errorhandler(500)
+def internal_server_error(error):
+    if request.path.startswith("/api/"):
+        return jsonify({
+            "status": "error",
+            "message": "Internal server execution error. Please check dataset formatting."
+        }), 500
+    return render_template("login.html", error="Internal Server Error"), 500
+
+
 # In-memory storage for active dataset session
 SESSION_DATA = {
     "dataset_name": "No dataset loaded",
@@ -1364,10 +1374,13 @@ def api_model_upload_multiple():
 
         from engine.data_modeler import ingest_files_into_model
         result = ingest_files_into_model(files_data, GLOBAL_DATA_MODEL, clear_existing=(not append_mode))
-        return jsonify(result)
+        safe_result = sanitize_for_json(result)
+        return jsonify(safe_result)
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         print(f"[Multi-File Upload Error] {e}", flush=True)
-        return jsonify({"status": "error", "message": f"Upload failed: {str(e)}"}), 500
+        return jsonify({"status": "error", "message": f"Upload processing issue: {str(e)}"}), 500
 
 
 @app.route("/api/model/schema", methods=["GET"])
@@ -1455,6 +1468,7 @@ def api_model_dax_evaluate():
         return jsonify({"status": "error", "message": f"DAX error: {str(e)}"}), 400
 
 
+@app.route("/api/model/dax/analystiq", methods=["POST"])
 @app.route("/api/model/dax/copilot", methods=["POST"])
 @login_required
 def api_model_dax_copilot():
@@ -1478,10 +1492,10 @@ def api_model_dax_copilot():
             eval_res["natural_language"] = prompt
             eval_res["generated_dax"] = dax_expr
             eval_res["explanation"] = nlp_res.get("explanation", "")
-            return jsonify(eval_res)
+            return jsonify(sanitize_for_json(eval_res))
         else:
             val = engine.evaluate_scalar_dax(dax_expr)
-            return jsonify({
+            return jsonify(sanitize_for_json({
                 "status": "success",
                 "type": "scalar",
                 "natural_language": prompt,
@@ -1490,7 +1504,7 @@ def api_model_dax_copilot():
                 "result": val,
                 "formatted": f"{val:,.2f}" if isinstance(val, (int, float, np.number)) else str(val),
                 "explanation": nlp_res.get("explanation", "")
-            })
+            }))
     except Exception as e:
         print(f"[DAX Copilot Error] {e}", flush=True)
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -1504,7 +1518,7 @@ def api_model_auto_measures():
         from engine.data_modeler import DaxEngine
         engine = DaxEngine(GLOBAL_DATA_MODEL)
         measures = engine.generate_automated_measures()
-        return jsonify({"status": "success", "measures": measures})
+        return jsonify(sanitize_for_json({"status": "success", "measures": measures}))
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 

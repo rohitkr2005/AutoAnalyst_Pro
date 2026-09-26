@@ -52,11 +52,18 @@ class DataModel:
         """
         Heuristic scan across all loaded tables to discover potential
         primary-foreign key links (e.g. Orders.customer_id -> Customers.id).
+        Restricts candidate columns to key/ID patterns and verifies high cardinality in lookup table.
         """
         discovered = []
         table_names = list(self.tables.keys())
         if len(table_names) < 2:
             return discovered
+
+        KEY_PATTERNS = ('id', 'code', 'key', 'no', 'num', 'number', 'pk', 'fk', 'sku', 'upc')
+
+        def _is_key_candidate(c_name: str) -> bool:
+            clean = c_name.lower().replace("_", "").replace("-", "")
+            return any(clean.endswith(k) or clean == k or clean.startswith(k) for k in KEY_PATTERNS)
 
         for i in range(len(table_names)):
             for j in range(len(table_names)):
@@ -66,33 +73,46 @@ class DataModel:
                 df1, df2 = self.tables[t1], self.tables[t2]
 
                 for col1 in df1.columns:
+                    if not _is_key_candidate(col1):
+                        continue
                     c1_clean = col1.lower().replace("_", "").replace("-", "")
                     
                     for col2 in df2.columns:
+                        if not _is_key_candidate(col2):
+                            continue
                         c2_clean = col2.lower().replace("_", "").replace("-", "")
                         
                         t2_stem = re.sub(r'(?:ies|s)$', '', t2.lower())
                         t1_stem = re.sub(r'(?:ies|s)$', '', t1.lower())
                         is_match = False
-                        if c1_clean == c2_clean and len(c1_clean) > 1:
+                        if c1_clean == c2_clean:
                             is_match = True
-                        elif c2_clean in ["id", f"{t2_stem}id"] and (t2_stem in c1_clean):
+                        elif c2_clean in ["id", f"{t2_stem}id", "key", f"{t2_stem}key"] and (t2_stem in c1_clean):
                             is_match = True
-                        elif c1_clean in ["id", f"{t1_stem}id"] and (t1_stem in c2_clean):
+                        elif c1_clean in ["id", f"{t1_stem}id", "key", f"{t1_stem}key"] and (t1_stem in c2_clean):
                             is_match = True
                         elif (t2_stem and t2_stem in c1_clean) and (c2_clean == "id" or c2_clean in c1_clean):
                             is_match = True
 
                         if is_match:
-                            # Verify value overlap to confirm true relationship
                             try:
-                                s1 = df1[col1].dropna().astype(str).unique()
-                                s2 = df2[col2].dropna().astype(str).unique()
+                                # Sample max 2000 non-null values for fast intersection
+                                s1 = df1[col1].dropna().head(2000).astype(str).str.strip().unique()
+                                s2_series = df2[col2].dropna().head(2000)
+                                s2 = s2_series.astype(str).str.strip().unique()
+                                
+                                # In table 2 (lookup table), verify key has reasonably high uniqueness to prevent Cartesian explosions
+                                if len(s2_series) > 0:
+                                    uniqueness_t2 = len(s2) / len(s2_series)
+                                    if uniqueness_t2 < 0.4:
+                                        # Not a true primary key in t2, skip
+                                        continue
+
                                 if len(s1) > 0 and len(s2) > 0:
                                     overlap = len(set(s1).intersection(set(s2)))
                                     ratio = overlap / min(len(s1), len(s2))
-                                    if ratio >= 0.25:  # Significant overlap found
-                                        is_unique_in_t2 = (len(s2) == len(df2[col2].dropna()))
+                                    if ratio >= 0.15:  # Valid key overlap
+                                        is_unique_in_t2 = (len(s2) == len(s2_series))
                                         cardinality = "many_to_one" if is_unique_in_t2 else "many_to_many"
                                         
                                         rel_entry = {
@@ -101,7 +121,7 @@ class DataModel:
                                             "to_table": t2,
                                             "to_col": col2,
                                             "cardinality": cardinality,
-                                            "overlap_ratio": round(ratio, 2)
+                                            "overlap_ratio": round(float(ratio), 2)
                                         }
                                         if not any(
                                             (r["from_table"] == t2 and r["to_table"] == t1 and r["from_col"] == col2 and r["to_col"] == col1)
@@ -178,7 +198,11 @@ class DataModel:
                     "null_count": int(df[col].isna().sum())
                 })
 
-            sample_rows = df.head(5).fillna("").to_dict(orient="records")
+            clean_sample = df.head(5).copy()
+            for col in clean_sample.columns:
+                clean_sample[col] = clean_sample[col].astype(str).replace({"nan": "", "None": "", "<NA>": "", "NaT": ""})
+            sample_rows = clean_sample.to_dict(orient="records")
+
             tables_meta.append({
                 "name": name,
                 "rows": len(df),
@@ -198,6 +222,7 @@ class DataModel:
         """
         Executes relational joins across all connected tables starting
         from the primary base table (or table with highest row count).
+        Deduplicates lookup tables and normalizes keys to prevent Cartesian explosions.
         """
         if not self.tables:
             return pd.DataFrame()
@@ -223,15 +248,31 @@ class DataModel:
                     right_df = right_df.rename(columns=rename_map)
                     right_key = rename_map.get(rel["to_col"], rel["to_col"])
 
-                    joined = pd.merge(
-                        joined,
-                        right_df,
-                        how="left",
-                        left_on=rel["from_col"],
-                        right_on=right_key
-                    )
-                    visited_tables.add(to_t)
-                    progress_made = True
+                    # Prevent Cartesian explosion: deduplicate lookup table on join key
+                    right_df = right_df.drop_duplicates(subset=[right_key])
+
+                    try:
+                        temp_k_left = f"__temp_k_{rel['from_col']}"
+                        temp_k_right = f"__temp_k_{right_key}"
+                        joined[temp_k_left] = joined[rel["from_col"]].astype(str).str.strip()
+                        right_df[temp_k_right] = right_df[right_key].astype(str).str.strip()
+
+                        # If right_key is in joined, drop it from right_df to prevent Pandas _x and _y suffixes
+                        if right_key in joined.columns:
+                            right_df = right_df.drop(columns=[right_key], errors="ignore")
+
+                        joined = pd.merge(
+                            joined,
+                            right_df,
+                            how="left",
+                            left_on=temp_k_left,
+                            right_on=temp_k_right
+                        )
+                        joined = joined.drop(columns=[temp_k_left, temp_k_right], errors="ignore")
+                        visited_tables.add(to_t)
+                        progress_made = True
+                    except Exception as e:
+                        print(f"[Join Error] {from_t} -> {to_t}: {e}", flush=True)
 
                 elif to_t in visited_tables and from_t not in visited_tables:
                     left_df = self.tables[from_t].copy()
@@ -241,15 +282,31 @@ class DataModel:
                     left_df = left_df.rename(columns=rename_map)
                     left_key = rename_map.get(rel["from_col"], rel["from_col"])
 
-                    joined = pd.merge(
-                        joined,
-                        left_df,
-                        how="left",
-                        left_on=rel["to_col"],
-                        right_on=left_key
-                    )
-                    visited_tables.add(from_t)
-                    progress_made = True
+                    # Prevent Cartesian explosion: deduplicate lookup table on join key
+                    left_df = left_df.drop_duplicates(subset=[left_key])
+
+                    try:
+                        temp_k_left = f"__temp_k_{rel['to_col']}"
+                        temp_k_right = f"__temp_k_{left_key}"
+                        joined[temp_k_left] = joined[rel["to_col"]].astype(str).str.strip()
+                        left_df[temp_k_right] = left_df[left_key].astype(str).str.strip()
+
+                        # If left_key is in joined, drop it from left_df to prevent Pandas _x and _y suffixes
+                        if left_key in joined.columns:
+                            left_df = left_df.drop(columns=[left_key], errors="ignore")
+
+                        joined = pd.merge(
+                            joined,
+                            left_df,
+                            how="left",
+                            left_on=temp_k_left,
+                            right_on=temp_k_right
+                        )
+                        joined = joined.drop(columns=[temp_k_left, temp_k_right], errors="ignore")
+                        visited_tables.add(from_t)
+                        progress_made = True
+                    except Exception as e:
+                        print(f"[Join Error] {to_t} -> {from_t}: {e}", flush=True)
 
             if not progress_made:
                 break
@@ -500,11 +557,17 @@ class DaxEngine:
             raise ValueError("Data model is empty or no valid records found.")
 
         resolved_group_col = None
+        resolved_group_col = None
         if group_col in joined.columns:
             resolved_group_col = group_col
         else:
             for c in joined.columns:
-                if c.endswith(f"_{group_col}") or c.lower() == group_col.lower():
+                if (
+                    c == f"{group_col}_x" or c == f"{group_col}_y" or
+                    c.endswith(f"_{group_col}") or c.lower() == group_col.lower() or
+                    c.lower() == f"{group_col.lower()}_x" or c.lower() == f"{group_col.lower()}_y" or
+                    c.lower().endswith(f"_{group_col.lower()}")
+                ):
                     resolved_group_col = c
                     break
 
@@ -523,11 +586,19 @@ class DaxEngine:
 
         res_df = pd.DataFrame(result_rows)
         primary_measure = measures[0][0]
-        if primary_measure in res_df.columns:
+        if not res_df.empty and primary_measure in res_df.columns:
             res_df = res_df.sort_values(by=primary_measure, ascending=False).head(20)
 
-        labels = [str(x) for x in res_df[group_col].tolist()]
-        values = [float(v) for v in res_df[primary_measure].tolist()]
+        def _to_float(v):
+            try:
+                if v is None or pd.isna(v):
+                    return 0.0
+                return round(float(v), 2)
+            except Exception:
+                return 0.0
+
+        labels = [str(x) for x in res_df[group_col].tolist()] if (not res_df.empty and group_col in res_df.columns) else []
+        values = [_to_float(v) for v in res_df[primary_measure].tolist()] if (not res_df.empty and primary_measure in res_df.columns) else []
 
         palettes = ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6', '#14b8a6']
         chart_type = "doughnut" if len(labels) <= 6 else "bar"
@@ -554,15 +625,22 @@ class DaxEngine:
         }
 
     def _find_column_and_table(self, query_text: str) -> Tuple[Optional[str], Optional[str]]:
-        """Finds the best matching column name and table name from text tokens."""
+        """Finds the best matching column name and table name from text tokens, prioritizing descriptive columns."""
         q_tokens = query_text.lower().split()
+        candidates = []
         for t_name, df in self.model.tables.items():
             for col in df.columns:
                 c_clean = col.lower().replace("_", "")
+                is_id = any(c_clean.endswith(k) or c_clean == k for k in ['id', 'key', 'code', 'pk', 'fk'])
                 for tok in q_tokens:
                     tok_clean = tok.replace("_", "")
-                    if tok_clean == c_clean or (len(tok_clean) >= 3 and tok_clean in c_clean) or (len(c_clean) >= 3 and c_clean in tok_clean):
-                        return col, t_name
+                    if tok_clean == c_clean:
+                        candidates.append((0 if not is_id else 2, col, t_name))
+                    elif (len(tok_clean) >= 3 and tok_clean in c_clean) or (len(c_clean) >= 3 and c_clean in tok_clean):
+                        candidates.append((1 if not is_id else 3, col, t_name))
+        if candidates:
+            candidates.sort(key=lambda x: x[0])
+            return candidates[0][1], candidates[0][2]
         return None, None
 
     def generate_automated_measures(self) -> List[Dict[str, Any]]:
@@ -856,40 +934,68 @@ def ingest_files_into_model(files_data: List[Tuple[str, bytes]], model: DataMode
             except Exception as e:
                 print(f"[Multi-Sheet Excel Load Error] {filename}: {e}", flush=True)
 
-        # 2. CSV / TSV
+        # 2. CSV / TSV / TXT (Smart encoding and delimiter sniffing)
         elif filename.lower().endswith(('.csv', '.tsv', '.txt')):
             try:
-                sep = '\t' if filename.lower().endswith('.tsv') else ','
-                df = pd.read_csv(io.BytesIO(content), sep=sep, low_memory=False, encoding_errors="replace")
-                if not df.empty:
+                from engine.cleaner import sniff_and_read_csv
+                df = sniff_and_read_csv(content, filename)
+                if df is not None and not df.empty:
                     table_name = clean_base
                     model.add_table(table_name, df)
                     loaded_tables.append(table_name)
             except Exception as e:
-                print(f"[CSV Load Error] {filename}: {e}", flush=True)
+                print(f"[Smart CSV Load Error] {filename}: {e}", flush=True)
+                # Fallback to standard read_csv with latin1 and lenient parsing
+                try:
+                    df = pd.read_csv(io.BytesIO(content), encoding="latin1", on_bad_lines="skip")
+                    if df is not None and not df.empty:
+                        table_name = clean_base
+                        model.add_table(table_name, df)
+                        loaded_tables.append(table_name)
+                except Exception as e2:
+                    print(f"[CSV Fallback Error] {filename}: {e2}", flush=True)
 
         # 3. JSON
         elif filename.lower().endswith('.json'):
             try:
                 df = pd.read_json(io.BytesIO(content))
-                if not df.empty:
+                if df is not None and not df.empty:
                     table_name = clean_base
                     model.add_table(table_name, df)
                     loaded_tables.append(table_name)
             except Exception as e:
                 print(f"[JSON Load Error] {filename}: {e}", flush=True)
 
-    relationships = model.detect_relationships()
+    relationships = []
+    try:
+        relationships = model.detect_relationships()
+    except Exception as e:
+        print(f"[Detect Relationships Error] {e}", flush=True)
 
-    # Automatically generate suggested DAX measures for the loaded model
-    dax_engine = DaxEngine(model)
-    automated_measures = dax_engine.generate_automated_measures()
+    # Automatically generate suggested DAX measures for the loaded model (safe, non-blocking)
+    automated_measures = []
+    try:
+        dax_engine = DaxEngine(model)
+        automated_measures = dax_engine.generate_automated_measures()
+    except Exception as e:
+        print(f"[Auto-Measures Generation Error] {e}", flush=True)
+
+    try:
+        schema_summary = model.get_schema_summary()
+    except Exception as e:
+        print(f"[Schema Summary Error] {e}", flush=True)
+        schema_summary = {
+            "tables": [],
+            "relationships": model.relationships,
+            "total_tables": len(model.tables),
+            "measures_count": 0
+        }
 
     return {
         "status": "success",
         "loaded_tables": loaded_tables,
         "relationships_discovered": relationships,
         "total_tables": len(model.tables),
-        "schema": model.get_schema_summary(),
+        "schema": schema_summary,
         "automated_measures": automated_measures
     }
