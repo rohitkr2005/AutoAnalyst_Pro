@@ -1069,7 +1069,8 @@ def export_pptx():
             audit_report=audit_report,
             eda_data=eda_data,
             ml_data=ml_data,
-            user_name=user_name
+            user_name=user_name,
+            df=df
         )
 
         clean_name = dataset_name.replace(" ", "_").replace(":", "_").lower()

@@ -209,6 +209,13 @@ function setupNavigation() {
     if (searchWrap && !searchWrap.contains(e.target)) {
       closeSearchPalette();
     }
+    const sidebar = document.getElementById('app-sidebar');
+    const mobileBtn = document.querySelector('.mobile-menu-btn');
+    if (sidebar && sidebar.classList.contains('mobile-open')) {
+      if (!sidebar.contains(e.target) && (!mobileBtn || !mobileBtn.contains(e.target))) {
+        closeMobileSidebar();
+      }
+    }
   });
 
   // Global keyboard shortcut (⌘K or Ctrl+K for search, Escape to close)
@@ -221,6 +228,7 @@ function setupNavigation() {
       openSearchPalette();
     } else if (e.key === 'Escape') {
       closeSearchPalette();
+      closeMobileSidebar();
     }
   });
 }
@@ -259,8 +267,7 @@ function switchView(viewId) {
   });
 
   // Close mobile sidebar if open
-  const sidebar = document.getElementById('app-sidebar');
-  if (sidebar) sidebar.classList.remove('mobile-open');
+  closeMobileSidebar();
 
   // Lazy loading & view specific actions
   if (targetView === 'view-reports') {
@@ -332,11 +339,21 @@ function proceedToEDA() {
   switchSubTab('view-reports', 'reports-corr');
 }
 
+function closeMobileSidebar() {
+  const sidebar = document.getElementById('app-sidebar');
+  const backdrop = document.getElementById('sidebar-mobile-backdrop');
+  if (sidebar) sidebar.classList.remove('mobile-open');
+  if (backdrop) backdrop.classList.remove('active');
+}
+
 function toggleSidebar() {
   const sidebar = document.getElementById('app-sidebar');
+  const backdrop = document.getElementById('sidebar-mobile-backdrop');
   if (!sidebar) return;
   if (window.innerWidth <= 900) {
-    sidebar.classList.toggle('mobile-open');
+    const willOpen = !sidebar.classList.contains('mobile-open');
+    sidebar.classList.toggle('mobile-open', willOpen);
+    if (backdrop) backdrop.classList.toggle('active', willOpen);
   } else {
     sidebar.classList.toggle('collapsed');
     const collapseBtn = document.getElementById('btn-sidebar-collapse');
@@ -344,6 +361,39 @@ function toggleSidebar() {
       collapseBtn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
     }
   }
+}
+
+function printExecutiveReport() {
+  // 1. Immediately close any open dropdowns, mobile sidebars, or palettes
+  const exportMenu = document.getElementById('export-dropdown-menu');
+  if (exportMenu) exportMenu.classList.remove('active');
+  closeMobileSidebar();
+  closeSearchPalette();
+
+  // 2. Populate print metadata banner
+  const printDatasetEl = document.getElementById('print-meta-dataset');
+  if (printDatasetEl) {
+    printDatasetEl.textContent = appState.datasetName || 'Active Dataset';
+  }
+  const printDateEl = document.getElementById('print-meta-date');
+  if (printDateEl) {
+    const now = new Date();
+    printDateEl.textContent = now.toLocaleDateString(undefined, { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  }
+
+  // 3. Resize all charts so canvases fit the printable print page margins cleanly
+  resizeAllCharts();
+
+  // 4. Trigger print preview after a brief timeout so DOM repaints cleanly without dropdown
+  setTimeout(() => {
+    window.print();
+  }, 120);
 }
 
 function handleSidebarLogoClick() {
@@ -354,7 +404,7 @@ function handleSidebarLogoClick() {
     const collapseBtn = document.getElementById('btn-sidebar-collapse');
     if (collapseBtn) collapseBtn.textContent = '◀';
   } else if (window.innerWidth <= 900 && !sidebar.classList.contains('mobile-open')) {
-    sidebar.classList.add('mobile-open');
+    toggleSidebar();
   }
 }
 

@@ -76,6 +76,10 @@
             <span class="brand-title">AutoAnalyst</span>
             <span class="brand-tier">ENTERPRISE BI</span>
           </div>
+          <!-- Mobile-Only Close Button -->
+          <button class="sidebar-mobile-close-btn" id="sidebar-mobile-close-btn" onclick="closeMobileSidebar()" aria-label="Close Navigation" title="Close Sidebar">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
         </div>
 
         <!-- Workspace Context Card -->
@@ -207,6 +211,9 @@
 
     </aside>
 
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div class="sidebar-mobile-backdrop" id="sidebar-mobile-backdrop" onclick="closeMobileSidebar()"></div>
+
     <!-- ============================================================ -->
     <!-- MAIN APPLICATION WRAPPER (Top Bar + Dynamic Workspace Views) -->
     <!-- ============================================================ -->
@@ -319,7 +326,7 @@
                 </div>
               </button>
               <div class="menu-divider"></div>
-              <button class="menu-item" onclick="window.print()">
+              <button class="menu-item" onclick="printExecutiveReport()">
                 <span class="item-icon">
                   <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                 </span>
@@ -382,6 +389,34 @@
         <!-- VIEW 1: DASHBOARDS (Live Interactive BI Executive Canvas) -->
         <!-- ======================================================== -->
         <section class="workspace-view active" id="view-dashboards">
+
+          <!-- Print-Only Executive Briefing Header Banner -->
+          <div class="print-executive-header">
+            <div class="print-header-top">
+              <div class="print-brand-badge">
+                <span class="print-brand-title">AutoAnalyst Pro</span>
+                <span class="print-brand-subtitle">Autonomous Business Intelligence & Analytics Report</span>
+              </div>
+              <div class="print-badge-verified">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                Certified Clean & Validated
+              </div>
+            </div>
+            <div class="print-header-meta">
+              <div class="print-meta-item">
+                <span class="meta-label">Active Dataset:</span>
+                <span class="meta-val" id="print-meta-dataset">Active Dataset</span>
+              </div>
+              <div class="print-meta-item">
+                <span class="meta-label">Report Date:</span>
+                <span class="meta-val" id="print-meta-date">Current Date</span>
+              </div>
+              <div class="print-meta-item">
+                <span class="meta-label">Classification:</span>
+                <span class="meta-val">Confidential / Executive Briefing</span>
+              </div>
+            </div>
+          </div>
 
           <!-- View Sub-Header with Sub-Tabs Navigation -->
           <div class="view-header-bar">

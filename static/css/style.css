@@ -1318,20 +1318,376 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
 }
 
-/* Responsive Overrides */
+/* Responsive Overrides & Mobile Navigation System */
+.sidebar-mobile-close-btn {
+  display: none;
+}
+
+.sidebar-mobile-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(4, 7, 18, 0.75);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 998;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s;
+}
+
+.sidebar-mobile-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
 @media (max-width: 900px) {
   .app-sidebar {
     position: fixed;
-    left: -260px;
+    left: -320px;
     top: 0;
     bottom: 0;
-    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+    width: 280px !important;
+    max-width: 85vw !important;
+    z-index: 1001;
+    box-shadow: 15px 0 40px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.15);
+    transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .app-sidebar.mobile-open {
-    left: 0;
+    left: 0 !important;
+  }
+  .sidebar-mobile-close-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--text-primary);
+    cursor: pointer;
+    margin-left: auto;
+    transition: background 0.18s, color 0.18s, border-color 0.18s;
+  }
+  .sidebar-mobile-close-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .sidebar-mobile-close-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #ef4444;
   }
   .mobile-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+  }
+  .sidebar-resizer {
+    display: none !important;
+  }
+}
+
+/* Mobile Top Bar Responsive Optimization */
+@media (max-width: 768px) {
+  .app-topbar {
+    padding: 0 0.5rem;
+    gap: 0.35rem;
+    height: 54px;
+    min-height: 54px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .app-topbar::-webkit-scrollbar {
+    display: none;
+  }
+  .topbar-left {
+    gap: 0.35rem;
+    flex-shrink: 0;
+  }
+  .topbar-breadcrumb {
+    gap: 0.25rem;
+    font-size: 0.75rem;
+  }
+  .crumb-active {
+    max-width: 80px;
+    font-size: 0.75rem;
+  }
+  .topbar-search {
+    flex: 0 0 32px;
+    max-width: 32px;
+    min-width: 32px;
+    height: 32px;
+    padding: 0;
+    justify-content: center;
+  }
+  .topbar-search .search-field {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    opacity: 0;
+    cursor: pointer;
+    position: absolute;
+    z-index: 2;
+  }
+  .topbar-search .search-lens {
+    position: static;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .topbar-search .search-shortcut {
+    display: none !important;
+  }
+  .topbar-actions {
+    gap: 0.28rem;
+    flex-shrink: 0;
+  }
+  .topbar-icon-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 7px;
+  }
+  .theme-switch-control {
+    gap: 1px;
+    padding: 1px;
+    border-radius: 7px;
+  }
+  .theme-icon-btn {
+    width: 25px;
+    height: 25px;
+    min-width: 25px;
+  }
+}
+
+/* ============================================================ */
+/* ENTERPRISE EXECUTIVE PRINT & PDF EXPORT STYLESHEET           */
+/* ============================================================ */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 10mm 12mm 12mm 12mm;
+  }
+
+  /* 1. Hide all interactive web UI and non-printable tools */
+  .app-sidebar,
+  .sidebar-resizer,
+  .sidebar-mobile-backdrop,
+  .app-topbar,
+  .topbar-menu,
+  .search-palette-dropdown,
+  .subtabs-bar,
+  .dashboard-controls-card,
+  .btn-ai-fab,
+  #btn-ai-fab,
+  .modal-backdrop,
+  .toast-container,
+  .view-header-bar,
+  .ai-prompt-box-wrap,
+  .dax-formula-bar-container,
+  .model-meta-card,
+  #ai-chat-drawer,
+  #share-modal,
+  #alerts-modal,
+  #history-modal,
+  .bg-3d-canvas {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* 2. Global Document Clean White Theme for Paper / PDF */
+  html, body, .app-shell, .app-main-wrap, .app-workspace-body, .workspace-view {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  /* 3. Executive Report Header */
+  .print-executive-header {
+    display: block !important;
+    border-bottom: 2px solid #0f172a;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    page-break-after: avoid;
+  }
+
+  .print-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+
+  .print-brand-title {
+    font-size: 20pt;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
     display: block;
+  }
+
+  .print-brand-subtitle {
+    font-size: 10pt;
+    color: #475569;
+    font-weight: 500;
+  }
+
+  .print-badge-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ecfdf5 !important;
+    color: #047857 !important;
+    border: 1px solid #a7f3d0;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 8.5pt;
+    font-weight: 600;
+  }
+
+  .print-header-meta {
+    display: flex;
+    gap: 24px;
+    font-size: 9pt;
+    color: #334155;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 6px 12px;
+  }
+
+  .print-meta-item .meta-label {
+    font-weight: 600;
+    color: #64748b;
+    margin-right: 4px;
+  }
+
+  .print-meta-item .meta-val {
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  /* 4. KPI Stat Cards on Paper */
+  .stats-grid, .grid-4, .grid-3 {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 12px !important;
+    margin-bottom: 20px !important;
+    page-break-inside: avoid;
+  }
+
+  .stat-card, .metric-card {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  .stat-label {
+    color: #475569 !important;
+    font-size: 8pt !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+  }
+
+  .stat-value {
+    color: #0f172a !important;
+    font-size: 20pt !important;
+    font-weight: 800 !important;
+    margin: 4px 0 !important;
+  }
+
+  .stat-subtext {
+    color: #64748b !important;
+    font-size: 7.5pt !important;
+  }
+
+  /* 5. Chart Cards & Canvases */
+  .glass-card, .chart-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+    box-shadow: none !important;
+    margin-bottom: 20px !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .glass-card h3, .chart-card h3 {
+    color: #0f172a !important;
+    font-size: 12pt !important;
+    font-weight: 700 !important;
+    margin-bottom: 8px !important;
+  }
+
+  canvas {
+    max-width: 100% !important;
+    height: auto !important;
+    page-break-inside: avoid;
+  }
+
+  /* 6. Data Tables on Paper */
+  .modern-table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    font-size: 8.5pt !important;
+    page-break-inside: avoid;
+  }
+
+  .modern-table th {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    padding: 6px 8px !important;
+    font-weight: 700 !important;
+  }
+
+  .modern-table td {
+    border: 1px solid #e2e8f0 !important;
+    color: #1e293b !important;
+    padding: 5px 8px !important;
+  }
+
+  .modern-table tr:nth-child(even) td {
+    background: #f8fafc !important;
+  }
+}
+
+/* Screen default: Hide print header banner */
+@media screen {
+  .print-executive-header {
+    display: none !important;
   }
 }
 
