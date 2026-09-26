@@ -292,6 +292,7 @@ function switchView(viewId) {
     fetchInspectorRows();
   } else if (targetView === 'view-model') {
     fetchModelSchema();
+    fetchAutomatedMeasures();
   }
 }
 
@@ -3033,39 +3034,118 @@ async function handleMultiFileUpload(event) {
   const files = event.target.files;
   if (!files || files.length === 0) return;
 
-  showLoading(`Ingesting ${files.length} file(s) into Relational Data Model...`);
-  const formData = new FormData();
-  for (let i = 0; i < files.length; i++) {
-    formData.append('files', files[i]);
-  }
+  const totalFiles = files.length;
+  const progressContainer = document.getElementById('model-upload-progress-container');
+  const progressBar = document.getElementById('model-upload-progress-bar');
+  const progressLabel = document.getElementById('model-upload-progress-label');
+  const progressPct = document.getElementById('model-upload-progress-pct');
+
+  if (progressContainer) progressContainer.style.display = 'block';
+
+  let lastData = null;
+  let allLoadedTables = [];
 
   try {
-    const res = await fetch('/api/model/upload-multiple', {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
-    if (data.status === 'success') {
+    for (let i = 0; i < totalFiles; i++) {
+      const file = files[i];
+      const pct = Math.round(((i) / totalFiles) * 100);
+      const isAppend = i > 0;
+
+      if (progressBar) progressBar.style.width = `${pct}%`;
+      if (progressPct) progressPct.textContent = `${pct}%`;
+      if (progressLabel) progressLabel.textContent = `Ingesting ${i + 1}/${totalFiles}: ${file.name}...`;
+      showLoading(`Ingesting ${i + 1} of ${totalFiles}: ${file.name} (${pct}%)...`);
+
+      const formData = new FormData();
+      formData.append('files', file);
+      formData.append('append', isAppend ? '1' : '0');
+
+      const res = await fetch(`/api/model/upload-multiple?append=${isAppend ? '1' : '0'}`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!res.ok) {
+        let errMsg = `Upload failed with status ${res.status}`;
+        try {
+          const errData = await res.json();
+          if (errData.message) errMsg = errData.message;
+        } catch (_) {}
+        throw new Error(errMsg);
+      }
+
+      const data = await res.json();
+      if (data.status !== 'success') {
+        throw new Error(data.message || `Failed to process ${file.name}`);
+      }
+
+      lastData = data;
+      if (data.loaded_tables) {
+        allLoadedTables = data.loaded_tables;
+      }
+    }
+
+    // Complete 100%
+    if (progressBar) progressBar.style.width = '100%';
+    if (progressPct) progressPct.textContent = '100%';
+    if (progressLabel) progressLabel.textContent = `All ${totalFiles} file(s) ingested & modeled successfully!`;
+
+    if (lastData) {
       const badgesContainer = document.getElementById('model-loaded-tables-badges');
-      if (badgesContainer && data.loaded_tables) {
-        badgesContainer.innerHTML = data.loaded_tables.map(t => 
+      if (badgesContainer && allLoadedTables.length > 0) {
+        badgesContainer.innerHTML = allLoadedTables.map(t => 
           `<span class="bullet-badge" style="background:rgba(99,102,241,0.2); color:#a5b4fc; font-weight:600; padding:4px 10px; border-radius:999px;">📄 ${escapeHtml(t)}</span>`
         ).join(' ');
       }
 
-      currentModelSchema = data.schema;
-      renderSchemaModel(data.schema);
+      currentModelSchema = lastData.schema;
+      renderSchemaModel(lastData.schema);
+
+      // Render automated measures if present
+      if (lastData.automated_measures && lastData.automated_measures.length > 0) {
+        renderAutomatedMeasures(lastData.automated_measures);
+      } else {
+        fetchAutomatedMeasures();
+      }
 
       const sidebarBadge = document.getElementById('sidebar-model-badge');
       if (sidebarBadge) {
-        sidebarBadge.textContent = `${data.total_tables} Tables`;
+        sidebarBadge.textContent = `${lastData.total_tables} Tables`;
       }
-    } else {
-      alert(data.message || 'Failed to ingest files.');
     }
   } catch (err) {
-    console.error('Multi-file upload error:', err);
-    alert('Error uploading multiple files.');
+    console.error('Multi-file progressive upload error:', err);
+    alert(`File Ingestion Glitch: ${err.message || err}`);
+  } finally {
+    hideLoading();
+    if (event.target) event.target.value = '';
+    setTimeout(() => {
+      if (progressContainer) progressContainer.style.display = 'none';
+    }, 2500);
+  }
+}
+
+async function clearModelTables() {
+  if (!confirm('Are you sure you want to clear all loaded tables from the Data Model?')) return;
+  showLoading('Clearing data model...');
+  try {
+    const res = await fetch('/api/model/clear', { method: 'POST' });
+    const data = await res.json();
+    if (data.status === 'success') {
+      currentModelSchema = data.schema;
+      renderSchemaModel(data.schema);
+      const badgesContainer = document.getElementById('model-loaded-tables-badges');
+      if (badgesContainer) badgesContainer.innerHTML = '';
+      const grid = document.getElementById('dax-suggested-measures-grid');
+      if (grid) grid.innerHTML = '<span style="font-size:0.8rem; color:#64748b;">Ingest tables above to automatically generate business measures.</span>';
+      const output = document.getElementById('dax-output-container');
+      if (output) output.style.display = 'none';
+      const sidebarBadge = document.getElementById('sidebar-model-badge');
+      if (sidebarBadge) sidebarBadge.textContent = '0 Tables';
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Error clearing model.');
   } finally {
     hideLoading();
   }
@@ -3078,9 +3158,215 @@ async function fetchModelSchema() {
     if (data.status === 'success') {
       currentModelSchema = data.schema;
       renderSchemaModel(data.schema);
+      fetchAutomatedMeasures();
     }
   } catch (err) {
     console.error('Fetch schema error:', err);
+  }
+}
+
+async function fetchAutomatedMeasures() {
+  try {
+    const res = await fetch('/api/model/auto-measures');
+    const data = await res.json();
+    if (data.status === 'success' && data.measures) {
+      renderAutomatedMeasures(data.measures);
+    }
+  } catch (err) {
+    console.error('Fetch auto-measures error:', err);
+  }
+}
+
+function renderAutomatedMeasures(measures) {
+  const container = document.getElementById('dax-suggested-measures-grid');
+  if (!container) return;
+
+  if (!measures || measures.length === 0) {
+    container.innerHTML = `<span style="font-size:0.8rem; color:#64748b;">No automated measures available yet. Ingest multiple tables to synthesize measures.</span>`;
+    return;
+  }
+
+  container.innerHTML = measures.map((m, idx) => {
+    const isTable = m.type === 'table';
+    const tagBg = isTable ? 'rgba(56, 189, 248, 0.15)' : 'rgba(245, 158, 11, 0.15)';
+    const tagColor = isTable ? '#38bdf8' : '#fbbf24';
+    const valText = m.formatted !== undefined && m.formatted !== null ? `<span style="font-weight:700; color:#34d399; font-size:0.85rem;">${escapeHtml(String(m.formatted))}</span>` : '';
+
+    return `
+      <div class="stat-card" style="padding: 0.65rem 0.9rem; cursor: pointer; border: 1px solid rgba(255,255,255,0.08); background: rgba(15,23,42,0.6); transition: all 0.2s ease; max-width: 320px; flex: 1 1 240px;"
+        onclick="applyAutoMeasure(${idx})" title="Click to execute & visualize DAX measure">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <span style="font-size: 0.68rem; font-weight: 700; text-transform: uppercase; background: ${tagBg}; color: ${tagColor}; padding: 1px 6px; border-radius: 4px;">
+            ${escapeHtml(m.category || 'Measure')}
+          </span>
+          ${valText}
+        </div>
+        <div style="font-size: 0.86rem; font-weight: 600; color: #fff; margin-bottom: 3px;">${escapeHtml(m.name)}</div>
+        <div style="font-size: 0.72rem; color: #94a3b8; font-family: 'JetBrains Mono', monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(m.dax)}</div>
+      </div>
+    `;
+  }).join('');
+
+  window._autoMeasuresCache = measures;
+}
+
+function applyAutoMeasure(index) {
+  if (!window._autoMeasuresCache || !window._autoMeasuresCache[index]) return;
+  const m = window._autoMeasuresCache[index];
+  const input = document.getElementById('dax-expression-input');
+  if (input) input.value = m.dax;
+  executeDaxQuery();
+}
+
+async function executeDaxCopilot() {
+  const input = document.getElementById('dax-copilot-input');
+  const btn = document.getElementById('btn-run-dax-copilot');
+  if (!input) return;
+
+  const prompt = input.value.trim();
+  if (!prompt) {
+    alert('Please enter a plain English query (e.g. "sales by region" or "profit margin").');
+    return;
+  }
+
+  const origBtn = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> Synthesizing...`;
+  }
+
+  try {
+    const res = await fetch('/api/model/dax/copilot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: prompt })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      const formulaInput = document.getElementById('dax-expression-input');
+      if (formulaInput && data.generated_dax) {
+        formulaInput.value = data.generated_dax;
+      }
+
+      const container = document.getElementById('dax-output-container');
+      const scalarCard = document.getElementById('dax-scalar-card');
+      const tableCard = document.getElementById('dax-table-card');
+      if (container) container.style.display = 'block';
+
+      if (data.type === 'scalar') {
+        if (tableCard) tableCard.style.display = 'none';
+        if (scalarCard) {
+          scalarCard.style.display = 'block';
+          document.getElementById('dax-scalar-label').textContent = data.explanation || 'AI Copilot DAX Result';
+          document.getElementById('dax-scalar-value').textContent = data.formatted;
+          document.getElementById('dax-scalar-formula').textContent = data.generated_dax;
+        }
+      } else if (data.type === 'table') {
+        if (scalarCard) scalarCard.style.display = 'none';
+        if (tableCard) {
+          tableCard.style.display = 'block';
+          document.getElementById('dax-chart-title').textContent = data.chart?.title || data.explanation || 'DAX Visual Synthesis';
+
+          // Table
+          const thead = document.querySelector('#dax-table-output thead');
+          const tbody = document.querySelector('#dax-table-output tbody');
+          if (thead) {
+            thead.innerHTML = '';
+            const tr = document.createElement('tr');
+            (data.columns || []).forEach(c => {
+              const th = document.createElement('th');
+              th.textContent = c;
+              tr.appendChild(th);
+            });
+            thead.appendChild(tr);
+          }
+          if (tbody) {
+            tbody.innerHTML = '';
+            (data.rows || []).forEach(r => {
+              const tr = document.createElement('tr');
+              (data.columns || []).forEach(c => {
+                const td = document.createElement('td');
+                td.textContent = r[c] !== null && r[c] !== undefined ? r[c] : 'null';
+                tr.appendChild(td);
+              });
+              tbody.appendChild(tr);
+            });
+          }
+
+          // Chart
+          renderDaxVisual(data.chart);
+        }
+      }
+    } else {
+      alert(data.message || 'DAX Copilot could not parse prompt.');
+    }
+  } catch (err) {
+    console.error('DAX Copilot error:', err);
+    alert('DAX Copilot encountered an error.');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = origBtn;
+    }
+  }
+}
+
+async function runAutonomousAutoModel() {
+  if (!currentModelSchema || !currentModelSchema.tables || currentModelSchema.tables.length === 0) {
+    alert('Please ingest 2 or more files/sheets first before running Autonomous Auto-Modeling.');
+    return;
+  }
+
+  showLoading('⚡ Auto-Modeler: Step 1/4 - Auto-linking schema graphs & executing relational joins...');
+  try {
+    const baseTable = document.getElementById('model-base-table-select')?.value || null;
+    const res = await fetch('/api/model/auto-synthesize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ base_table: baseTable })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      showLoading('⚡ Auto-Modeler: Step 2/4 - Syncing automated cleaning & health audit...');
+      const cleanRes = await fetch('/api/clean', { method: 'POST' });
+      const cleanData = await cleanRes.json();
+      if (cleanData.status === 'success') {
+        renderCleanResults(cleanData.cleaning_report, cleanData.preview, cleanData.columns, cleanData.python_script);
+      }
+
+      showLoading('⚡ Auto-Modeler: Step 3/4 - Running exploratory statistical correlations...');
+      const edaRes = await fetch('/api/eda', { method: 'POST' });
+      const edaData = await edaRes.json();
+      if (edaData.status === 'success') {
+        renderEDAResults(edaData);
+      }
+
+      showLoading('⚡ Auto-Modeler: Step 4/4 - Synthesizing live dashboard & predictive drivers...');
+      const mlRes = await fetch('/api/ml', { method: 'POST' });
+      const mlData = await mlRes.json();
+      if (mlData.status === 'success') {
+        renderMLResults(mlData);
+      }
+
+      appState.datasetName = data.dataset_name;
+      const wsName = document.getElementById('sidebar-workspace-name');
+      if (wsName) wsName.textContent = data.dataset_name;
+      const labelEl = document.getElementById('active-dataset-label');
+      if (labelEl) labelEl.textContent = `${data.dataset_name} (${data.total_rows.toLocaleString()} rows)`;
+
+      // Switch to dashboard view
+      switchView('view-dashboards');
+      switchSubTab('view-dashboards', 'dash-overview');
+      renderDashboard();
+      fetchInspectorRows();
+    } else {
+      alert(data.message || 'Autonomous modeling failed.');
+    }
+  } catch (err) {
+    console.error('Autonomous model error:', err);
+    alert('Error running autonomous model synthesis.');
+  } finally {
+    hideLoading();
   }
 }
 

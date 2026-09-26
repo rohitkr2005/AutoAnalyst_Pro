@@ -34,12 +34,20 @@ from engine.ml_engine import run_ml_pipeline
 
 # Initialize Flask app
 app = Flask(__name__, static_folder="static", template_folder="templates")
-app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024  # 32MB max upload size
+app.config["MAX_CONTENT_LENGTH"] = 512 * 1024 * 1024  # 512MB max upload size
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "autoanalyst-secure-session-key-2026-production")
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 if os.environ.get("RENDER") or os.environ.get("FLASK_ENV") == "production":
     app.config["SESSION_COOKIE_SECURE"] = True
+
+
+@app.errorhandler(413)
+def request_entity_too_large(error):
+    return jsonify({
+        "status": "error",
+        "message": "Upload payload exceeded the 512MB capacity limit. Large files should be uploaded individually."
+    }), 413
 
 
 # In-memory storage for active dataset session
@@ -1340,11 +1348,13 @@ def api_evaluate_alerts():
 @app.route("/api/model/upload-multiple", methods=["POST"])
 @login_required
 def api_model_upload_multiple():
-    """Uploads multiple files or multi-sheet workbooks into the relational data model."""
+    """Uploads multiple files or multi-sheet workbooks into the relational data model with progressive append support."""
     try:
         files = request.files.getlist("files")
         if not files or len(files) == 0:
             return jsonify({"status": "error", "message": "No files uploaded."}), 400
+
+        append_mode = request.form.get("append", "0") in ("1", "true", "True") or request.args.get("append", "0") in ("1", "true", "True")
 
         files_data = []
         for file in files:
@@ -1353,7 +1363,7 @@ def api_model_upload_multiple():
                 files_data.append((file.filename, content))
 
         from engine.data_modeler import ingest_files_into_model
-        result = ingest_files_into_model(files_data, GLOBAL_DATA_MODEL)
+        result = ingest_files_into_model(files_data, GLOBAL_DATA_MODEL, clear_existing=(not append_mode))
         return jsonify(result)
     except Exception as e:
         print(f"[Multi-File Upload Error] {e}", flush=True)
@@ -1399,6 +1409,18 @@ def api_model_relationship():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@app.route("/api/model/clear", methods=["POST"])
+@login_required
+def api_model_clear():
+    """Clears all tables and relationships from the active relational data model."""
+    try:
+        GLOBAL_DATA_MODEL.tables.clear()
+        GLOBAL_DATA_MODEL.relationships.clear()
+        return jsonify({"status": "success", "message": "All model tables cleared.", "schema": GLOBAL_DATA_MODEL.get_schema_summary()})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
 @app.route("/api/model/dax/evaluate", methods=["POST"])
 @login_required
 def api_model_dax_evaluate():
@@ -1431,6 +1453,120 @@ def api_model_dax_evaluate():
     except Exception as e:
         print(f"[DAX Evaluation Error] {e}", flush=True)
         return jsonify({"status": "error", "message": f"DAX error: {str(e)}"}), 400
+
+
+@app.route("/api/model/dax/copilot", methods=["POST"])
+@login_required
+def api_model_dax_copilot():
+    """Translates natural language prompts to DAX expressions and evaluates them immediately."""
+    try:
+        data = request.get_json() or {}
+        prompt = (data.get("prompt") or data.get("query") or "").strip()
+        if not prompt:
+            return jsonify({"status": "error", "message": "Prompt cannot be empty."}), 400
+
+        if len(GLOBAL_DATA_MODEL.tables) == 0:
+            return jsonify({"status": "error", "message": "No tables loaded in data model. Please ingest tables first."}), 400
+
+        from engine.data_modeler import DaxEngine
+        engine = DaxEngine(GLOBAL_DATA_MODEL)
+        nlp_res = engine.natural_language_to_dax(prompt)
+        dax_expr = nlp_res["dax"]
+
+        if "SUMMARIZE(" in dax_expr.upper():
+            eval_res = engine.evaluate_summarize(dax_expr)
+            eval_res["natural_language"] = prompt
+            eval_res["generated_dax"] = dax_expr
+            eval_res["explanation"] = nlp_res.get("explanation", "")
+            return jsonify(eval_res)
+        else:
+            val = engine.evaluate_scalar_dax(dax_expr)
+            return jsonify({
+                "status": "success",
+                "type": "scalar",
+                "natural_language": prompt,
+                "generated_dax": dax_expr,
+                "expression": dax_expr,
+                "result": val,
+                "formatted": f"{val:,.2f}" if isinstance(val, (int, float, np.number)) else str(val),
+                "explanation": nlp_res.get("explanation", "")
+            })
+    except Exception as e:
+        print(f"[DAX Copilot Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/model/auto-measures", methods=["GET"])
+@login_required
+def api_model_auto_measures():
+    """Returns autonomously synthesized DAX measures and dimensional summaries."""
+    try:
+        from engine.data_modeler import DaxEngine
+        engine = DaxEngine(GLOBAL_DATA_MODEL)
+        measures = engine.generate_automated_measures()
+        return jsonify({"status": "success", "measures": measures})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/model/auto-synthesize", methods=["POST"])
+@login_required
+def api_model_auto_synthesize():
+    """
+    Fully autonomous 1-click execution:
+    - Auto-detects relationships across all uploaded tables
+    - Joins connected tables into fact-dimension analytical model
+    - Precomputes automated DAX measures
+    - Runs data prep, audit, EDA and AutoML
+    - Sets up live executive dashboard
+    """
+    try:
+        if len(GLOBAL_DATA_MODEL.tables) == 0:
+            return jsonify({"status": "error", "message": "No tables in data model. Please upload files first."}), 400
+
+        data = request.get_json() or {}
+        base_table = data.get("base_table")
+
+        GLOBAL_DATA_MODEL.detect_relationships()
+        df = GLOBAL_DATA_MODEL.build_joined_dataframe(base_table)
+        if df.empty:
+            return jsonify({"status": "error", "message": "Joined relational model is empty."}), 400
+
+        table_names = list(GLOBAL_DATA_MODEL.tables.keys())
+        SESSION_DATA["dataset_name"] = f"Relational Model: {' + '.join(table_names)}"
+        SESSION_DATA["raw_df"] = df.copy()
+
+        # Run Automated Cleaning
+        from engine.cleaner import clean_and_preprocess, audit_dataset_health
+        clean_df, audit_rep, py_script = clean_and_preprocess(df)
+        SESSION_DATA["cleaned_df"] = clean_df.copy()
+        SESSION_DATA["audit_report"] = audit_rep
+        SESSION_DATA["python_script"] = py_script
+
+        # Run Automated EDA
+        from engine.analytics import compute_comprehensive_eda
+        eda_rep = compute_comprehensive_eda(clean_df)
+        SESSION_DATA["eda_cache"] = eda_rep
+
+        # Run Automated ML
+        from engine.ml_engine import run_ml_pipeline
+        ml_rep = run_ml_pipeline(clean_df)
+        SESSION_DATA["ml_cache"] = ml_rep
+
+        if "user_id" in session:
+            record_user_activity(session["user_id"], SESSION_DATA["dataset_name"], len(df), audit_rep["cleaned_health_score"], "Autonomous Relational Pipeline")
+
+        return jsonify({
+            "status": "success",
+            "message": f"Autonomous pipeline complete: {len(table_names)} tables unified ({len(df):,} rows). Dashboard ready!",
+            "dataset_name": SESSION_DATA["dataset_name"],
+            "total_rows": len(df),
+            "total_cols": len(df.columns),
+            "columns": list(df.columns)
+        })
+    except Exception as e:
+        print(f"[Auto-Synthesize Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 @app.route("/api/model/build-dashboard", methods=["POST"])

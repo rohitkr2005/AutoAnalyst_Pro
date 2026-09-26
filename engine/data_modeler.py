@@ -553,16 +553,289 @@ class DaxEngine:
             }
         }
 
+    def _find_column_and_table(self, query_text: str) -> Tuple[Optional[str], Optional[str]]:
+        """Finds the best matching column name and table name from text tokens."""
+        q_tokens = query_text.lower().split()
+        for t_name, df in self.model.tables.items():
+            for col in df.columns:
+                c_clean = col.lower().replace("_", "")
+                for tok in q_tokens:
+                    tok_clean = tok.replace("_", "")
+                    if tok_clean == c_clean or (len(tok_clean) >= 3 and tok_clean in c_clean) or (len(c_clean) >= 3 and c_clean in tok_clean):
+                        return col, t_name
+        return None, None
+
+    def generate_automated_measures(self) -> List[Dict[str, Any]]:
+        """
+        Autonomously analyzes table schemas, foreign key links, and data types
+        to synthesize high-value executive DAX measures and dimensional summaries.
+        """
+        if not self.model.tables:
+            return []
+
+        auto_measures = []
+
+        # 1. Identify primary Fact table (highest row count or most foreign keys)
+        fact_candidates = sorted(
+            self.model.tables.keys(),
+            key=lambda t: (sum(1 for r in self.model.relationships if r["from_table"] == t), len(self.model.tables[t])),
+            reverse=True
+        )
+        fact_table = fact_candidates[0]
+        fact_df = self.model.tables[fact_table]
+
+        # 2. Identify numeric measures in Fact table
+        num_cols = fact_df.select_dtypes(include=[np.number]).columns.tolist()
+        metric_cols = [c for c in num_cols if not re.search(r'(?:_id|id$|^id$|code|key|index)', c.lower())]
+        if not metric_cols and num_cols:
+            metric_cols = num_cols
+
+        # 3. Base Fact Aggregations (Total Revenue, Total Sales, Units, Volume)
+        for col in metric_cols[:4]:
+            clean_name = col.replace("_", " ").title()
+            sum_expr = f"SUM({fact_table}[{col}])"
+            try:
+                val = self.evaluate_scalar_dax(sum_expr)
+                is_curr = any(k in col.lower() for k in ["sales", "revenue", "profit", "price", "amount", "cost"])
+                formatted_val = f"${val:,.2f}" if is_curr else f"{val:,.2f}"
+                auto_measures.append({
+                    "id": f"sum_{col}",
+                    "name": f"Total {clean_name}",
+                    "title": f"Total {clean_name}",
+                    "category": "Core Aggregation",
+                    "expression": sum_expr,
+                    "dax": sum_expr,
+                    "type": "scalar",
+                    "value": val,
+                    "formatted": formatted_val,
+                    "description": f"Calculates total sum of {clean_name} across {fact_table}."
+                })
+            except Exception:
+                pass
+
+            avg_expr = f"AVERAGE({fact_table}[{col}])"
+            try:
+                val = self.evaluate_scalar_dax(avg_expr)
+                is_curr = any(k in col.lower() for k in ["sales", "revenue", "profit", "price", "amount", "cost"])
+                formatted_val = f"${val:,.2f}" if is_curr else f"{val:,.2f}"
+                auto_measures.append({
+                    "id": f"avg_{col}",
+                    "name": f"Average {clean_name}",
+                    "title": f"Average {clean_name}",
+                    "category": "Core Aggregation",
+                    "expression": avg_expr,
+                    "dax": avg_expr,
+                    "type": "scalar",
+                    "value": val,
+                    "formatted": formatted_val,
+                    "description": f"Calculates mean {clean_name} per transaction in {fact_table}."
+                })
+            except Exception:
+                pass
+
+        # 4. Total Volume
+        count_expr = f"COUNTROWS({fact_table})"
+        try:
+            val = self.evaluate_scalar_dax(count_expr)
+            auto_measures.append({
+                "id": "count_records",
+                "name": f"Total {fact_table} Volume",
+                "title": f"Total {fact_table} Volume",
+                "category": "Volume",
+                "expression": count_expr,
+                "dax": count_expr,
+                "type": "scalar",
+                "value": val,
+                "formatted": f"{int(val):,} Records",
+                "description": f"Census record volume for {fact_table}."
+            })
+        except Exception:
+            pass
+
+        # 5. Financial / Business Ratios (Margin, Conversion)
+        profit_cols = [c for c in metric_cols if "profit" in c.lower() or "margin" in c.lower()]
+        sales_cols = [c for c in metric_cols if "sales" in c.lower() or "revenue" in c.lower()]
+        cost_cols = [c for c in metric_cols if "cost" in c.lower() or "expense" in c.lower() or "spend" in c.lower()]
+
+        if profit_cols and sales_cols:
+            p_col, s_col = profit_cols[0], sales_cols[0]
+            ratio_expr = f"DIVIDE(SUM({fact_table}[{p_col}]), SUM({fact_table}[{s_col}]))"
+            try:
+                val = self.evaluate_scalar_dax(ratio_expr)
+                auto_measures.append({
+                    "id": "profit_margin",
+                    "name": "Gross Profit Margin %",
+                    "title": "Gross Profit Margin %",
+                    "category": "Financial Ratio",
+                    "expression": ratio_expr,
+                    "dax": ratio_expr,
+                    "type": "scalar",
+                    "value": val,
+                    "formatted": f"{val * 100:.2f}%",
+                    "description": f"Ratio of total {p_col} over total {s_col}."
+                })
+            except Exception:
+                pass
+
+        if cost_cols and sales_cols:
+            c_col, s_col = cost_cols[0], sales_cols[0]
+            cost_ratio_expr = f"DIVIDE(SUM({fact_table}[{c_col}]), SUM({fact_table}[{s_col}]))"
+            try:
+                val = self.evaluate_scalar_dax(cost_ratio_expr)
+                auto_measures.append({
+                    "id": "cost_ratio",
+                    "name": "Cost-to-Sales Ratio %",
+                    "title": "Cost-to-Sales Ratio %",
+                    "category": "Financial Ratio",
+                    "expression": cost_ratio_expr,
+                    "dax": cost_ratio_expr,
+                    "type": "scalar",
+                    "value": val,
+                    "formatted": f"{val * 100:.2f}%",
+                    "description": "Operating cost burden relative to top-line sales."
+                })
+            except Exception:
+                pass
+
+        # 6. Cross-Table Relational Summaries (SUMMARIZE)
+        for rel in self.model.relationships:
+            from_t = rel["from_table"]
+            to_t = rel["to_table"]
+            dim_table = to_t if from_t == fact_table else from_t
+            dim_df = self.model.tables.get(dim_table)
+            if dim_df is None:
+                continue
+
+            cat_cols = dim_df.select_dtypes(include=["object", "category", "string"]).columns.tolist()
+            dim_candidates = [
+                c for c in cat_cols 
+                if not re.search(r'(?:_id|id$|^id$|code)', c.lower()) and 2 <= dim_df[c].nunique() <= 30
+            ]
+            if not dim_candidates and cat_cols:
+                dim_candidates = cat_cols[:1]
+
+            for dim_col in dim_candidates[:2]:
+                if metric_cols:
+                    m_col = metric_cols[0]
+                    clean_m = m_col.replace("_", " ").title()
+                    clean_d = dim_col.replace("_", " ").title()
+                    summarize_expr = f'SUMMARIZE({fact_table}, {dim_table}[{dim_col}], "Total {clean_m}", SUM({fact_table}[{m_col}]))'
+                    try:
+                        summary_res = self.evaluate_summarize(summarize_expr)
+                        auto_measures.append({
+                            "id": f"sum_{dim_table}_{dim_col}_{m_col}",
+                            "name": f"{clean_m} by {dim_table} {clean_d}",
+                            "title": f"{clean_m} by {dim_table} {clean_d}",
+                            "category": "Dimensional Breakdown",
+                            "expression": summarize_expr,
+                            "dax": summarize_expr,
+                            "type": "table",
+                            "chart": summary_res.get("chart"),
+                            "rows_count": summary_res.get("total_rows", 0),
+                            "description": f"Cross-table multi-dimensional breakdown of {clean_m} grouped by {dim_table}.{dim_col}."
+                        })
+                    except Exception:
+                        pass
+
+        return auto_measures
+
+    def natural_language_to_dax(self, prompt: str) -> Dict[str, Any]:
+        """
+        Translates natural language conversational prompts into executable DAX queries.
+        e.g. 'sales by customer region' -> SUMMARIZE(Orders, Customers[region], 'Total Sales', SUM(Orders[sales]))
+        """
+        prompt_clean = prompt.lower().strip()
+        if not prompt_clean:
+            raise ValueError("Prompt cannot be empty.")
+
+        # If already explicit DAX syntax
+        if re.search(r'\b(SUM|AVERAGE|DIVIDE|CALCULATE|SUMMARIZE|COUNTROWS)\s*\(', prompt, re.I):
+            return {"dax": prompt.strip(), "confidence": 1.0, "explanation": "Direct DAX Expression"}
+
+        # Determine Fact Table
+        fact_candidates = sorted(
+            self.model.tables.keys(),
+            key=lambda t: (sum(1 for r in self.model.relationships if r["from_table"] == t), len(self.model.tables[t])),
+            reverse=True
+        )
+        fact_table = fact_candidates[0] if fact_candidates else list(self.model.tables.keys())[0]
+        fact_df = self.model.tables.get(fact_table, pd.DataFrame())
+
+        # 1. Identify Target Metric Column
+        target_col = None
+        target_table = fact_table
+
+        for t_name, df in self.model.tables.items():
+            for col in df.columns:
+                clean_col = col.lower().replace("_", " ")
+                if clean_col in prompt_clean:
+                    target_col = col
+                    target_table = t_name
+                    break
+            if target_col:
+                break
+
+        if not target_col:
+            num_cols = fact_df.select_dtypes(include=[np.number]).columns.tolist() if not fact_df.empty else []
+            metric_cols = [c for c in num_cols if not re.search(r'(?:_id|id$|^id$|code|key)', c.lower())]
+            target_col = metric_cols[0] if metric_cols else (num_cols[0] if num_cols else "sales")
+
+        # 2. Check for Margin / Ratio keywords
+        if "margin" in prompt_clean or "ratio" in prompt_clean:
+            profit_cols = [c for c in fact_df.columns if "profit" in c.lower() or "margin" in c.lower()]
+            sales_cols = [c for c in fact_df.columns if "sales" in c.lower() or "revenue" in c.lower()]
+            if profit_cols and sales_cols:
+                ratio_expr = f"DIVIDE(SUM({fact_table}[{profit_cols[0]}]), SUM({fact_table}[{sales_cols[0]}]))"
+                m_by = re.search(r'\b(?:by|per|across)\s+([a-zA-Z0-9_\s]+)', prompt_clean)
+                if m_by:
+                    group_word = m_by.group(1).strip()
+                    dim_col, dim_t = self._find_column_and_table(group_word)
+                    if dim_col:
+                        dax = f'SUMMARIZE({fact_table}, {dim_t}[{dim_col}], "Profit Margin", {ratio_expr})'
+                        return {"dax": dax, "confidence": 0.95, "explanation": f"Grouped profit margin ratio by {dim_t}[{dim_col}]."}
+                return {"dax": ratio_expr, "confidence": 0.95, "explanation": "Evaluates safe ratio of profit over sales."}
+
+        # 3. Check for Grouping ('by', 'per', 'across')
+        m_by = re.search(r'\b(?:by|per|across|for each)\s+([a-zA-Z0-9_\s]+)', prompt_clean)
+        if m_by:
+            group_candidate = m_by.group(1).strip()
+            dim_col, dim_t = self._find_column_and_table(group_candidate)
+            if dim_col:
+                agg_func = "AVERAGE" if ("average" in prompt_clean or "avg" in prompt_clean or "mean" in prompt_clean) else "SUM"
+                measure_title = f"{'Avg' if agg_func == 'AVERAGE' else 'Total'} {target_col.replace('_', ' ').title()}"
+                dax = f'SUMMARIZE({fact_table}, {dim_t}[{dim_col}], "{measure_title}", {agg_func}({target_table}[{target_col}]))'
+                return {"dax": dax, "confidence": 0.92, "explanation": f"Multi-dimensional summary of {measure_title} grouped by {dim_t}[{dim_col}]."}
+
+        # 4. Check for Filter ('where', 'in', '=')
+        m_filter = re.search(r'\bwhere\s+([a-zA-Z0-9_]+)\s*(?:is|=|equals)\s*[\'"]?([a-zA-Z0-9_\s]+)[\'"]?', prompt_clean)
+        if m_filter:
+            f_col_raw, f_val = m_filter.group(1).strip(), m_filter.group(2).strip()
+            f_col, f_t = self._find_column_and_table(f_col_raw)
+            if f_col:
+                dax = f'CALCULATE(SUM({target_table}[{target_col}]), {f_t}[{f_col}] = "{f_val.title()}")'
+                return {"dax": dax, "confidence": 0.90, "explanation": f"Context transition filter on {f_t}[{f_col}] = '{f_val}'."}
+
+        # 5. Default scalar aggregation
+        agg_func = "AVERAGE" if ("average" in prompt_clean or "mean" in prompt_clean) else ("COUNTROWS" if ("count" in prompt_clean or "rows" in prompt_clean or "volume" in prompt_clean) else "SUM")
+        if agg_func == "COUNTROWS":
+            dax = f"COUNTROWS({fact_table})"
+        else:
+            dax = f"{agg_func}({target_table}[{target_col}])"
+        return {"dax": dax, "confidence": 0.88, "explanation": f"Calculates {agg_func} of {target_table}[{target_col}]."}
+
 
 # ============================================================
 # MULTI-FILE & MULTI-SHEET INGESTION CONTROLLER
 # ============================================================
 
-def ingest_files_into_model(files_data: List[Tuple[str, bytes]], model: DataModel) -> Dict[str, Any]:
+def ingest_files_into_model(files_data: List[Tuple[str, bytes]], model: DataModel, clear_existing: bool = False) -> Dict[str, Any]:
     """
     Ingests multiple files (CSV, TSV, or multi-sheet Excel workbooks)
     into the active DataModel and discovers inter-table schema relationships.
     """
+    if clear_existing:
+        model.clear()
+
     loaded_tables = []
     
     for filename, content in files_data:
@@ -608,10 +881,15 @@ def ingest_files_into_model(files_data: List[Tuple[str, bytes]], model: DataMode
 
     relationships = model.detect_relationships()
 
+    # Automatically generate suggested DAX measures for the loaded model
+    dax_engine = DaxEngine(model)
+    automated_measures = dax_engine.generate_automated_measures()
+
     return {
         "status": "success",
         "loaded_tables": loaded_tables,
         "relationships_discovered": relationships,
         "total_tables": len(model.tables),
-        "schema": model.get_schema_summary()
+        "schema": model.get_schema_summary(),
+        "automated_measures": automated_measures
     }

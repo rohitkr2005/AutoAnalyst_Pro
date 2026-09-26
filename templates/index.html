@@ -903,7 +903,11 @@
                 <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
                 Auto-Detect Schema Links
               </button>
-              <button class="btn-primary" onclick="buildUnifiedModelDashboard()" style="display: flex; align-items: center; gap: 6px; font-size: 0.84rem; padding: 0.55rem 1.1rem;">
+              <button class="btn-primary" id="btn-auto-synthesize-model" onclick="runAutonomousAutoModel()" style="background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%); border: none; display: flex; align-items: center; gap: 6px; font-size: 0.84rem; padding: 0.55rem 1.1rem; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                ⚡ Auto-Model & Synthesize Live Dashboard
+              </button>
+              <button class="pill-btn" onclick="buildUnifiedModelDashboard()" style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem;">
                 <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                 Build Unified Live Dashboard →
               </button>
@@ -921,11 +925,28 @@
               </div>
               <div class="dropzone-title" style="font-size: 1.1rem; margin-bottom: 0.35rem;">Ingest Multiple Files / Multi-Sheet Workbooks</div>
               <div class="dropzone-subtitle" style="font-size: 0.8rem; margin-bottom: 1.25rem;">
-                Select 2+ files (e.g. Orders, Customers, Products) or multi-sheet Excel workbooks simultaneously.
+                Select 2+ files (e.g. Orders, Customers, Products, Returns) or multi-sheet Excel workbooks simultaneously.
               </div>
-              <button class="btn-primary" type="button" onclick="document.getElementById('multi-file-uploader').click()" style="padding: 0.6rem 1.4rem; font-size: 0.86rem;">
-                Browse Multiple Files...
-              </button>
+              <div style="display: flex; gap: 0.6rem; justify-content: center; align-items: center; flex-wrap: wrap;">
+                <button class="btn-primary" type="button" onclick="document.getElementById('multi-file-uploader').click()" style="padding: 0.6rem 1.4rem; font-size: 0.86rem;">
+                  Browse Multiple Files...
+                </button>
+                <button class="pill-btn" type="button" onclick="clearModelTables()" style="padding: 0.6rem 1rem; font-size: 0.82rem; color: #f87171; border-color: rgba(248,113,113,0.3);">
+                  Clear All Tables
+                </button>
+              </div>
+
+              <!-- Upload Progress Indicator Bar -->
+              <div id="model-upload-progress-container" style="display: none; margin-top: 1.25rem; width: 100%; max-width: 480px; margin-left: auto; margin-right: auto; text-align: left;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: #94a3b8; margin-bottom: 5px;">
+                  <span id="model-upload-progress-label">Uploading files...</span>
+                  <span id="model-upload-progress-pct" style="color: #818cf8; font-weight: 700;">0%</span>
+                </div>
+                <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
+                  <div id="model-upload-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #6366f1, #38bdf8); transition: width 0.2s ease;"></div>
+                </div>
+              </div>
+
               <div id="model-loaded-tables-badges" style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 1rem;"></div>
             </div>
 
@@ -1035,9 +1056,44 @@
               </div>
             </div>
 
-            <!-- Quick Template Chips -->
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.85rem;">
-              <span style="font-size: 0.75rem; color: #94a3b8; align-self: center; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Templates:</span>
+            <!-- AI DAX Copilot Conversational Bar -->
+            <div style="background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(236,72,153,0.08) 100%); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 1.1rem; margin-bottom: 1.25rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div style="font-size: 0.92rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="#818cf8" stroke-width="2" fill="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                  <span>Automated AI DAX Copilot (Natural Language)</span>
+                </div>
+                <span style="font-size: 0.72rem; color: #34d399; font-weight: 600; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); padding: 2px 10px; border-radius: 999px;">Fully Automated</span>
+              </div>
+              <p style="font-size: 0.8rem; color: #94a3b8; margin: 0 0 0.75rem 0;">Ask anything in plain English like <code style="color:#cbd5e1; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px;">"sales by region"</code>, <code style="color:#cbd5e1; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px;">"profit margin by category"</code>, or <code style="color:#cbd5e1; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px;">"total customer count"</code> — the AI writes, compiles, and visualizes the DAX formula instantly.</p>
+              <div style="display: flex; gap: 0.6rem; align-items: center;">
+                <input type="text" id="dax-copilot-input" class="search-field" style="flex: 1; font-size: 0.88rem; padding: 0.6rem 0.9rem;"
+                  placeholder='Ask AI: e.g. "total sales by region", "profit margin by category", or "top 5 orders by revenue"'
+                  onkeydown="if(event.key === 'Enter') executeDaxCopilot()">
+                <button type="button" class="btn-primary" id="btn-run-dax-copilot" onclick="executeDaxCopilot()" style="padding: 0.6rem 1.25rem; font-size: 0.84rem; display: flex; align-items: center; gap: 6px; white-space: nowrap; background: linear-gradient(135deg, #6366f1, #8b5cf6);">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  <span>Ask Copilot</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Autonomously Synthesized Measures Showcase -->
+            <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                <span style="font-size: 0.82rem; font-weight: 700; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="#fbbf24" stroke-width="2" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                  Autonomously Synthesized Measures & Summaries
+                </span>
+                <button class="pill-btn" onclick="fetchAutomatedMeasures()" style="font-size: 0.75rem; padding: 2px 8px;">Refresh Measures</button>
+              </div>
+              <div id="dax-suggested-measures-grid" style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+                <span style="font-size: 0.8rem; color: #64748b;">Ingest tables above to automatically generate business measures, KPI ratios, and dimensional summaries.</span>
+              </div>
+            </div>
+
+            <!-- Quick Template Chips & Manual Expression Editor -->
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.85rem; align-items: center;">
+              <span style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Manual DAX Studio:</span>
               <button class="pill-btn" onclick="insertDaxSnippet('SUM')">SUM()</button>
               <button class="pill-btn" onclick="insertDaxSnippet('DIVIDE')">DIVIDE(Profit, Sales)</button>
               <button class="pill-btn" onclick="insertDaxSnippet('CALCULATE')">CALCULATE(Sales, Filter)</button>
