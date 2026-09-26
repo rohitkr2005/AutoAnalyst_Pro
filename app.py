@@ -55,6 +55,9 @@ SESSION_DATA = {
     "ml_cache": None
 }
 
+from engine.data_modeler import DataModel, DaxEngine, ingest_files_into_model
+GLOBAL_DATA_MODEL = DataModel()
+
 
 def init_app_services():
     """Initializes database schema and sample datasets safely on startup (both local and Gunicorn)."""
@@ -1327,6 +1330,151 @@ def api_evaluate_alerts():
         "triggered_count": len(triggered),
         "alerts": triggered
     })
+
+
+# ============================================================
+# MULTI-FILE / MULTI-SHEET RELATIONAL MODELING & DAX API
+# ============================================================
+
+@app.route("/api/model/upload-multiple", methods=["POST"])
+@login_required
+def api_model_upload_multiple():
+    """Uploads multiple files or multi-sheet workbooks into the relational data model."""
+    try:
+        files = request.files.getlist("files")
+        if not files or len(files) == 0:
+            return jsonify({"status": "error", "message": "No files uploaded."}), 400
+
+        files_data = []
+        for file in files:
+            if file.filename:
+                content = file.read()
+                files_data.append((file.filename, content))
+
+        from engine.data_modeler import ingest_files_into_model
+        result = ingest_files_into_model(files_data, GLOBAL_DATA_MODEL)
+        return jsonify(result)
+    except Exception as e:
+        print(f"[Multi-File Upload Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": f"Upload failed: {str(e)}"}), 500
+
+
+@app.route("/api/model/schema", methods=["GET"])
+@login_required
+def api_model_schema():
+    """Returns the active relational schema: tables, columns, sample rows, and foreign key relationships."""
+    try:
+        summary = GLOBAL_DATA_MODEL.get_schema_summary()
+        return jsonify({"status": "success", "schema": summary})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/model/relationship", methods=["POST"])
+@login_required
+def api_model_relationship():
+    """Adds or deletes a relationship link between two tables in the data model."""
+    try:
+        data = request.get_json() or {}
+        action = data.get("action", "add")
+        from_table = (data.get("from_table") or "").strip()
+        from_col = (data.get("from_col") or data.get("from_column") or "").strip()
+        to_table = (data.get("to_table") or "").strip()
+        to_col = (data.get("to_col") or data.get("to_column") or "").strip()
+        cardinality = data.get("cardinality", "many_to_one")
+
+        if not all([from_table, from_col, to_table, to_col]):
+            return jsonify({"status": "error", "message": "Missing relationship endpoints."}), 400
+
+        if action == "delete":
+            GLOBAL_DATA_MODEL.remove_relationship(from_table, from_col, to_table, to_col)
+            return jsonify({"status": "success", "message": "Relationship removed.", "schema": GLOBAL_DATA_MODEL.get_schema_summary()})
+        else:
+            success = GLOBAL_DATA_MODEL.add_relationship(from_table, from_col, to_table, to_col, cardinality)
+            if not success:
+                return jsonify({"status": "error", "message": "Could not create relationship. Check table and column names."}), 400
+            return jsonify({"status": "success", "message": "Relationship established.", "schema": GLOBAL_DATA_MODEL.get_schema_summary()})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/model/dax/evaluate", methods=["POST"])
+@login_required
+def api_model_dax_evaluate():
+    """Evaluates a DAX measure or table expression (SUMMARIZE, CALCULATE, DIVIDE, SUM, etc.)."""
+    try:
+        data = request.get_json() or {}
+        expression = data.get("expression", "").strip()
+        if not expression:
+            return jsonify({"status": "error", "message": "DAX expression cannot be empty."}), 400
+
+        if len(GLOBAL_DATA_MODEL.tables) == 0:
+            return jsonify({"status": "error", "message": "No tables loaded in the data model. Please upload sheets or tables first."}), 400
+
+        from engine.data_modeler import DaxEngine
+        engine = DaxEngine(GLOBAL_DATA_MODEL)
+
+        if expression.upper().startswith("SUMMARIZE") or expression.upper().startswith("EVALUATE SUMMARIZE"):
+            result = engine.evaluate_summarize(expression)
+            return jsonify(result)
+        else:
+            val = engine.evaluate_scalar_dax(expression)
+            formatted = f"{val:,.2f}" if isinstance(val, (int, float, np.number)) else str(val)
+            return jsonify({
+                "status": "success",
+                "type": "scalar",
+                "expression": expression,
+                "result": val,
+                "formatted": formatted
+            })
+    except Exception as e:
+        print(f"[DAX Evaluation Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": f"DAX error: {str(e)}"}), 400
+
+
+@app.route("/api/model/build-dashboard", methods=["POST"])
+@login_required
+def api_model_build_dashboard():
+    """Builds a unified relational dataset from all connected tables and streams it into the live dashboard studio."""
+    try:
+        if len(GLOBAL_DATA_MODEL.tables) == 0:
+            return jsonify({"status": "error", "message": "No tables in data model."}), 400
+
+        data = request.get_json() or {}
+        base_table = data.get("base_table")
+
+        df = GLOBAL_DATA_MODEL.build_joined_dataframe(base_table)
+        if df.empty:
+            return jsonify({"status": "error", "message": "Joined model is empty."}), 400
+
+        table_names = list(GLOBAL_DATA_MODEL.tables.keys())
+        SESSION_DATA["raw_df"] = df
+        SESSION_DATA["dataset_name"] = f"Relational Model: {' + '.join(table_names)}"
+        SESSION_DATA["current_file_path"] = f"model://{'-'.join(table_names)}"
+        SESSION_DATA["selected_sample_key"] = None
+        SESSION_DATA["cleaned_df"] = None
+        SESSION_DATA["audit_report"] = None
+        SESSION_DATA["eda_cache"] = None
+        SESSION_DATA["ml_cache"] = None
+
+        raw_audit = audit_dataset_health(df)
+        SESSION_DATA["raw_audit"] = raw_audit
+
+        if "user_id" in session:
+            record_user_activity(session["user_id"], SESSION_DATA["dataset_name"], len(df), raw_audit["health_score"], "Unified Relational Model")
+
+        return jsonify({
+            "status": "success",
+            "message": f"Relational model unified ({len(df):,} joined records across {len(table_names)} tables). Live dashboard ready!",
+            "dataset_name": SESSION_DATA["dataset_name"],
+            "total_rows": len(df),
+            "total_cols": len(df.columns),
+            "columns": list(df.columns)
+        })
+    except Exception as e:
+        print(f"[Build Model Dashboard Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 
 def auto_open_browser():

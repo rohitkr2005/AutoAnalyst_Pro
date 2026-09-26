@@ -40,7 +40,8 @@ const chartInstances = {
   anomalyRadar: null,
   dashStudio: null,
   forecast: null,
-  forecastDrivers: null
+  forecastDrivers: null,
+  daxPreview: null
 };
 
 // Color palettes for Chart.js
@@ -237,7 +238,9 @@ const TAB_TO_VIEW_MAP = {
   'view-reports': 'view-reports',
   'view-ml': 'view-ml',
   'view-table': 'view-table',
-  'view-ai': 'view-ai'
+  'view-ai': 'view-ai',
+  'tab-model': 'view-model',
+  'view-model': 'view-model'
 };
 
 function switchView(viewId) {
@@ -280,6 +283,8 @@ function switchView(viewId) {
     fetchInspectorRows();
   } else if (targetView === 'view-table') {
     fetchInspectorRows();
+  } else if (targetView === 'view-model') {
+    fetchModelSchema();
   }
 }
 
@@ -2968,4 +2973,480 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 1000);
 });
+
+// ============================================================
+// RELATIONAL DATA MODELER & DAX CONTROLLER
+// ============================================================
+let currentModelSchema = null;
+
+async function handleMultiFileUpload(event) {
+  const files = event.target.files;
+  if (!files || files.length === 0) return;
+
+  showLoading(`Ingesting ${files.length} file(s) into Relational Data Model...`);
+  const formData = new FormData();
+  for (let i = 0; i < files.length; i++) {
+    formData.append('files', files[i]);
+  }
+
+  try {
+    const res = await fetch('/api/model/upload-multiple', {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      const badgesContainer = document.getElementById('model-loaded-tables-badges');
+      if (badgesContainer && data.loaded_tables) {
+        badgesContainer.innerHTML = data.loaded_tables.map(t => 
+          `<span class="bullet-badge" style="background:rgba(99,102,241,0.2); color:#a5b4fc; font-weight:600; padding:4px 10px; border-radius:999px;">📄 ${escapeHtml(t)}</span>`
+        ).join(' ');
+      }
+
+      currentModelSchema = data.schema;
+      renderSchemaModel(data.schema);
+
+      const sidebarBadge = document.getElementById('sidebar-model-badge');
+      if (sidebarBadge) {
+        sidebarBadge.textContent = `${data.total_tables} Tables`;
+      }
+    } else {
+      alert(data.message || 'Failed to ingest files.');
+    }
+  } catch (err) {
+    console.error('Multi-file upload error:', err);
+    alert('Error uploading multiple files.');
+  } finally {
+    hideLoading();
+  }
+}
+
+async function fetchModelSchema() {
+  try {
+    const res = await fetch('/api/model/schema');
+    const data = await res.json();
+    if (data.status === 'success') {
+      currentModelSchema = data.schema;
+      renderSchemaModel(data.schema);
+    }
+  } catch (err) {
+    console.error('Fetch schema error:', err);
+  }
+}
+
+function renderSchemaModel(schema) {
+  if (!schema) return;
+
+  // Stats
+  const statTables = document.getElementById('model-stat-tables');
+  const statRels = document.getElementById('model-stat-rels');
+  const statMeasures = document.getElementById('model-stat-measures');
+  const statRows = document.getElementById('model-stat-rows');
+
+  if (statTables) statTables.textContent = schema.total_tables || 0;
+  if (statRels) statRels.textContent = (schema.relationships || []).length;
+  if (statMeasures) statMeasures.textContent = schema.measures_count || 0;
+
+  let totalRows = 0;
+  (schema.tables || []).forEach(t => totalRows += (t.rows || 0));
+  if (statRows) statRows.textContent = totalRows.toLocaleString();
+
+  // Populate Base Table selector
+  const baseSelect = document.getElementById('model-base-table-select');
+  if (baseSelect) {
+    const currVal = baseSelect.value;
+    baseSelect.innerHTML = '<option value="">-- Auto-detect Largest Fact Table --</option>';
+    (schema.tables || []).forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.name;
+      opt.textContent = `${t.name} (${t.rows.toLocaleString()} rows)`;
+      if (t.name === currVal) opt.selected = true;
+      baseSelect.appendChild(opt);
+    });
+  }
+
+  // Populate Relationship modal dropdowns
+  const fromSelect = document.getElementById('rel-from-table');
+  const toSelect = document.getElementById('rel-to-table');
+  if (fromSelect && toSelect) {
+    fromSelect.innerHTML = '<option value="">-- Select Table --</option>';
+    toSelect.innerHTML = '<option value="">-- Select Table --</option>';
+    (schema.tables || []).forEach(t => {
+      const opt1 = document.createElement('option');
+      opt1.value = t.name; opt1.textContent = t.name;
+      const opt2 = document.createElement('option');
+      opt2.value = t.name; opt2.textContent = t.name;
+      fromSelect.appendChild(opt1);
+      toSelect.appendChild(opt2);
+    });
+  }
+
+  // Render Relationships list
+  const relsList = document.getElementById('model-relationships-list');
+  if (relsList) {
+    if (!schema.relationships || schema.relationships.length === 0) {
+      relsList.innerHTML = `<span style="font-size:0.82rem; color:#94a3b8; align-self:center;">No relationships defined yet. Ingest multiple tables or click Auto-Detect.</span>`;
+    } else {
+      relsList.innerHTML = schema.relationships.map(r => `
+        <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); border-radius:999px; padding:4px 12px; font-size:0.8rem; color:#cbd5e1;">
+          <strong style="color:#fff;">${escapeHtml(r.from_table)}</strong>.<span style="color:#a5b4fc;">${escapeHtml(r.from_col)}</span>
+          <span style="color:#fbbf24; font-weight:700;">──( 1:* )──►</span>
+          <strong style="color:#fff;">${escapeHtml(r.to_table)}</strong>.<span style="color:#a5b4fc;">${escapeHtml(r.to_col)}</span>
+          <button type="button" onclick="deleteModelRelationship('${escapeHtml(r.from_table)}', '${escapeHtml(r.from_col)}', '${escapeHtml(r.to_table)}', '${escapeHtml(r.to_col)}')" style="background:none; border:none; color:#f87171; cursor:pointer; font-weight:bold; margin-left:4px; font-size:0.85rem;" title="Delete relationship">✕</button>
+        </div>
+      `).join(' ');
+    }
+  }
+
+  // Render Visual Table Cards
+  const cardsGrid = document.getElementById('model-tables-cards-grid');
+  if (cardsGrid) {
+    if (!schema.tables || schema.tables.length === 0) {
+      cardsGrid.innerHTML = `
+        <div style="padding: 2.5rem; text-align: center; color: #94a3b8; grid-column: 1 / -1; border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
+          <svg viewBox="0 0 24 24" width="36" height="36" stroke="#64748b" stroke-width="1.5" fill="none" style="margin-bottom: 0.75rem;"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+          <div style="font-size: 0.95rem; font-weight: 600; color: #cbd5e1; margin-bottom: 0.25rem;">No Tables in Data Model</div>
+          <p style="font-size: 0.82rem; color: #64748b; margin: 0;">Upload multiple CSV/Excel files above to start relational star/snowflake modeling.</p>
+        </div>
+      `;
+      return;
+    }
+
+    let cardsHtml = '';
+    schema.tables.forEach(t => {
+      let colsHtml = t.columns.map(c => {
+        let tag = '';
+        if (c.is_pk) tag = `<span style="font-size:0.65rem; background:rgba(16,185,129,0.25); color:#34d399; font-weight:700; padding:1px 5px; border-radius:4px;">PK</span>`;
+        else if (c.is_fk) tag = `<span style="font-size:0.65rem; background:rgba(99,102,241,0.25); color:#a5b4fc; font-weight:700; padding:1px 5px; border-radius:4px;">FK</span>`;
+
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 8px; border-bottom:1px solid rgba(255,255,255,0.03); font-size:0.78rem;">
+            <div style="display:flex; align-items:center; gap:6px;">
+              ${tag}
+              <span style="color:#f1f5f9; font-family:'JetBrains Mono',monospace;">${escapeHtml(c.name)}</span>
+            </div>
+            <span style="font-size:0.68rem; color:#64748b; font-weight:600;">${c.type}</span>
+          </div>
+        `;
+      }).join('');
+
+      cardsHtml += `
+        <div style="background:var(--bg-card, rgba(15,23,42,0.85)); border:1px solid var(--border-subtle, rgba(255,255,255,0.08)); border-radius:12px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.25);">
+          <div style="background:rgba(255,255,255,0.04); padding:0.75rem 1rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.06);">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:#818cf8;"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg></span>
+              <strong style="font-size:0.92rem; color:#fff;">${escapeHtml(t.name)}</strong>
+            </div>
+            <span class="bullet-badge" style="background:rgba(255,255,255,0.08); font-size:0.72rem; color:#94a3b8;">${t.rows.toLocaleString()} rows</span>
+          </div>
+          <div style="max-height:220px; overflow-y:auto; padding:0.4rem;">
+            ${colsHtml}
+          </div>
+        </div>
+      `;
+    });
+
+    cardsGrid.innerHTML = cardsHtml;
+  }
+}
+
+function toggleAddRelationshipDrawer() {
+  const box = document.getElementById('add-relationship-form-box');
+  if (!box) return;
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+}
+
+function updateRelColumnDropdowns(type) {
+  if (!currentModelSchema || !currentModelSchema.tables) return;
+  const tableSelect = document.getElementById(`rel-${type}-table`);
+  const colSelect = document.getElementById(`rel-${type}-col`);
+  if (!tableSelect || !colSelect) return;
+
+  const chosenTable = tableSelect.value;
+  colSelect.innerHTML = '';
+  const tableMeta = currentModelSchema.tables.find(t => t.name === chosenTable);
+  if (tableMeta && tableMeta.columns) {
+    tableMeta.columns.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.name; opt.textContent = `${c.name} (${c.type})`;
+      colSelect.appendChild(opt);
+    });
+  }
+}
+
+async function submitCustomRelationship() {
+  const fromTable = document.getElementById('rel-from-table')?.value;
+  const fromCol = document.getElementById('rel-from-col')?.value;
+  const toTable = document.getElementById('rel-to-table')?.value;
+  const toCol = document.getElementById('rel-to-col')?.value;
+
+  if (!fromTable || !fromCol || !toTable || !toCol) {
+    alert('Please select both tables and foreign/primary key columns.');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/model/relationship', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'add',
+        from_table: fromTable,
+        from_col: fromCol,
+        to_table: toTable,
+        to_col: toCol
+      })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      currentModelSchema = data.schema;
+      renderSchemaModel(data.schema);
+      toggleAddRelationshipDrawer();
+    } else {
+      alert(data.message || 'Failed to save relationship.');
+    }
+  } catch (err) {
+    alert('Error saving relationship link.');
+  }
+}
+
+async function deleteModelRelationship(fromTable, fromCol, toTable, toCol) {
+  if (!confirm(`Delete relationship link between ${fromTable}.${fromCol} and ${toTable}.${toCol}?`)) return;
+
+  try {
+    const res = await fetch('/api/model/relationship', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'delete',
+        from_table: fromTable,
+        from_col: fromCol,
+        to_table: toTable,
+        to_col: toCol
+      })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      currentModelSchema = data.schema;
+      renderSchemaModel(data.schema);
+    }
+  } catch (err) {
+    alert('Error removing relationship.');
+  }
+}
+
+async function detectModelRelationships() {
+  showLoading('Scanning tables and calculating key value overlaps for foreign keys...');
+  try {
+    const res = await fetch('/api/model/schema');
+    const data = await res.json();
+    if (data.status === 'success') {
+      currentModelSchema = data.schema;
+      renderSchemaModel(data.schema);
+    }
+  } finally {
+    hideLoading();
+  }
+}
+
+function insertDaxSnippet(type) {
+  const input = document.getElementById('dax-expression-input');
+  if (!input) return;
+
+  let firstTable = 'Orders';
+  let firstCol = 'sales';
+  if (currentModelSchema && currentModelSchema.tables && currentModelSchema.tables.length > 0) {
+    firstTable = currentModelSchema.tables[0].name;
+    if (currentModelSchema.tables[0].columns && currentModelSchema.tables[0].columns.length > 1) {
+      firstCol = currentModelSchema.tables[0].columns[1].name;
+    }
+  }
+
+  if (type === 'SUM') {
+    input.value = `SUM(${firstTable}[${firstCol}])`;
+  } else if (type === 'DIVIDE') {
+    input.value = `DIVIDE(SUM(${firstTable}[profit]), SUM(${firstTable}[sales]), 0)`;
+  } else if (type === 'CALCULATE') {
+    input.value = `CALCULATE(SUM(${firstTable}[${firstCol}]), ${firstTable}[${firstCol}] > 100)`;
+  } else if (type === 'SUMMARIZE') {
+    input.value = `EVALUATE SUMMARIZE(${firstTable}, ${firstTable}[${firstCol}], "Total Revenue", SUM(${firstTable}[${firstCol}]))`;
+  } else if (type === 'COUNTROWS') {
+    input.value = `COUNTROWS(${firstTable})`;
+  }
+}
+
+async function executeDaxQuery() {
+  const input = document.getElementById('dax-expression-input');
+  const btn = document.getElementById('btn-run-dax');
+  if (!input) return;
+
+  const expression = input.value.trim();
+  if (!expression) {
+    alert('Please enter a DAX expression.');
+    return;
+  }
+
+  const origBtn = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> Evaluating...`;
+  }
+
+  try {
+    const res = await fetch('/api/model/dax/evaluate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ expression: expression })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      const container = document.getElementById('dax-output-container');
+      const scalarCard = document.getElementById('dax-scalar-card');
+      const tableCard = document.getElementById('dax-table-card');
+      if (container) container.style.display = 'block';
+
+      if (data.type === 'scalar') {
+        if (tableCard) tableCard.style.display = 'none';
+        if (scalarCard) {
+          scalarCard.style.display = 'block';
+          document.getElementById('dax-scalar-label').textContent = 'DAX Measure Result';
+          document.getElementById('dax-scalar-value').textContent = data.formatted;
+          document.getElementById('dax-scalar-formula').textContent = data.expression;
+        }
+      } else if (data.type === 'table') {
+        if (scalarCard) scalarCard.style.display = 'none';
+        if (tableCard) {
+          tableCard.style.display = 'block';
+          document.getElementById('dax-chart-title').textContent = data.chart?.title || 'DAX Summarize Visual';
+
+          // Render Table
+          const thead = document.querySelector('#dax-table-output thead');
+          const tbody = document.querySelector('#dax-table-output tbody');
+          if (thead) {
+            thead.innerHTML = '';
+            const tr = document.createElement('tr');
+            (data.columns || []).forEach(c => {
+              const th = document.createElement('th');
+              th.textContent = c;
+              tr.appendChild(th);
+            });
+            thead.appendChild(tr);
+          }
+          if (tbody) {
+            tbody.innerHTML = '';
+            (data.rows || []).forEach(r => {
+              const tr = document.createElement('tr');
+              (data.columns || []).forEach(c => {
+                const td = document.createElement('td');
+                td.textContent = r[c] !== null && r[c] !== undefined ? r[c] : 'null';
+                tr.appendChild(td);
+              });
+              tbody.appendChild(tr);
+            });
+          }
+
+          // Render Chart
+          renderDaxVisual(data.chart);
+        }
+      }
+    } else {
+      alert(data.message || 'DAX evaluation error.');
+    }
+  } catch (err) {
+    console.error('DAX execution error:', err);
+    alert('Failed to evaluate DAX expression.');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = origBtn;
+    }
+  }
+}
+
+function renderDaxVisual(chartConfig) {
+  const ctx = document.getElementById('chart-dax-preview-canvas')?.getContext('2d');
+  if (!ctx || !chartConfig) return;
+
+  if (chartInstances.daxPreview) {
+    chartInstances.daxPreview.destroy();
+  }
+
+  const chartType = chartConfig.type || 'bar';
+  chartInstances.daxPreview = new Chart(ctx, {
+    type: chartType,
+    data: {
+      labels: chartConfig.labels || [],
+      datasets: chartConfig.datasets || []
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: chartType === 'doughnut' || chartType === 'pie',
+          labels: { color: '#94a3b8' }
+        }
+      },
+      scales: (chartType === 'doughnut' || chartType === 'pie') ? {} : {
+        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
+      }
+    }
+  });
+}
+
+async function buildUnifiedModelDashboard() {
+  const baseTable = document.getElementById('model-base-table-select')?.value || null;
+  showLoading('Unifying relational model, joining connected tables, and running autonomous pipeline...');
+
+  try {
+    const res = await fetch('/api/model/build-dashboard', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ base_table: baseTable })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      showLoading('Streaming Model: Step 1/3 - Running Data Preprocessing Studio...');
+      const cleanRes = await fetch('/api/clean', { method: 'POST' });
+      const cleanData = await cleanRes.json();
+      if (cleanData.status === 'success') {
+        renderCleanResults(cleanData.cleaning_report, cleanData.preview, cleanData.columns, cleanData.python_script);
+      }
+
+      showLoading('Streaming Model: Step 2/3 - Computing Statistical Exploratory Analysis...');
+      const edaRes = await fetch('/api/eda', { method: 'POST' });
+      const edaData = await edaRes.json();
+      if (edaData.status === 'success') {
+        renderEDAResults(edaData);
+      }
+
+      showLoading('Streaming Model: Step 3/3 - Executing AutoML (Clusters, Drivers, Anomalies)...');
+      const mlRes = await fetch('/api/ml', { method: 'POST' });
+      const mlData = await mlRes.json();
+      if (mlData.status === 'success') {
+        renderMLResults(mlData);
+      }
+
+      appState.datasetName = data.dataset_name;
+      const wsName = document.getElementById('sidebar-workspace-name');
+      if (wsName) wsName.textContent = data.dataset_name;
+      const labelEl = document.getElementById('active-dataset-label');
+      if (labelEl) labelEl.textContent = `${data.dataset_name} (${data.total_rows.toLocaleString()} rows)`;
+
+      switchView('view-dashboards');
+      switchSubTab('view-dashboards', 'dash-overview');
+      renderDashboard();
+      fetchInspectorRows();
+    } else {
+      alert(data.message || 'Failed to unify relational model.');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Error unifying model into live dashboard.');
+  } finally {
+    hideLoading();
+  }
+}
+
 

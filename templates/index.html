@@ -111,7 +111,16 @@
             <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
           </span>
           <span class="nav-item-label">Data Connect</span>
-          <span class="nav-badge count" id="sidebar-sources-badge">4 Demos</span>
+          <span class="nav-badge count" id="sidebar-sources-badge">Sources</span>
+        </button>
+
+        <!-- 3. Relational Data Modeling & DAX -->
+        <button class="nav-item" data-view="view-model" id="nav-model" onclick="switchView('view-model')">
+          <span class="nav-item-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="2" width="8" height="8" rx="2"></rect><rect x="14" y="2" width="8" height="8" rx="2"></rect><rect x="8" y="14" width="8" height="8" rx="2"></rect><line x1="6" y1="10" x2="6" y2="18"></line><line x1="6" y1="18" x2="8" y2="18"></line><line x1="18" y1="10" x2="18" y2="18"></line><line x1="18" y1="18" x2="16" y2="18"></line></svg>
+          </span>
+          <span class="nav-item-label">Data Model & DAX</span>
+          <span class="nav-badge ai" id="sidebar-model-badge" style="background: rgba(99, 102, 241, 0.2); color: #818cf8;">Power BI</span>
         </button>
 
         <!-- 3. Data Prep & Cleansing -->
@@ -837,6 +846,213 @@
                 </table>
               </div>
             </div>
+          </div>
+
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- VIEW 2.5: RELATIONAL DATA MODELER & DAX FORMULA STUDIO   -->
+        <!-- ======================================================== -->
+        <section class="workspace-view" id="view-model">
+
+          <div class="view-header-bar">
+            <div>
+              <h2 class="view-title">
+                <svg class="view-title-icon" viewBox="0 0 24 24"><rect x="2" y="2" width="8" height="8" rx="2"></rect><rect x="14" y="2" width="8" height="8" rx="2"></rect><rect x="8" y="14" width="8" height="8" rx="2"></rect><line x1="6" y1="10" x2="6" y2="18"></line><line x1="6" y1="18" x2="8" y2="18"></line><line x1="18" y1="10" x2="18" y2="18"></line><line x1="18" y1="18" x2="16" y2="18"></line></svg>
+                Relational Data Modeler & DAX Studio
+              </h2>
+              <p class="view-subtitle">Ingest multiple files/sheets, connect them in a Star/Snowflake schema, author DAX measures, and stream into unified live dashboards.</p>
+            </div>
+            <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+              <button class="pill-btn" onclick="detectModelRelationships()" style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem;">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                Auto-Detect Schema Links
+              </button>
+              <button class="btn-primary" onclick="buildUnifiedModelDashboard()" style="display: flex; align-items: center; gap: 6px; font-size: 0.84rem; padding: 0.55rem 1.1rem;">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Build Unified Live Dashboard →
+              </button>
+            </div>
+          </div>
+
+          <!-- Top Grid: Ingestion Hub & Model Metrics -->
+          <div class="grid-2" style="margin-bottom: 1.75rem;">
+            
+            <!-- Multi-File Dropzone -->
+            <div class="dropzone-container" style="padding: 2rem 1.5rem; text-align: center;">
+              <input type="file" id="multi-file-uploader" class="file-input" multiple accept=".csv,.tsv,.xlsx,.xls,.json" onchange="handleMultiFileUpload(event)">
+              <div class="dropzone-icon" style="margin-bottom: 0.75rem;">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              </div>
+              <div class="dropzone-title" style="font-size: 1.1rem; margin-bottom: 0.35rem;">Ingest Multiple Files / Multi-Sheet Workbooks</div>
+              <div class="dropzone-subtitle" style="font-size: 0.8rem; margin-bottom: 1.25rem;">
+                Select 2+ files (e.g. Orders, Customers, Products) or multi-sheet Excel workbooks simultaneously.
+              </div>
+              <button class="btn-primary" type="button" onclick="document.getElementById('multi-file-uploader').click()" style="padding: 0.6rem 1.4rem; font-size: 0.86rem;">
+                Browse Multiple Files...
+              </button>
+              <div id="model-loaded-tables-badges" style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 1rem;"></div>
+            </div>
+
+            <!-- Model Status & Summary Card -->
+            <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <h3 style="margin-bottom: 0.5rem; font-size: 1.15rem; color: #fff; display: flex; align-items: center; gap: 8px;">
+                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="#38bdf8" stroke-width="2" fill="none"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                  Relational Model Architecture
+                </h3>
+                <p style="color: var(--text-secondary); font-size: 0.82rem; margin-bottom: 1.25rem;">
+                  Star/Snowflake relational schema graph. Tables are automatically linked via shared keys and queryable via DAX.
+                </p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem;">
+                  <div class="stat-card" style="padding: 0.85rem 1rem;">
+                    <div class="stat-label">Tables In Model</div>
+                    <div class="stat-value" id="model-stat-tables" style="font-size: 1.4rem; color: #818cf8;">0</div>
+                  </div>
+                  <div class="stat-card" style="padding: 0.85rem 1rem;">
+                    <div class="stat-label">Active Relationships</div>
+                    <div class="stat-value" id="model-stat-rels" style="font-size: 1.4rem; color: #34d399;">0</div>
+                  </div>
+                  <div class="stat-card" style="padding: 0.85rem 1rem;">
+                    <div class="stat-label">Model Total Rows</div>
+                    <div class="stat-value" id="model-stat-rows" style="font-size: 1.4rem; color: #38bdf8;">0</div>
+                  </div>
+                  <div class="stat-card" style="padding: 0.85rem 1rem;">
+                    <div class="stat-label">DAX Measures</div>
+                    <div class="stat-value" id="model-stat-measures" style="font-size: 1.4rem; color: #fbbf24;">0</div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.35rem; font-weight: 500;">Primary Fact Table (Base Table for Joins)</label>
+                <select id="model-base-table-select" class="search-field" style="width: 100%; font-size: 0.85rem; padding: 0.5rem 0.8rem;">
+                  <option value="">-- Auto-detect Largest Fact Table --</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Section 2: Visual Schema Architecture & Active Links -->
+          <div class="glass-card" style="margin-bottom: 1.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+              <div>
+                <h3 style="margin: 0; font-size: 1.15rem; color: #fff;">Schema Tables & Columns</h3>
+                <p style="margin: 0.2rem 0 0; font-size: 0.82rem; color: #94a3b8;">Visual table cards with inferred data types and primary/foreign key badges</p>
+              </div>
+              <button class="pill-btn" onclick="toggleAddRelationshipDrawer()" style="font-size: 0.82rem; padding: 0.45rem 0.9rem;">
+                + Add Custom Relationship
+              </button>
+            </div>
+
+            <!-- Inline Relationship Creator Form -->
+            <div id="add-relationship-form-box" style="display: none; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 10px; padding: 1rem; margin-bottom: 1.25rem;">
+              <div style="font-size: 0.85rem; font-weight: 600; color: #818cf8; margin-bottom: 0.75rem;">Define Foreign Key Link Between Tables</div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; align-items: flex-end;">
+                <div>
+                  <label style="display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 4px;">From Table</label>
+                  <select id="rel-from-table" class="search-field" style="width: 100%; font-size: 0.82rem; padding: 0.45rem 0.7rem;" onchange="updateRelColumnDropdowns('from')"></select>
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 4px;">From Column (FK)</label>
+                  <select id="rel-from-col" class="search-field" style="width: 100%; font-size: 0.82rem; padding: 0.45rem 0.7rem;"></select>
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 4px;">To Table</label>
+                  <select id="rel-to-table" class="search-field" style="width: 100%; font-size: 0.82rem; padding: 0.45rem 0.7rem;" onchange="updateRelColumnDropdowns('to')"></select>
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 4px;">To Column (PK)</label>
+                  <select id="rel-to-col" class="search-field" style="width: 100%; font-size: 0.82rem; padding: 0.45rem 0.7rem;"></select>
+                </div>
+                <div>
+                  <button class="btn-primary" onclick="submitCustomRelationship()" style="width: 100%; padding: 0.5rem; font-size: 0.82rem;">Save Link</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active Relationships Badges Row -->
+            <div id="model-relationships-list" style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
+              <span style="font-size: 0.82rem; color: #94a3b8; align-self: center;">No relationships defined yet. Ingest multiple tables or click Auto-Detect.</span>
+            </div>
+
+            <!-- Dynamic Table Cards Grid -->
+            <div id="model-tables-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+              <div style="padding: 2.5rem; text-align: center; color: #94a3b8; grid-column: 1 / -1; border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
+                <svg viewBox="0 0 24 24" width="36" height="36" stroke="#64748b" stroke-width="1.5" fill="none" style="margin-bottom: 0.75rem;"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                <div style="font-size: 0.95rem; font-weight: 600; color: #cbd5e1; margin-bottom: 0.25rem;">No Tables in Data Model</div>
+                <p style="font-size: 0.82rem; color: #64748b; margin: 0;">Upload multiple CSV/Excel files above to start relational star/snowflake modeling.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Power BI Style DAX Formula Studio & Visual Preview -->
+          <div class="glass-card" style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+              <div>
+                <h3 style="margin: 0; font-size: 1.15rem; color: #fff; display: flex; align-items: center; gap: 8px;">
+                  <span class="bullet-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.85rem; padding: 2px 8px;">fx</span>
+                  DAX Formula Studio (Data Analysis Expressions)
+                </h3>
+                <p style="margin: 0.2rem 0 0; font-size: 0.82rem; color: #94a3b8;">Write or choose Power BI DAX formulas: SUM, AVERAGE, DIVIDE, CALCULATE, and SUMMARIZE</p>
+              </div>
+            </div>
+
+            <!-- Quick Template Chips -->
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.85rem;">
+              <span style="font-size: 0.75rem; color: #94a3b8; align-self: center; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Templates:</span>
+              <button class="pill-btn" onclick="insertDaxSnippet('SUM')">SUM()</button>
+              <button class="pill-btn" onclick="insertDaxSnippet('DIVIDE')">DIVIDE(Profit, Sales)</button>
+              <button class="pill-btn" onclick="insertDaxSnippet('CALCULATE')">CALCULATE(Sales, Filter)</button>
+              <button class="pill-btn" onclick="insertDaxSnippet('SUMMARIZE')">EVALUATE SUMMARIZE()</button>
+              <button class="pill-btn" onclick="insertDaxSnippet('COUNTROWS')">COUNTROWS()</button>
+            </div>
+
+            <!-- DAX Input Bar -->
+            <div style="display: flex; gap: 0.75rem; align-items: center; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 0.6rem 0.9rem; margin-bottom: 1.25rem;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #fbbf24; font-size: 0.95rem; user-select: none;">fx</span>
+              <input type="text" id="dax-expression-input" class="search-field" style="flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; background: transparent; border: none; padding: 0.2rem 0.5rem; color: #fff;"
+                placeholder='e.g. EVALUATE SUMMARIZE(Orders, Customers[region], "Total Revenue", SUM(Orders[sales]), "Margin", DIVIDE(SUM(Orders[profit]), SUM(Orders[sales])))'
+                onkeydown="if(event.key === 'Enter') executeDaxQuery()">
+              <button type="button" class="btn-primary" id="btn-run-dax" onclick="executeDaxQuery()" style="padding: 0.55rem 1.1rem; font-size: 0.84rem; display: flex; align-items: center; gap: 6px; white-space: nowrap;">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <span>Execute DAX</span>
+              </button>
+            </div>
+
+            <!-- DAX Output Display (Scalar KPI or Table + Chart Preview) -->
+            <div id="dax-output-container" style="display: none;">
+              <!-- Scalar Result Card -->
+              <div id="dax-scalar-card" style="display: none; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 12px; padding: 1.5rem; text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: #818cf8; font-weight: 700; margin-bottom: 0.4rem;" id="dax-scalar-label">Computed DAX Measure</div>
+                <div style="font-size: 2.4rem; font-weight: 800; font-family: 'Outfit', sans-serif; color: #fff;" id="dax-scalar-value">--</div>
+                <div style="font-size: 0.8rem; color: #94a3b8; font-family: 'JetBrains Mono', monospace; margin-top: 0.5rem;" id="dax-scalar-formula"></div>
+              </div>
+
+              <!-- Tabular & Visual Result Card -->
+              <div id="dax-table-card" style="display: none;">
+                <div class="grid-2" style="gap: 1.25rem; align-items: start;">
+                  <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1rem;">
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #fff; margin-bottom: 0.75rem;">DAX Tabular Output</div>
+                    <div class="table-container" style="max-height: 320px; overflow-y: auto;">
+                      <table class="modern-table" id="dax-table-output">
+                        <thead></thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1rem;">
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #fff; margin-bottom: 0.75rem;" id="dax-chart-title">DAX Visual Synthesis</div>
+                    <div style="height: 300px; position: relative;">
+                      <canvas id="chart-dax-preview-canvas"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
         </section>
