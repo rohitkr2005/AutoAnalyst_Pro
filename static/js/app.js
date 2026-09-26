@@ -872,6 +872,15 @@ function renderStudioChart() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      onClick: (event, elements) => {
+        if (elements && elements.length > 0) {
+          const index = elements[0].index;
+          const clickedLabel = labels[index];
+          if (clickedLabel) {
+            applyCrossFilter(category, clickedLabel);
+          }
+        }
+      },
       plugins: {
         legend: {
           position: chartType === 'doughnut' || chartType === 'polarArea' ? 'right' : 'top',
@@ -2002,6 +2011,15 @@ function renderDashboardCategoryChart(category, metric, chartType = 'doughnut', 
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      onClick: (event, elements) => {
+        if (elements && elements.length > 0) {
+          const index = elements[0].index;
+          const clickedLabel = labels[index];
+          if (clickedLabel) {
+            applyCrossFilter(category, clickedLabel);
+          }
+        }
+      },
       plugins: {
         legend: {
           position: chartType === 'doughnut' || chartType === 'polarArea' ? 'right' : 'top',
@@ -2457,4 +2475,497 @@ async function clearUserHistory() {
     alert('Error clearing history.');
   }
 }
+
+// ============================================================
+// UPGRADE 1: CONVERSATIONAL TEXT-TO-CHART (BI COPILOT)
+// ============================================================
+async function executeAiPromptToChart() {
+  const input = document.getElementById('ai-prompt-chart-input');
+  const btn = document.getElementById('btn-ai-prompt-chart');
+  const banner = document.getElementById('ai-chart-narrative-banner');
+  if (!input) return;
+
+  const promptText = input.value.trim();
+  if (!promptText) {
+    alert('Please enter a chart description, e.g. "Average salary by department" or "Distribution of age"');
+    return;
+  }
+
+  const origBtnContent = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> Generating...`;
+  }
+
+  try {
+    const res = await fetch('/api/ai/text-to-chart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: promptText })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      renderAiGeneratedChart(data);
+      if (banner && data.narrative) {
+        banner.style.display = 'block';
+        banner.innerHTML = `<strong>✨ AI Executive Narrative:</strong> ${escapeHtml(data.narrative).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}`;
+      }
+    } else {
+      alert(data.message || 'Could not generate chart from prompt.');
+    }
+  } catch (err) {
+    console.error('Text-to-Chart error:', err);
+    alert('Error generating chart. Please ensure a dataset is loaded.');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = origBtnContent;
+    }
+  }
+}
+
+function renderAiGeneratedChart(chartResult) {
+  const ctx = document.getElementById('chart-dash-studio-canvas')?.getContext('2d');
+  if (!ctx) return;
+
+  if (chartInstances.dashStudio) {
+    chartInstances.dashStudio.destroy();
+  }
+
+  const chartType = chartResult.chart_type || 'bar';
+  const isHorizontal = !!chartResult.is_horizontal;
+
+  const config = {
+    type: chartType,
+    data: {
+      labels: chartResult.labels || [],
+      datasets: chartResult.datasets || []
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: isHorizontal ? 'y' : 'x',
+      onClick: (e, elements) => {
+        if (elements && elements.length > 0) {
+          const idx = elements[0].index;
+          const clickedLabel = chartResult.labels[idx];
+          if (clickedLabel) {
+            applyCrossFilter(chartResult.dimension || 'Selected', clickedLabel);
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: chartType === 'doughnut' || chartType === 'pie',
+          labels: { color: '#94a3b8' }
+        },
+        title: {
+          display: true,
+          text: chartResult.title || 'AI Generated Visualization',
+          color: '#ffffff',
+          font: { size: 14, weight: 'bold' }
+        }
+      },
+      scales: (chartType === 'doughnut' || chartType === 'pie' || chartType === 'polarArea') ? {} : {
+        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
+      }
+    }
+  };
+
+  chartInstances.dashStudio = new Chart(ctx, config);
+}
+
+
+// ============================================================
+// UPGRADE 4: INTERACTIVE CHART CROSS-FILTERING
+// ============================================================
+function applyCrossFilter(dimension, value) {
+  if (!value) return;
+  const pill = document.getElementById('active-cross-filter-pill');
+  const labelVal = document.getElementById('cross-filter-label-val');
+  if (pill && labelVal) {
+    pill.style.display = 'inline-flex';
+    labelVal.textContent = `${dimension ? dimension + ': ' : ''}"${value}"`;
+  }
+  
+  // Set table search filter
+  const tableSearchInput = document.getElementById('inspector-search');
+  if (tableSearchInput) {
+    tableSearchInput.value = String(value);
+  }
+  appState.inspectorSearch = String(value);
+  appState.inspectorPage = 1;
+  fetchInspectorRows();
+
+  // Scroll smoothly down to the data inspector table
+  const tableSec = document.getElementById('view-table') || document.getElementById('inspector-table');
+  if (tableSec && appState.activeView === 'view-table') {
+    tableSec.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function clearCrossFilter() {
+  const pill = document.getElementById('active-cross-filter-pill');
+  if (pill) pill.style.display = 'none';
+  const tableSearchInput = document.getElementById('inspector-search');
+  if (tableSearchInput) {
+    tableSearchInput.value = '';
+  }
+  appState.inspectorSearch = '';
+  appState.inspectorPage = 1;
+  fetchInspectorRows();
+}
+
+
+// ============================================================
+// UPGRADE 5: AUTOMATED EXECUTIVE POWERPOINT (.PPTX) EXPORT
+// ============================================================
+function downloadExecutivePPTX() {
+  const exportDropdown = document.getElementById('export-dropdown-menu');
+  if (exportDropdown) exportDropdown.classList.remove('active');
+  window.location.href = '/api/export-pptx';
+}
+
+
+// ============================================================
+// UPGRADE 2: SHAREABLE VIEW-ONLY DASHBOARD LINKS
+// ============================================================
+function openShareModal() {
+  const modal = document.getElementById('share-modal');
+  const resultBox = document.getElementById('share-link-result-box');
+  if (resultBox) resultBox.style.display = 'none';
+  const exportDropdown = document.getElementById('export-dropdown-menu');
+  if (exportDropdown) exportDropdown.classList.remove('active');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeShareModal() {
+  const modal = document.getElementById('share-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function submitShareDashboard() {
+  const btn = document.getElementById('btn-generate-share-link');
+  const titleInput = document.getElementById('share-title-input');
+  const resultBox = document.getElementById('share-link-result-box');
+  const urlDisplay = document.getElementById('share-url-display');
+  
+  const title = titleInput ? titleInput.value.trim() : 'Executive Analytics Snapshot';
+  const origBtnContent = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> Generating Snapshot...`;
+  }
+
+  // Get active chart data from studio or fallback
+  let chartData = { title: 'Executive Overview', chart_type: 'bar', labels: [], datasets: [] };
+  if (chartInstances.dashStudio) {
+    chartData = {
+      title: title,
+      chart_type: chartInstances.dashStudio.config.type,
+      labels: chartInstances.dashStudio.data.labels,
+      datasets: chartInstances.dashStudio.data.datasets
+    };
+  } else if (chartInstances.dashBreakdown) {
+    chartData = {
+      title: title,
+      chart_type: chartInstances.dashBreakdown.config.type,
+      labels: chartInstances.dashBreakdown.data.labels,
+      datasets: chartInstances.dashBreakdown.data.datasets
+    };
+  }
+
+  const narrativeText = document.getElementById('ai-chart-narrative-banner')?.innerText || '';
+
+  try {
+    const res = await fetch('/api/dashboard/share', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: title,
+        chart: chartData,
+        narrative: narrativeText
+      })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      if (resultBox && urlDisplay) {
+        resultBox.style.display = 'block';
+        urlDisplay.value = data.full_url;
+      }
+    } else {
+      alert(data.message || 'Could not generate share link.');
+    }
+  } catch (err) {
+    console.error('Share error:', err);
+    alert('Failed to generate share link.');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = origBtnContent;
+    }
+  }
+}
+
+function copyModalShareLink() {
+  const urlDisplay = document.getElementById('share-url-display');
+  const btn = document.getElementById('btn-modal-copy-link');
+  if (!urlDisplay) return;
+  navigator.clipboard.writeText(urlDisplay.value);
+  if (btn) {
+    btn.textContent = 'Copied! ✓';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+  }
+}
+
+
+// ============================================================
+// UPGRADE 3: LIVE DATABASE & CLOUD CONNECTOR (SUPABASE / POSTGRES)
+// ============================================================
+async function fetchDbTables() {
+  const select = document.getElementById('db-table-select');
+  const badge = document.getElementById('db-connection-status-badge');
+  if (!select) return;
+  select.innerHTML = '<option value="">Loading tables from database...</option>';
+  
+  try {
+    const res = await fetch('/api/db/tables');
+    const data = await res.json();
+    if (data.status === 'success' && data.tables) {
+      if (badge) {
+        badge.textContent = `● Connected (${data.tables.length} Tables)`;
+        badge.style.background = 'rgba(16, 185, 129, 0.15)';
+        badge.style.color = '#34d399';
+      }
+      select.innerHTML = '<option value="">-- Choose Table from Database --</option>';
+      data.tables.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.name;
+        opt.textContent = `${t.name} (${t.rows.toLocaleString()} estimated rows)`;
+        select.appendChild(opt);
+      });
+    } else {
+      select.innerHTML = '<option value="">Failed to fetch tables</option>';
+      if (badge) {
+        badge.textContent = '● Not Configured';
+        badge.style.background = 'rgba(239, 68, 68, 0.15)';
+        badge.style.color = '#f87171';
+      }
+    }
+  } catch (err) {
+    select.innerHTML = '<option value="">Error connecting</option>';
+  }
+}
+
+async function loadSelectedDbTable() {
+  const select = document.getElementById('db-table-select');
+  if (!select || !select.value) {
+    alert('Please select a database table to load.');
+    return;
+  }
+  const tableName = select.value;
+  showLoading(`Connecting to database and streaming "${tableName}" into Autonomous Analytics Engine...`);
+  
+  try {
+    const res = await fetch('/api/db/load', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table_name: tableName })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      showLoading('Streaming Table: Step 1/3 - Running Data Preprocessing & Cleaning Studio...');
+      const cleanRes = await fetch('/api/clean', { method: 'POST' });
+      const cleanData = await cleanRes.json();
+      if (cleanData.status === 'success') {
+        renderCleanResults(cleanData.cleaning_report, cleanData.preview, cleanData.columns, cleanData.python_script);
+      }
+
+      showLoading('Streaming Table: Step 2/3 - Computing Statistical Exploratory Analysis...');
+      const edaRes = await fetch('/api/eda', { method: 'POST' });
+      const edaData = await edaRes.json();
+      if (edaData.status === 'success') {
+        renderEDAResults(edaData);
+      }
+
+      showLoading('Streaming Table: Step 3/3 - Executing AutoML (K-Means, PCA, Isolation Forest)...');
+      const mlRes = await fetch('/api/ml', { method: 'POST' });
+      const mlData = await mlRes.json();
+      if (mlData.status === 'success') {
+        renderMLResults(mlData);
+      }
+
+      appState.datasetName = data.dataset_name;
+      const wsName = document.getElementById('sidebar-workspace-name');
+      if (wsName) wsName.textContent = data.dataset_name;
+      const labelEl = document.getElementById('active-dataset-label');
+      if (labelEl) labelEl.textContent = `${data.dataset_name} (${data.total_rows.toLocaleString()} rows)`;
+
+      switchView('view-dashboards');
+      switchSubTab('view-dashboards', 'dash-overview');
+      renderDashboard();
+      fetchInspectorRows();
+    } else {
+      alert(data.message || 'Failed to load table.');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Error loading table into engine.');
+  } finally {
+    hideLoading();
+  }
+}
+
+async function executeDbSqlQuery() {
+  const input = document.getElementById('db-sql-input');
+  const container = document.getElementById('db-query-results-container');
+  const statusText = document.getElementById('db-query-status-text');
+  const thead = document.querySelector('#db-query-table thead');
+  const tbody = document.querySelector('#db-query-table tbody');
+  
+  if (!input || !input.value.trim()) {
+    alert('Please enter a SQL query.');
+    return;
+  }
+
+  if (container) container.style.display = 'block';
+  if (statusText) statusText.textContent = 'Executing query...';
+  if (tbody) tbody.innerHTML = '<tr><td style="padding:1rem;color:#94a3b8;">Running query against database...</td></tr>';
+
+  try {
+    const res = await fetch('/api/db/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: input.value.trim() })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      if (statusText) statusText.textContent = `Query returned ${data.total_rows} rows (displaying preview)`;
+      
+      if (thead) {
+        thead.innerHTML = '';
+        const tr = document.createElement('tr');
+        (data.columns || []).forEach(c => {
+          const th = document.createElement('th');
+          th.textContent = c;
+          tr.appendChild(th);
+        });
+        thead.appendChild(tr);
+      }
+      if (tbody) {
+        tbody.innerHTML = '';
+        (data.rows || []).forEach(r => {
+          const tr = document.createElement('tr');
+          (data.columns || []).forEach(c => {
+            const td = document.createElement('td');
+            td.textContent = r[c] !== null && r[c] !== undefined ? r[c] : 'null';
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+      }
+    } else {
+      if (statusText) statusText.textContent = 'Query failed';
+      if (tbody) tbody.innerHTML = `<tr><td style="color:#f87171;padding:1rem;">${escapeHtml(data.message || 'Execution error')}</td></tr>`;
+    }
+  } catch (err) {
+    if (statusText) statusText.textContent = 'Network or query error';
+  }
+}
+
+
+// ============================================================
+// UPGRADE 6: SMART ANOMALY & KPI ALERTS
+// ============================================================
+function openAlertsModal() {
+  const modal = document.getElementById('alerts-modal');
+  const statusBox = document.getElementById('alert-test-status');
+  if (statusBox) statusBox.style.display = 'none';
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeAlertsModal() {
+  const modal = document.getElementById('alerts-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function testAlertDispatch() {
+  const webhookInput = document.getElementById('alert-webhook-url');
+  const statusBox = document.getElementById('alert-test-status');
+  const webhookUrl = webhookInput ? webhookInput.value.trim() : '';
+  
+  if (statusBox) {
+    statusBox.style.display = 'block';
+    statusBox.style.background = 'rgba(99, 102, 241, 0.1)';
+    statusBox.style.border = '1px solid rgba(99, 102, 241, 0.25)';
+    statusBox.style.color = '#cbd5e1';
+    statusBox.textContent = 'Testing alert trigger and dispatch...';
+  }
+
+  try {
+    const res = await fetch('/api/alerts/test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ webhook_url: webhookUrl })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      if (statusBox) {
+        statusBox.style.background = 'rgba(16, 185, 129, 0.12)';
+        statusBox.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+        statusBox.style.color = '#34d399';
+        statusBox.textContent = `✓ ${data.message}`;
+      }
+    } else {
+      if (statusBox) {
+        statusBox.style.background = 'rgba(239, 68, 68, 0.12)';
+        statusBox.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+        statusBox.style.color = '#f87171';
+        statusBox.textContent = `Alert dispatch failed: ${data.message}`;
+      }
+    }
+  } catch (err) {
+    if (statusBox) {
+      statusBox.style.color = '#f87171';
+      statusBox.textContent = 'Error testing alert dispatch.';
+    }
+  }
+}
+
+async function evaluateCurrentAlerts() {
+  const statusBox = document.getElementById('alert-test-status');
+  
+  try {
+    const res = await fetch('/api/alerts/evaluate', { method: 'POST' });
+    const data = await res.json();
+    if (data.status === 'success') {
+      if (statusBox) {
+        statusBox.style.display = 'block';
+        if (data.triggered_count === 0) {
+          statusBox.style.background = 'rgba(16, 185, 129, 0.12)';
+          statusBox.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+          statusBox.style.color = '#34d399';
+          statusBox.textContent = 'All 3 automated rules passed! No risk thresholds triggered.';
+        } else {
+          statusBox.style.background = 'rgba(245, 158, 11, 0.12)';
+          statusBox.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+          statusBox.style.color = '#fbbf24';
+          statusBox.textContent = `Warning: ${data.triggered_count} alert rule(s) triggered on active dataset!`;
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Alert evaluation error:', err);
+  }
+}
+
+// Auto-populate DB tables on initial load if database connector is visible
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    if (document.getElementById('db-table-select')) {
+      fetchDbTables();
+    }
+  }, 1000);
+});
 

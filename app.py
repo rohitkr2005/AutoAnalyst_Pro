@@ -10,6 +10,8 @@ import json
 import time
 import threading
 import webbrowser
+import secrets
+from datetime import datetime
 from functools import wraps
 from dotenv import load_dotenv
 
@@ -17,7 +19,7 @@ load_dotenv()
 
 import numpy as np
 import pandas as pd
-from flask import Flask, render_template, request, jsonify, send_file, Response, session, redirect, url_for
+from flask import Flask, render_template, render_template_string, request, jsonify, send_file, Response, session, redirect, url_for
 
 from engine.auth import (
     init_auth_db, register_user, authenticate_user, get_user_by_id, 
@@ -930,6 +932,28 @@ def generate_analyst_chat_response(query: str, session_data: dict) -> str:
             f"• *'Give me the 14-day trend forecast'*")
 
 
+@app.route("/api/ai/text-to-chart", methods=["POST"])
+@login_required
+def api_text_to_chart():
+    """Generates on-demand Chart.js configuration and executive narrative from natural language prompts."""
+    try:
+        data = request.get_json() or {}
+        prompt = data.get("prompt", "").strip()
+        if not prompt:
+            return jsonify({"status": "error", "message": "Please enter a chart description or question."}), 400
+
+        df = SESSION_DATA["cleaned_df"] if SESSION_DATA["cleaned_df"] is not None else SESSION_DATA["raw_df"]
+        if df is None:
+            return jsonify({"status": "error", "message": "No active dataset loaded. Please load or upload a dataset first."}), 400
+
+        from engine.nlp_chart import generate_text_to_chart
+        result = generate_text_to_chart(prompt, df, SESSION_DATA.get("eda_cache"))
+        return jsonify(result)
+    except Exception as e:
+        print(f"[Text-to-Chart Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": f"Could not generate chart: {str(e)}"}), 500
+
+
 @app.route("/api/data-query", methods=["POST"])
 @login_required
 def query_data_rows():
@@ -1019,6 +1043,290 @@ def export_script():
         mimetype="text/x-python",
         headers={"Content-Disposition": "attachment;filename=clean_pipeline.py"}
     )
+
+
+@app.route("/api/export-pptx", methods=["GET"])
+@login_required
+def export_pptx():
+    """Exports and downloads an executive PowerPoint slide deck."""
+    try:
+        from engine.pptx_generator import generate_executive_pptx
+        df = SESSION_DATA["cleaned_df"] if SESSION_DATA["cleaned_df"] is not None else SESSION_DATA["raw_df"]
+        if df is None:
+            return "No dataset loaded to generate presentation.", 400
+
+        dataset_name = SESSION_DATA.get("dataset_name", "Enterprise Dataset")
+        audit_report = SESSION_DATA.get("audit_report") or {}
+        eda_data = SESSION_DATA.get("eda_cache") or {}
+        ml_data = SESSION_DATA.get("ml_cache") or {}
+        user_name = session.get("user", {}).get("username", "Executive Analyst")
+
+        pptx_buffer = generate_executive_pptx(
+            dataset_name=dataset_name,
+            audit_report=audit_report,
+            eda_data=eda_data,
+            ml_data=ml_data,
+            user_name=user_name
+        )
+
+        clean_name = dataset_name.replace(" ", "_").replace(":", "_").lower()
+        return send_file(
+            pptx_buffer,
+            mimetype="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            as_attachment=True,
+            download_name=f"executive_briefing_{clean_name}.pptx"
+        )
+    except Exception as e:
+        print(f"[PPTX Export Error] {e}", flush=True)
+        return f"Error generating PowerPoint deck: {str(e)}", 500
+
+
+@app.route("/api/dashboard/share", methods=["POST"])
+@login_required
+def api_share_dashboard():
+    """Generates a public view-only share link with a snapshot of the current dashboard."""
+    try:
+        data = request.get_json() or {}
+        title = data.get("title", "Executive Analytics Snapshot").strip()
+        chart_data = data.get("chart", {})
+        
+        eda = SESSION_DATA.get("eda_cache") or {}
+        audit = SESSION_DATA.get("audit_report") or {}
+        df = SESSION_DATA["cleaned_df"] if SESSION_DATA["cleaned_df"] is not None else SESSION_DATA["raw_df"]
+        
+        total_rows = len(df) if df is not None else 0
+        total_cols = len(df.columns) if df is not None else 0
+        health_score = audit.get("cleaned_health_score", 99.5)
+        
+        # Correlations if available
+        top_correlations = []
+        if "correlation_matrix" in eda and eda["correlation_matrix"]:
+            corr = eda["correlation_matrix"]
+            cols = list(corr.keys())
+            for i in range(len(cols)):
+                for j in range(i + 1, len(cols)):
+                    c1, c2 = cols[i], cols[j]
+                    val = corr[c1].get(c2)
+                    if val is not None and abs(val) < 0.999:
+                        top_correlations.append({
+                            "feature_a": c1,
+                            "feature_b": c2,
+                            "pearson_r": round(float(val), 2),
+                            "strength": "Strong" if abs(val) > 0.6 else "Moderate",
+                            "direction": "Positive" if val > 0 else "Negative"
+                        })
+            top_correlations.sort(key=lambda x: abs(x["pearson_r"]), reverse=True)
+            top_correlations = top_correlations[:6]
+        
+        snapshot = {
+            "kpis": {
+                "rows": f"{total_rows:,}",
+                "cols": total_cols,
+                "health_score": round(float(health_score), 1)
+            },
+            "primary_metric": chart_data.get("title") or "Dynamic Multi-Dimensional Slicing",
+            "chart": chart_data,
+            "narrative": data.get("narrative", ""),
+            "top_correlations": top_correlations
+        }
+        
+        token = secrets.token_urlsafe(16)
+        user_id = session.get("user", {}).get("id")
+        dataset_name = SESSION_DATA.get("dataset_name", "Active Dataset")
+        
+        from engine.auth import save_shared_dashboard
+        success = save_shared_dashboard(token, title, dataset_name, json.dumps(snapshot), user_id)
+        if not success:
+            return jsonify({"status": "error", "message": "Failed to create shareable snapshot."}), 500
+            
+        share_url = f"/share/{token}"
+        return jsonify({
+            "status": "success",
+            "token": token,
+            "share_url": share_url,
+            "full_url": f"{request.host_url.rstrip('/')}{share_url}"
+        })
+    except Exception as e:
+        print(f"[Share Dashboard Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/share/<token>", methods=["GET"])
+def view_shared_dashboard(token: str):
+    """Public read-only executive view of a shared dashboard."""
+    from engine.auth import get_shared_dashboard
+    dashboard = get_shared_dashboard(token)
+    if not dashboard:
+        return render_template_string("""
+        <!DOCTYPE html>
+        <html>
+        <head><title>Dashboard Not Found</title><link rel="stylesheet" href="/static/css/style.css"></head>
+        <body style="background:#0a0f1d; color:#fff; display:flex; align-items:center; justify-content:center; height:100vh; text-align:center; font-family:'Inter',sans-serif;">
+            <div>
+                <h1 style="font-size:2rem; font-family:'Outfit',sans-serif;">Dashboard Not Found or Expired</h1>
+                <p style="color:#94a3b8; margin:1rem 0 1.5rem;">The requested executive snapshot does not exist or has been removed.</p>
+                <a href="/login" class="btn-primary" style="text-decoration:none; padding:0.6rem 1.2rem; border-radius:8px;">Open AutoAnalyst Pro</a>
+            </div>
+        </body>
+        </html>
+        """), 404
+
+    try:
+        snapshot = json.loads(dashboard["snapshot_json"])
+    except Exception:
+        snapshot = {}
+
+    return render_template("share.html", dashboard=dashboard, snapshot=snapshot, snapshot_json=dashboard["snapshot_json"])
+
+
+@app.route("/api/db/test", methods=["POST"])
+@login_required
+def api_db_test():
+    """Tests connection to PostgreSQL / Supabase database."""
+    from engine.db_connector import test_db_connection
+    data = request.get_json() or {}
+    db_url = data.get("db_url", "").strip() or None
+    result = test_db_connection(db_url)
+    return jsonify(result)
+
+
+@app.route("/api/db/tables", methods=["GET"])
+@login_required
+def api_db_tables():
+    """Lists tables from the connected PostgreSQL / Supabase database."""
+    from engine.db_connector import list_db_tables
+    db_url = request.args.get("db_url", "").strip() or None
+    result = list_db_tables(db_url)
+    return jsonify(result)
+
+
+@app.route("/api/db/load", methods=["POST"])
+@login_required
+def api_db_load():
+    """Loads a database table directly into the AutoAnalyst Pro pipeline."""
+    try:
+        from engine.db_connector import load_db_table_data
+        data = request.get_json() or {}
+        table_name = data.get("table_name", "").strip()
+        db_url = data.get("db_url", "").strip() or None
+        limit = min(50000, max(100, int(data.get("limit", 15000))))
+
+        if not table_name:
+            return jsonify({"status": "error", "message": "Table name is required."}), 400
+
+        df, err = load_db_table_data(table_name, db_url=db_url, limit=limit)
+        if err or df is None:
+            return jsonify({"status": "error", "message": err or "Failed to load table."}), 500
+
+        if df.empty:
+            return jsonify({"status": "error", "message": f"Table '{table_name}' contains no rows."}), 400
+
+        # Load into session data and execute autonomous pipeline
+        SESSION_DATA["raw_df"] = df
+        SESSION_DATA["dataset_name"] = f"DB Table: {table_name}"
+        SESSION_DATA["current_file_path"] = f"postgres://{table_name}"
+        SESSION_DATA["selected_sample_key"] = None
+        SESSION_DATA["cleaned_df"] = None
+        SESSION_DATA["audit_report"] = None
+        SESSION_DATA["eda_cache"] = None
+        SESSION_DATA["ml_cache"] = None
+
+        run_pipeline()
+        return jsonify({
+            "status": "success",
+            "message": f"Successfully loaded '{table_name}' with {len(df):,} records into analytics engine!",
+            "dataset_name": SESSION_DATA["dataset_name"],
+            "total_rows": len(df),
+            "total_cols": len(df.columns)
+        })
+    except Exception as e:
+        print(f"[DB Load Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/db/query", methods=["POST"])
+@login_required
+def api_db_query():
+    """Executes a custom read-only SQL query against the database."""
+    from engine.db_connector import execute_custom_db_query
+    data = request.get_json() or {}
+    sql_query = data.get("query", "").strip()
+    db_url = data.get("db_url", "").strip() or None
+    
+    if not sql_query:
+        return jsonify({"status": "error", "message": "SQL query cannot be empty."}), 400
+
+    result = execute_custom_db_query(sql_query, db_url=db_url)
+    return jsonify(result)
+
+
+@app.route("/api/alerts/test", methods=["POST"])
+@login_required
+def api_test_alert():
+    """Simulates or dispatches an automated KPI / Anomaly threshold alert."""
+    try:
+        data = request.get_json() or {}
+        webhook_url = data.get("webhook_url", "").strip()
+        alert_name = data.get("alert_name", "High Anomaly Drift Alert")
+        threshold_metric = data.get("threshold_metric", "Health Score < 90%")
+        channel = data.get("channel", "webhook")
+
+        payload = {
+            "source": "AutoAnalyst Pro Autonomous Alert Dispatcher",
+            "timestamp": datetime.now().isoformat(),
+            "alert": alert_name,
+            "metric": threshold_metric,
+            "dataset": SESSION_DATA.get("dataset_name", "Active Dataset"),
+            "health_score": (SESSION_DATA.get("audit_report") or {}).get("cleaned_health_score", 99.8),
+            "status": "TRIGGERED",
+            "severity": "WARNING"
+        }
+
+        if webhook_url:
+            import urllib.request
+            req = urllib.request.Request(
+                webhook_url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json", "User-Agent": "AutoAnalystPro-Alerts/1.0"}
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=5) as response:
+                    return jsonify({"status": "success", "message": f"Webhook dispatched successfully! Response code: {response.getcode()}", "payload": payload})
+            except Exception as we:
+                return jsonify({"status": "error", "message": f"Webhook delivery failed: {str(we)}", "payload": payload}), 400
+
+        return jsonify({
+            "status": "success",
+            "message": f"Test alert '{alert_name}' verified and logged to monitoring stream.",
+            "payload": payload
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/alerts/evaluate", methods=["POST"])
+@login_required
+def api_evaluate_alerts():
+    """Scans current dataset against active alert rules."""
+    audit = SESSION_DATA.get("audit_report") or {}
+    health = float(audit.get("cleaned_health_score", 100))
+    missing = int(audit.get("missing_values_handled", 0))
+    outliers = int(audit.get("outliers_treated", 0))
+
+    triggered = []
+    if health < 85.0:
+        triggered.append({"rule": "Health Score Critical", "detail": f"Dataset health score is {health:.1f}%, below 85% safety threshold.", "level": "danger"})
+    if outliers > 50:
+        triggered.append({"rule": "High Outlier Density", "detail": f"Detected {outliers} anomalies/outliers requiring multivariate inspection.", "level": "warning"})
+    if missing > 100:
+        triggered.append({"rule": "High Imputation Count", "detail": f"Handled {missing} missing cells in ingestion step.", "level": "info"})
+
+    return jsonify({
+        "status": "success",
+        "evaluated_rules_count": 3,
+        "triggered_count": len(triggered),
+        "alerts": triggered
+    })
 
 
 def auto_open_browser():

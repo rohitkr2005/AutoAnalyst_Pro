@@ -291,6 +291,24 @@
                   <span class="item-desc">Reproducible code file</span>
                 </div>
               </button>
+              <button class="menu-item" id="btn-export-pptx" onclick="downloadExecutivePPTX()">
+                <span class="item-icon">
+                  <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                </span>
+                <div class="item-text">
+                  <span class="item-title">Executive Slide Deck (.PPTX)</span>
+                  <span class="item-desc">5-slide presentation briefing</span>
+                </div>
+              </button>
+              <button class="menu-item" id="btn-open-share-modal" onclick="openShareModal()">
+                <span class="item-icon">
+                  <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                </span>
+                <div class="item-text">
+                  <span class="item-title">Share Live Dashboard</span>
+                  <span class="item-desc">Generate public view-only link</span>
+                </div>
+              </button>
               <div class="menu-divider"></div>
               <button class="menu-item" onclick="window.print()">
                 <span class="item-icon">
@@ -304,7 +322,15 @@
             </div>
           </div>
 
-          <!-- 4. Analysis History Icon Button -->
+          <!-- 4. KPI & Anomaly Alerts Icon Button -->
+          <button class="topbar-icon-btn btn-alerts-icon" id="btn-topbar-alerts" onclick="openAlertsModal()"
+            data-tooltip="Smart KPI & Anomaly Alerts" aria-label="KPI Alerts">
+            <span class="topbar-icon">
+              <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            </span>
+          </button>
+
+          <!-- 5. Analysis History Icon Button -->
           <button class="topbar-icon-btn btn-history-icon" id="btn-topbar-history" onclick="openHistoryModal()"
             data-tooltip="Analysis History & Activity Logs" aria-label="Analysis History">
             <span class="topbar-icon">
@@ -522,6 +548,26 @@
                   </button>
                 </div>
               </div>
+
+              <!-- AI Natural Language Prompt-to-Chart Bar -->
+              <div class="ai-prompt-chart-bar" style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1rem; display: flex; gap: 0.75rem; align-items: center;">
+                <span style="color: var(--primary); display: flex; align-items: center;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+                </span>
+                <input type="text" id="ai-prompt-chart-input" class="search-field" style="flex: 1; padding: 0.55rem 0.85rem; font-size: 0.88rem;"
+                  placeholder="✨ Prompt AI: e.g. 'Average heart rate by diagnosis as a bar chart' or 'Scatter plot of age vs cholesterol'"
+                  onkeydown="if(event.key === 'Enter') executeAiPromptToChart()">
+                <button type="button" class="btn-primary" id="btn-ai-prompt-chart" onclick="executeAiPromptToChart()" style="padding: 0.55rem 1.1rem; font-size: 0.84rem; display: flex; align-items: center; gap: 6px; white-space: nowrap;">
+                  <span>Generate Chart</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+              <div id="ai-chart-narrative-banner" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; padding: 0.65rem 0.9rem; margin-bottom: 1rem; font-size: 0.84rem; color: #a7f3d0; line-height: 1.5;"></div>
+              <!-- Cross-Filter Active Pill Indicator -->
+              <div id="active-cross-filter-pill" style="display: none; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 0.75rem; background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.4); border-radius: 999px; padding: 5px 14px; font-size: 0.82rem; width: fit-content; color: #cbd5e1;">
+                <span><strong style="color: #818cf8;">⚡ Interactive Cross-Filter:</strong> <span id="cross-filter-label-val"></span></span>
+                <button type="button" onclick="clearCrossFilter()" style="background: none; border: none; color: #f87171; cursor: pointer; font-size: 0.9rem; line-height: 1; padding: 0 4px; font-weight: bold;" title="Clear filter">✕</button>
+              </div>
               <div class="chart-container-box" style="height: 480px;">
                 <canvas id="chart-dash-studio-canvas"></canvas>
               </div>
@@ -673,6 +719,64 @@
                   <p>Home prices with '$', 'sqft' string values, missing spec variables.</p>
                   <button class="btn-sample">Load Housing</button>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Database & Cloud Connector (Supabase / PostgreSQL) -->
+          <div class="glass-card" style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div class="brand-icon-box" style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: rgba(6, 182, 212, 0.15); border-radius: 10px; border: 1px solid rgba(6, 182, 212, 0.3);">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="#06b6d4" stroke-width="2" fill="none"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                </div>
+                <div>
+                  <h3 style="margin: 0; font-size: 1.15rem; color: #fff;">Live Database & Cloud Connector</h3>
+                  <p style="margin: 0.2rem 0 0; font-size: 0.82rem; color: #94a3b8;">Direct real-time connection to Supabase / PostgreSQL databases & SQL Studio</p>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <span id="db-connection-status-badge" class="bullet-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 600; padding: 4px 12px; border-radius: 999px;">
+                  ● Ready to Query
+                </span>
+                <button class="pill-btn" onclick="fetchDbTables()" style="font-size: 0.82rem; padding: 0.5rem 0.9rem;">
+                  Refresh Tables
+                </button>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem;">
+              <div>
+                <label style="display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.4rem; font-weight: 500;">Select Database Table</label>
+                <div style="display: flex; gap: 0.5rem;">
+                  <select id="db-table-select" class="search-field" style="flex: 1; padding: 0.55rem 0.85rem; font-size: 0.86rem;">
+                    <option value="">-- Choose Table from Database --</option>
+                  </select>
+                  <button class="btn-primary" onclick="loadSelectedDbTable()" style="padding: 0.55rem 1rem; font-size: 0.84rem; white-space: nowrap;">
+                    Load Table →
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.4rem; font-weight: 500;">Direct SQL Studio (Read-Only Query)</label>
+                <div style="display: flex; gap: 0.5rem;">
+                  <input type="text" id="db-sql-input" class="search-field" placeholder="SELECT * FROM users LIMIT 10" style="flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;">
+                  <button class="pill-btn" onclick="executeDbSqlQuery()" style="padding: 0.55rem 1rem; font-size: 0.84rem; white-space: nowrap;">
+                    Run SQL
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="db-query-results-container" style="display: none; margin-top: 1rem; background: rgba(0,0,0,0.25); border-radius: 8px; padding: 1rem; border: 1px solid rgba(255,255,255,0.06);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.82rem; font-weight: 600; color: #a5b4fc;" id="db-query-status-text">Query Results</span>
+                <button class="pill-btn" onclick="document.getElementById('db-query-results-container').style.display='none'" style="font-size: 0.75rem; padding: 2px 8px;">Close</button>
+              </div>
+              <div class="table-container" style="max-height: 240px; overflow-y: auto;">
+                <table class="modern-table" id="db-query-table">
+                  <thead></thead>
+                  <tbody></tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -1323,6 +1427,107 @@
       <div class="history-modal-body">
         <div class="history-list" id="history-list">
           <div class="history-loading-placeholder">Loading your activity history...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SHARE LIVE DASHBOARD MODAL                                   -->
+  <!-- ============================================================ -->
+  <div class="history-modal-overlay" id="share-modal" style="display: none;">
+    <div class="history-modal-backdrop" onclick="closeShareModal()"></div>
+    <div class="history-modal-container" style="max-width: 540px;">
+      <div class="history-modal-header">
+        <div class="history-header-title">
+          <div class="history-icon-badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8;">
+            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+          </div>
+          <div>
+            <h3>Share Live Dashboard</h3>
+            <p>Generate a secure, view-only executive link for clients and leadership</p>
+          </div>
+        </div>
+        <button class="btn-close-history" onclick="closeShareModal()" title="Close">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="history-modal-body" style="padding: 1.5rem;">
+        <label style="display: block; font-size: 0.82rem; color: #94a3b8; margin-bottom: 0.4rem; font-weight: 500;">Dashboard Snapshot Title</label>
+        <input type="text" id="share-title-input" class="search-field" style="width: 100%; margin-bottom: 1.25rem; font-size: 0.9rem;" value="Executive Intelligence Briefing">
+        
+        <div id="share-link-result-box" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 1rem; margin-bottom: 1.25rem;">
+          <span style="font-size: 0.8rem; color: #34d399; font-weight: 600; display: block; margin-bottom: 0.5rem;">Shareable Link Active:</span>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" id="share-url-display" readonly style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 0.45rem 0.75rem; font-size: 0.82rem; color: #fff; font-family: monospace;">
+            <button class="btn-primary" onclick="copyModalShareLink()" id="btn-modal-copy-link" style="padding: 0.45rem 0.9rem; font-size: 0.8rem;">Copy</button>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button class="pill-btn" onclick="closeShareModal()">Cancel</button>
+          <button class="btn-primary" id="btn-generate-share-link" onclick="submitShareDashboard()">
+            Generate Executive Link
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SMART ANOMALY & KPI ALERTS MODAL                             -->
+  <!-- ============================================================ -->
+  <div class="history-modal-overlay" id="alerts-modal" style="display: none;">
+    <div class="history-modal-backdrop" onclick="closeAlertsModal()"></div>
+    <div class="history-modal-container" style="max-width: 580px;">
+      <div class="history-modal-header">
+        <div class="history-header-title">
+          <div class="history-icon-badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          </div>
+          <div>
+            <h3>Smart Anomaly & KPI Alerts</h3>
+            <p>Autonomous monitoring rules and webhook notification dispatch</p>
+          </div>
+        </div>
+        <button class="btn-close-history" onclick="closeAlertsModal()" title="Close">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="history-modal-body" style="padding: 1.5rem;">
+        <div style="margin-bottom: 1.25rem;">
+          <label style="display: block; font-size: 0.82rem; color: #94a3b8; margin-bottom: 0.4rem; font-weight: 500;">Active Anomaly & KPI Rules</label>
+          <div id="alerts-active-rules-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <div style="padding: 0.75rem 0.9rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: #fff; font-size: 0.86rem;">Data Health Score Threshold</strong>
+                <div style="font-size: 0.75rem; color: #94a3b8;">Trigger warning if certified score drops below 85%</div>
+              </div>
+              <span class="bullet-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">Active</span>
+            </div>
+            <div style="padding: 0.75rem 0.9rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: #fff; font-size: 0.86rem;">High Outlier Drift Scanner</strong>
+                <div style="font-size: 0.75rem; color: #94a3b8;">Alert if multivariate outlier count exceeds 50 rows</div>
+              </div>
+              <span class="bullet-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">Active</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <label style="display: block; font-size: 0.82rem; color: #94a3b8; margin-bottom: 0.4rem; font-weight: 500;">Slack / Discord / Custom Webhook URL</label>
+          <input type="url" id="alert-webhook-url" class="search-field" placeholder="https://hooks.slack.com/services/..." style="width: 100%; font-size: 0.84rem;">
+        </div>
+
+        <div id="alert-test-status" style="display: none; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.82rem; margin-bottom: 1rem;"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <button class="pill-btn" onclick="evaluateCurrentAlerts()">Evaluate Live Rules Now</button>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="pill-btn" onclick="closeAlertsModal()">Close</button>
+            <button class="btn-primary" onclick="testAlertDispatch()">Test Dispatch</button>
+          </div>
         </div>
       </div>
     </div>

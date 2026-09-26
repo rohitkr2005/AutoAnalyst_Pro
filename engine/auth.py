@@ -207,6 +207,16 @@ def init_auth_db():
             expires_at TIMESTAMP NOT NULL,
             used INTEGER DEFAULT 0
         );
+
+        CREATE TABLE IF NOT EXISTS shared_dashboards (
+            id SERIAL PRIMARY KEY,
+            token VARCHAR(64) UNIQUE NOT NULL,
+            title VARCHAR(255) NOT NULL,
+            dataset_name VARCHAR(255) NOT NULL,
+            snapshot_json TEXT NOT NULL,
+            created_by INTEGER,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
         """)
     else:
         # SQLite Schema
@@ -246,6 +256,18 @@ def init_auth_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             expires_at TIMESTAMP NOT NULL,
             used INTEGER DEFAULT 0
+        )
+        """)
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS shared_dashboards (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            token TEXT UNIQUE NOT NULL,
+            title TEXT NOT NULL,
+            dataset_name TEXT NOT NULL,
+            snapshot_json TEXT NOT NULL,
+            created_by INTEGER,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """)
 
@@ -576,4 +598,48 @@ def reset_password_with_otp(email: str, otp_code: str, new_password: str) -> Dic
     conn.close()
 
     return {"success": True, "message": "Password reset successfully. You can now sign in with your new password."}
+
+
+def save_shared_dashboard(token: str, title: str, dataset_name: str, snapshot_json: str, user_id: Optional[int] = None) -> bool:
+    """Stores a standalone dashboard snapshot accessible via unique token."""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+        INSERT INTO shared_dashboards (token, title, dataset_name, snapshot_json, created_by)
+        VALUES (?, ?, ?, ?, ?)
+        """, (token, title, dataset_name, snapshot_json, user_id))
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"[Save Shared Dashboard Error] {e}", flush=True)
+        return False
+
+
+def get_shared_dashboard(token: str) -> Optional[Dict[str, Any]]:
+    """Retrieves a shared dashboard snapshot by token."""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT token, title, dataset_name, snapshot_json, created_at
+        FROM shared_dashboards
+        WHERE token = ?
+        """, (token,))
+        row = cursor.fetchone()
+        conn.close()
+        if not row:
+            return None
+        return {
+            "token": row["token"],
+            "title": row["title"],
+            "dataset_name": row["dataset_name"],
+            "snapshot_json": row["snapshot_json"],
+            "created_at": str(row["created_at"])
+        }
+    except Exception as e:
+        print(f"[Get Shared Dashboard Error] {e}", flush=True)
+        return None
+
 
