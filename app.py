@@ -78,12 +78,17 @@ GLOBAL_DATA_MODEL = DataModel()
 
 
 def init_app_services():
-    """Initializes database schema and sample datasets safely on startup (both local and Gunicorn)."""
+    """Initializes database schema, keep-alive daemon, and sample datasets safely on startup."""
     try:
         init_auth_db()
         print("[AutoAnalyst Pro] Database initialized successfully.", flush=True)
     except Exception as e:
         print(f"[AutoAnalyst Pro] Database initialization warning: {e}", flush=True)
+    try:
+        from engine.auth import start_database_keepalive
+        start_database_keepalive()
+    except Exception as e:
+        print(f"[AutoAnalyst Pro] Keep-alive thread warning: {e}", flush=True)
     try:
         init_all_samples()
         print("[AutoAnalyst Pro] Sample datasets verified.", flush=True)

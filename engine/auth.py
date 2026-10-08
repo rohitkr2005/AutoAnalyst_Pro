@@ -155,13 +155,38 @@ def get_db_connection():
                         return PGConnectionWrapper(pg_conn)
                     except Exception as e2:
                         print(f"[AutoAnalyst Pro] Supabase IPv4 Pooler also failed: {e2}", flush=True)
-            # Re-raise original error if pooler fallback could not resolve it
-            raise e
+            # If PostgreSQL fails or is paused by Supabase, gracefully fallback to SQLite to prevent downtime
+            print(f"[AutoAnalyst Pro] Cloud database unreachable ({e}). Gracefully falling back to local SQLite database to prevent service disruption.", flush=True)
 
     os.makedirs(DB_DIR, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
+
+
+def start_database_keepalive():
+    """Starts a background daemon thread that pings Supabase every 24 hours to prevent the 7-day inactivity pause."""
+    import threading
+    import time
+
+    def _keepalive_loop():
+        while True:
+            try:
+                db_url = get_database_url()
+                if db_url and PSYCOPG2_AVAILABLE:
+                    conn = psycopg2.connect(db_url, connect_timeout=10)
+                    cur = conn.cursor()
+                    cur.execute("SELECT 1;")
+                    conn.commit()
+                    conn.close()
+                    print("[AutoAnalyst Pro Keep-Alive] Supabase keepalive ping successful. Inactivity timer reset.", flush=True)
+            except Exception as ex:
+                print(f"[AutoAnalyst Pro Keep-Alive] Keepalive ping error: {ex}", flush=True)
+            # Sleep 24 hours (86,400 seconds)
+            time.sleep(86400)
+
+    t = threading.Thread(target=_keepalive_loop, daemon=True)
+    t.start()
 
 
 def init_auth_db():
