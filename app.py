@@ -4,6 +4,7 @@ Full-Stack Automated Data Science, User Authentication, AI Copilot & Live Dashbo
 """
 
 import os
+import re
 import io
 import math
 import json
@@ -857,8 +858,10 @@ def run_cleaning():
         return jsonify(sanitize_for_json({
             "status": "success",
             "audit_report": audit_report,
+            "cleaning_report": audit_report,
             "preview": preview_rows,
             "cleaned_columns": [str(c) for c in clean_df.columns],
+            "columns": [str(c) for c in clean_df.columns],
             "python_script": py_script
         }))
     except Exception as e:

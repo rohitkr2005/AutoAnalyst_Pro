@@ -1357,34 +1357,50 @@ async function triggerCleanPipeline() {
 
 // Render Cleaning Results
 function renderCleanResults(report, previewRows, cleanedCols, pythonScript) {
+  const rep = report || (window.appState && window.appState.auditReport);
+  if (!rep) return;
   const container = document.getElementById('clean-results-section');
   if (!container) return;
   container.style.display = 'block';
 
   // Dial
   const scoreEl = document.getElementById('cleaned-health-score');
-  if (scoreEl) scoreEl.textContent = report.cleaned_health_score;
+  if (scoreEl && rep.cleaned_health_score !== undefined) scoreEl.textContent = rep.cleaned_health_score;
 
   const healthBadge = document.getElementById('sidebar-health-badge');
-  if (healthBadge) {
-    healthBadge.textContent = `${report.cleaned_health_score}%`;
+  if (healthBadge && rep.cleaned_health_score !== undefined) {
+    healthBadge.textContent = `${rep.cleaned_health_score}%`;
     healthBadge.className = 'nav-badge health live';
   }
 
   // Comparison metrics
-  document.getElementById('comp-score-before').textContent = `${report.initial_health_score}%`;
-  document.getElementById('comp-score-after').textContent = `${report.cleaned_health_score}% (+${report.health_score_delta}%)`;
-  document.getElementById('comp-missing-before').textContent = report.initial_missing_cells.toLocaleString();
-  document.getElementById('comp-missing-after').textContent = `${report.cleaned_missing_cells} (0%)`;
-  document.getElementById('comp-dups-before').textContent = `${report.duplicates_removed} found`;
-  document.getElementById('comp-dups-after').textContent = `0 (Purged)`;
-  document.getElementById('comp-outliers-after').textContent = `${report.outliers_treated} treated`;
+  if (document.getElementById('comp-score-before') && rep.initial_health_score !== undefined) {
+    document.getElementById('comp-score-before').textContent = `${rep.initial_health_score}%`;
+  }
+  if (document.getElementById('comp-score-after') && rep.cleaned_health_score !== undefined) {
+    document.getElementById('comp-score-after').textContent = `${rep.cleaned_health_score}% (+${rep.health_score_delta || 0}%)`;
+  }
+  if (document.getElementById('comp-missing-before') && rep.initial_missing_cells !== undefined) {
+    document.getElementById('comp-missing-before').textContent = rep.initial_missing_cells.toLocaleString();
+  }
+  if (document.getElementById('comp-missing-after') && rep.cleaned_missing_cells !== undefined) {
+    document.getElementById('comp-missing-after').textContent = `${rep.cleaned_missing_cells} (0%)`;
+  }
+  if (document.getElementById('comp-dups-before') && rep.duplicates_removed !== undefined) {
+    document.getElementById('comp-dups-before').textContent = `${rep.duplicates_removed} found`;
+  }
+  if (document.getElementById('comp-dups-after')) {
+    document.getElementById('comp-dups-after').textContent = `0 (Purged)`;
+  }
+  if (document.getElementById('comp-outliers-after') && rep.outliers_treated !== undefined) {
+    document.getElementById('comp-outliers-after').textContent = `${rep.outliers_treated} treated`;
+  }
 
   // Log Box
   const logBox = document.getElementById('cleaning-log-box');
-  if (logBox) {
+  if (logBox && Array.isArray(rep.transform_log)) {
     logBox.innerHTML = '';
-    report.transform_log.forEach(msg => {
+    rep.transform_log.forEach(msg => {
       const entry = document.createElement('div');
       entry.className = 'log-entry';
       entry.innerHTML = `<span class="log-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></span> <span>${escapeHtml(msg)}</span>`;
@@ -1394,10 +1410,13 @@ function renderCleanResults(report, previewRows, cleanedCols, pythonScript) {
 
   // Python Script Preview
   const pyPre = document.getElementById('python-script-preview');
-  if (pyPre) pyPre.textContent = pythonScript;
+  if (pyPre && pythonScript) pyPre.textContent = pythonScript;
 
   // Cleaned Preview Table
-  renderTable('cleaned-preview-table', previewRows, cleanedCols);
+  const cols = cleanedCols || rep.cleaned_columns || rep.columns;
+  if (previewRows && cols) {
+    renderTable('cleaned-preview-table', previewRows, cols);
+  }
 
   container.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -3353,7 +3372,9 @@ async function runAutonomousAutoModel() {
       const cleanRes = await fetch('/api/clean', { method: 'POST' });
       const cleanData = await cleanRes.json();
       if (cleanData.status === 'success') {
-        renderCleanResults(cleanData.cleaning_report, cleanData.preview, cleanData.columns, cleanData.python_script);
+        const auditRep = cleanData.audit_report || cleanData.cleaning_report;
+        const cols = cleanData.cleaned_columns || cleanData.columns;
+        renderCleanResults(auditRep, cleanData.preview, cols, cleanData.python_script);
       }
 
       showLoading('⚡ Auto-Modeler: Step 3/4 - Running exploratory statistical correlations...');
@@ -3386,7 +3407,7 @@ async function runAutonomousAutoModel() {
     }
   } catch (err) {
     console.error('Autonomous model error:', err);
-    alert('Error running autonomous model synthesis.');
+    alert(`Autonomous Model Alert: ${err.message || 'Encountered processing glitch.'}`);
   } finally {
     hideLoading();
   }
@@ -3769,7 +3790,9 @@ async function buildUnifiedModelDashboard() {
       const cleanRes = await fetch('/api/clean', { method: 'POST' });
       const cleanData = await cleanRes.json();
       if (cleanData.status === 'success') {
-        renderCleanResults(cleanData.cleaning_report, cleanData.preview, cleanData.columns, cleanData.python_script);
+        const auditRep = cleanData.audit_report || cleanData.cleaning_report;
+        const cols = cleanData.cleaned_columns || cleanData.columns;
+        renderCleanResults(auditRep, cleanData.preview, cols, cleanData.python_script);
       }
 
       showLoading('Streaming Model: Step 2/3 - Computing Statistical Exploratory Analysis...');
@@ -3801,7 +3824,7 @@ async function buildUnifiedModelDashboard() {
     }
   } catch (err) {
     console.error(err);
-    alert('Error unifying model into live dashboard.');
+    alert(`Model Dashboard Alert: ${err.message || 'Error unifying model into live dashboard.'}`);
   } finally {
     hideLoading();
   }
