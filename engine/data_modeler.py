@@ -39,6 +39,16 @@ def _downcast_df(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def _safe_prepare_key(series: pd.Series, prefix: str) -> pd.Series:
+    """Normalizes join keys: converts '1.0' -> '1', trims, and prevents null == null matching."""
+    s = series.astype(str).str.strip().str.replace(r'\.0$', '', regex=True)
+    mask = series.isna() | s.isin(["nan", "None", "<NA>", "NaT", ""])
+    if mask.any():
+        s = s.copy()
+        s[mask] = [f"__null_{prefix}_{i}" for i in range(mask.sum())]
+    return s
+
+
 class DataModel:
     """
     In-memory Relational Data Model managing multiple tables,
@@ -122,14 +132,19 @@ class DataModel:
                         t2_stem = re.sub(r'(?:ies|s)$', '', t2.lower())
                         t1_stem = re.sub(r'(?:ies|s)$', '', t1.lower())
                         is_match = False
+                        match_priority = 0
                         if c1_clean == c2_clean:
                             is_match = True
+                            match_priority = 2  # Exact column name match
                         elif c2_clean in ["id", f"{t2_stem}id", "key", f"{t2_stem}key"] and (t2_stem in c1_clean):
                             is_match = True
+                            match_priority = 1
                         elif c1_clean in ["id", f"{t1_stem}id", "key", f"{t1_stem}key"] and (t1_stem in c2_clean):
                             is_match = True
+                            match_priority = 1
                         elif (t2_stem and t2_stem in c1_clean) and (c2_clean == "id" or c2_clean in c1_clean):
                             is_match = True
+                            match_priority = 1
 
                         if is_match:
                             try:
@@ -158,7 +173,8 @@ class DataModel:
                                             "to_table": t2,
                                             "to_col": col2,
                                             "cardinality": cardinality,
-                                            "overlap_ratio": round(float(ratio), 2)
+                                            "overlap_ratio": round(float(ratio), 2),
+                                            "match_priority": match_priority
                                         }
                                         if not any(
                                             (r["from_table"] == t2 and r["to_table"] == t1 and r["from_col"] == col2 and r["to_col"] == col1)
@@ -169,7 +185,21 @@ class DataModel:
                             except Exception:
                                 pass
 
+        # Deduplicate relationships between the same pair of tables:
+        # If an exact column name match exists (match_priority == 2, e.g. order_id == order_id),
+        # discard weaker fuzzy matches (e.g. order_item_id == order_id) between the same two tables.
+        best_discovered = []
         for d in discovered:
+            pair = tuple(sorted([d["from_table"], d["to_table"]]))
+            has_exact = any(
+                tuple(sorted([x["from_table"], x["to_table"]])) == pair and x.get("match_priority", 0) == 2
+                for x in discovered
+            )
+            if has_exact and d.get("match_priority", 0) < 2:
+                continue
+            best_discovered.append(d)
+
+        for d in best_discovered:
             if not any(
                 r["from_table"] == d["from_table"] and r["from_col"] == d["from_col"] and
                 r["to_table"] == d["to_table"] and r["to_col"] == d["to_col"]
@@ -177,7 +207,7 @@ class DataModel:
             ):
                 self.relationships.append(d)
 
-        return discovered
+        return best_discovered
 
     def add_relationship(self, from_table: str, from_col: str, to_table: str, to_col: str, cardinality: str = "many_to_one") -> bool:
         """Adds or updates a foreign key relationship."""
@@ -304,10 +334,17 @@ class DataModel:
                     right_df = right_df.drop_duplicates(subset=[right_key])
 
                     try:
+                        # Find left join key in joined columns (handle cases where from_t was previously prefixed)
+                        left_col = rel["from_col"]
+                        if left_col not in joined.columns:
+                            candidates = [c for c in joined.columns if c == f"{from_t}_{rel['from_col']}" or c.endswith(f"_{rel['from_col']}")]
+                            if candidates:
+                                left_col = candidates[0]
+
                         temp_k_left = f"__temp_k_{rel['from_col']}"
                         temp_k_right = f"__temp_k_{right_key}"
-                        joined[temp_k_left] = joined[rel["from_col"]].astype(str).str.strip()
-                        right_df[temp_k_right] = right_df[right_key].astype(str).str.strip()
+                        joined[temp_k_left] = _safe_prepare_key(joined[left_col], f"l_{to_t}")
+                        right_df[temp_k_right] = _safe_prepare_key(right_df[right_key], f"r_{to_t}")
 
                         # If right_key is in joined, drop it from right_df to prevent Pandas _x and _y suffixes
                         if right_key in joined.columns:
@@ -338,10 +375,17 @@ class DataModel:
                     left_df = left_df.drop_duplicates(subset=[left_key])
 
                     try:
+                        # Find target join key in joined columns
+                        joined_col = rel["to_col"]
+                        if joined_col not in joined.columns:
+                            candidates = [c for c in joined.columns if c == f"{to_t}_{rel['to_col']}" or c.endswith(f"_{rel['to_col']}")]
+                            if candidates:
+                                joined_col = candidates[0]
+
                         temp_k_left = f"__temp_k_{rel['to_col']}"
                         temp_k_right = f"__temp_k_{left_key}"
-                        joined[temp_k_left] = joined[rel["to_col"]].astype(str).str.strip()
-                        left_df[temp_k_right] = left_df[left_key].astype(str).str.strip()
+                        joined[temp_k_left] = _safe_prepare_key(joined[joined_col], f"l_{from_t}")
+                        left_df[temp_k_right] = _safe_prepare_key(left_df[left_key], f"r_{from_t}")
 
                         # If left_key is in joined, drop it from left_df to prevent Pandas _x and _y suffixes
                         if left_key in joined.columns:

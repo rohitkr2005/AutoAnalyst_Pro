@@ -252,6 +252,24 @@ def init_auth_db():
         REVOKE ALL ON public.user_activity FROM anon, authenticated;
         REVOKE ALL ON public.otp_verifications FROM anon, authenticated;
         REVOKE ALL ON public.shared_dashboards FROM anon, authenticated;
+
+        DO $$ 
+        BEGIN
+            IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'users' AND policyname = 'service_role_all') THEN
+                CREATE POLICY "service_role_all" ON public.users FOR ALL TO service_role USING (true) WITH CHECK (true);
+                CREATE POLICY "deny_anon_all" ON public.users FOR ALL TO anon USING (false);
+                CREATE POLICY "deny_authenticated_all" ON public.users FOR ALL TO authenticated USING (false);
+                CREATE POLICY "service_role_all" ON public.user_activity FOR ALL TO service_role USING (true) WITH CHECK (true);
+                CREATE POLICY "deny_anon_all" ON public.user_activity FOR ALL TO anon USING (false);
+                CREATE POLICY "deny_authenticated_all" ON public.user_activity FOR ALL TO authenticated USING (false);
+                CREATE POLICY "service_role_all" ON public.otp_verifications FOR ALL TO service_role USING (true) WITH CHECK (true);
+                CREATE POLICY "deny_anon_all" ON public.otp_verifications FOR ALL TO anon USING (false);
+                CREATE POLICY "deny_authenticated_all" ON public.otp_verifications FOR ALL TO authenticated USING (false);
+                CREATE POLICY "service_role_all" ON public.shared_dashboards FOR ALL TO service_role USING (true) WITH CHECK (true);
+                CREATE POLICY "deny_anon_all" ON public.shared_dashboards FOR ALL TO anon USING (false);
+                CREATE POLICY "deny_authenticated_all" ON public.shared_dashboards FOR ALL TO authenticated USING (false);
+            END IF;
+        END $$;
         """)
     else:
         # SQLite Schema

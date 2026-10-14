@@ -398,6 +398,23 @@ def clean_and_preprocess(
         # Impute numeric
         for col in clean_df.select_dtypes(include=[np.number]).columns:
             if clean_df[col].isna().any():
+                col_lower = str(col).lower()
+                # 1. Never impute surrogate IDs or foreign keys with statistical medians/means
+                if (
+                    col_lower.endswith(("_id", "_key", "_code", "_uuid", "_fk", "_pk"))
+                    or col_lower in ["id", "key", "code", "uuid", "fk", "pk"]
+                    or "_id_" in col_lower
+                ):
+                    continue
+
+                # 2. For sparse metrics (>40% missing, e.g. refunds, discounts, penalties from left joins)
+                missing_ratio = clean_df[col].isna().sum() / len(clean_df)
+                if missing_ratio > 0.4:
+                    if any(w in col_lower for w in ["refund", "discount", "fee", "penalty", "tax"]):
+                        clean_df[col] = clean_df[col].fillna(0.0)
+                        transform_log.append(f"Filled missing optional transaction amounts in '{col}' with 0.0.")
+                    continue
+
                 imputed_val = 0
                 if num_strat == "median":
                     imputed_val = clean_df[col].median()
@@ -412,6 +429,15 @@ def clean_and_preprocess(
         # Impute categorical / strings
         for col in clean_df.select_dtypes(include=[object, "string"]).columns:
             if clean_df[col].isna().any():
+                col_lower = str(col).lower()
+                # Skip string ID or code columns from mode imputation
+                if (
+                    col_lower.endswith(("_id", "_key", "_code", "_uuid", "_fk", "_pk"))
+                    or col_lower in ["id", "key", "code", "uuid", "fk", "pk"]
+                    or "_id_" in col_lower
+                ):
+                    continue
+
                 if cat_strat == "mode":
                     mode_vals = clean_df[col].mode()
                     val = mode_vals.iloc[0] if len(mode_vals) > 0 else "Unknown"
