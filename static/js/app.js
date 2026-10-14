@@ -476,6 +476,18 @@ function downloadPythonScript() {
   document.getElementById('export-dropdown-menu')?.classList.remove('active');
 }
 
+function exportCleanedCSV() {
+  downloadCleanCSV();
+}
+
+function exportPDFReport() {
+  printExecutiveReport();
+}
+
+function triggerPrintExport() {
+  printExecutiveReport();
+}
+
 function copyPythonScript() {
   const codeEl = document.getElementById('python-script-preview');
   if (codeEl && codeEl.textContent) {
@@ -1439,11 +1451,23 @@ async function fetchEDA() {
   }
 }
 
+// Universal EDA Render Wrapper
+function renderEDAResults(data) {
+  if (!data) return;
+  const eda = data.eda || data;
+  appState.edaData = eda;
+  if (typeof renderEDA === 'function') {
+    renderEDA(eda);
+  }
+  document.getElementById('step-nav-3')?.classList.add('completed');
+}
+
 // Render EDA Section
 function renderEDA(eda) {
+  if (!eda) return;
   // 1. Numerical Stats Table
   const tableBody = document.querySelector('#eda-num-stats-table tbody');
-  if (tableBody) {
+  if (tableBody && eda.numeric_stats) {
     tableBody.innerHTML = '';
     Object.values(eda.numeric_stats).forEach(stat => {
       const tr = document.createElement('tr');
@@ -1468,7 +1492,7 @@ function renderEDA(eda) {
   // 2. Correlation Heatmap Table
   const corr = eda.correlation;
   const heatmapEl = document.getElementById('correlation-matrix-table');
-  if (heatmapEl && corr && corr.columns.length > 0) {
+  if (heatmapEl && corr && corr.columns && corr.columns.length > 0 && Array.isArray(corr.pearson_matrix)) {
     document.getElementById('corr-feature-count').textContent = `${corr.columns.length} variables`;
     let html = '<thead><tr><th></th>';
     corr.columns.forEach(col => {
@@ -1478,18 +1502,20 @@ function renderEDA(eda) {
 
     corr.columns.forEach((rowCol, rIdx) => {
       html += `<tr><th>${escapeHtml(rowCol.substring(0, 12))}</th>`;
-      corr.pearson_matrix[rIdx].forEach((val, cIdx) => {
-        const absVal = Math.abs(val);
-        let bgColor = 'rgba(255, 255, 255, 0.05)';
-        if (rIdx === cIdx) {
-          bgColor = 'rgba(99, 102, 241, 0.5)';
-        } else if (val > 0) {
-          bgColor = `rgba(16, 185, 129, ${Math.min(0.85, absVal * 0.9)})`;
-        } else if (val < 0) {
-          bgColor = `rgba(244, 63, 94, ${Math.min(0.85, absVal * 0.9)})`;
-        }
-        html += `<td style="background: ${bgColor}; cursor: pointer;" onclick="onCorrelationCellClick('${rowCol}', '${corr.columns[cIdx]}')" title="Click to plot scatter: ${rowCol} vs ${corr.columns[cIdx]} (r = ${val})">${val}</td>`;
-      });
+      if (corr.pearson_matrix[rIdx]) {
+        corr.pearson_matrix[rIdx].forEach((val, cIdx) => {
+          const absVal = Math.abs(val);
+          let bgColor = 'rgba(255, 255, 255, 0.05)';
+          if (rIdx === cIdx) {
+            bgColor = 'rgba(99, 102, 241, 0.5)';
+          } else if (val > 0) {
+            bgColor = `rgba(16, 185, 129, ${Math.min(0.85, absVal * 0.9)})`;
+          } else if (val < 0) {
+            bgColor = `rgba(244, 63, 94, ${Math.min(0.85, absVal * 0.9)})`;
+          }
+          html += `<td style="background: ${bgColor}; cursor: pointer;" onclick="onCorrelationCellClick('${rowCol}', '${corr.columns[cIdx]}')" title="Click to plot scatter: ${rowCol} vs ${corr.columns[cIdx]} (r = ${val})">${val}</td>`;
+        });
+      }
       html += '</tr>';
     });
     html += '</tbody>';
@@ -1520,7 +1546,9 @@ function renderEDA(eda) {
   }
 
   // 4. Pairwise Scatter Explorer Dropdowns Setup
-  populateScatterSelectors(corr.columns);
+  if (corr && corr.columns && corr.columns.length > 0) {
+    populateScatterSelectors(corr.columns);
+  }
 
   // 5. Distribution Histogram Dropdown
   const metricSelect = document.getElementById('distribution-metric-select');
@@ -1719,8 +1747,20 @@ async function fetchML() {
   }
 }
 
+// Universal ML Render Wrapper
+function renderMLResults(data) {
+  if (!data) return;
+  const ml = data.ml || data;
+  appState.mlData = ml;
+  if (typeof renderML === 'function') {
+    renderML(ml);
+  }
+  document.getElementById('step-nav-4')?.classList.add('completed');
+}
+
 // Render ML & Executive Insights
 function renderML(ml) {
+  if (!ml) return;
   // 1. Executive Summary Bullets
   const bulletsContainer = document.getElementById('executive-bullets-container');
   if (bulletsContainer && ml.executive_summary) {
@@ -2861,7 +2901,9 @@ async function loadSelectedDbTable() {
       const cleanRes = await fetch('/api/clean', { method: 'POST' });
       const cleanData = await cleanRes.json();
       if (cleanData.status === 'success') {
-        renderCleanResults(cleanData.cleaning_report, cleanData.preview, cleanData.columns, cleanData.python_script);
+        const auditRep = cleanData.audit_report || cleanData.cleaning_report;
+        const cols = cleanData.cleaned_columns || cleanData.columns;
+        renderCleanResults(auditRep, cleanData.preview, cols, cleanData.python_script);
       }
 
       showLoading('Streaming Table: Step 2/3 - Computing Statistical Exploratory Analysis...');
