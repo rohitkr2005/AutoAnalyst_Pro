@@ -242,6 +242,16 @@ def init_auth_db():
             created_by INTEGER,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
+
+        -- Enforce Supabase Row Level Security (RLS) and protect public schema
+        ALTER TABLE IF EXISTS public.users ENABLE ROW LEVEL SECURITY;
+        ALTER TABLE IF EXISTS public.user_activity ENABLE ROW LEVEL SECURITY;
+        ALTER TABLE IF EXISTS public.otp_verifications ENABLE ROW LEVEL SECURITY;
+        ALTER TABLE IF EXISTS public.shared_dashboards ENABLE ROW LEVEL SECURITY;
+        REVOKE ALL ON public.users FROM anon, authenticated;
+        REVOKE ALL ON public.user_activity FROM anon, authenticated;
+        REVOKE ALL ON public.otp_verifications FROM anon, authenticated;
+        REVOKE ALL ON public.shared_dashboards FROM anon, authenticated;
         """)
     else:
         # SQLite Schema
@@ -677,5 +687,32 @@ def get_shared_dashboard(token: str) -> Optional[Dict[str, Any]]:
     except Exception as e:
         print(f"[Get Shared Dashboard Error] {e}", flush=True)
         return None
+
+
+def start_database_keepalive(interval_hours: int = 12):
+    """
+    Background daemon thread that periodically executes a lightweight heartbeat query
+    against Supabase PostgreSQL so the project is never paused due to cloud inactivity.
+    """
+    import threading
+    import time
+
+    def _worker():
+        while True:
+            try:
+                time.sleep(interval_hours * 3600)
+                if is_postgres():
+                    conn = get_db_connection()
+                    cur = conn.cursor()
+                    cur.execute("SELECT 1")
+                    cur.fetchone()
+                    conn.close()
+                    print("[KeepAlive] Supabase PostgreSQL heartbeat ping successful.", flush=True)
+            except Exception as e:
+                print(f"[KeepAlive] Heartbeat warning: {e}", flush=True)
+
+    t = threading.Thread(target=_worker, daemon=True, name="SupabaseHeartbeat")
+    t.start()
+
 
 

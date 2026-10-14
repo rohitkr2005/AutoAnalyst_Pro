@@ -73,12 +73,62 @@ SESSION_DATA = {
     "ml_cache": None
 }
 
+import time
+SERVER_START_TIME = time.time()
+
 from engine.data_modeler import DataModel, DaxEngine, ingest_files_into_model
 GLOBAL_DATA_MODEL = DataModel()
 
 
+def sync_session_to_data_model():
+    """
+    Ensures GLOBAL_DATA_MODEL has at least the active dataset from SESSION_DATA
+    if no multi-table model is loaded. Allows DAX Studio to work seamlessly
+    with both single-file uploads and multi-table relational models.
+    """
+    if len(GLOBAL_DATA_MODEL.tables) == 0:
+        active_df = SESSION_DATA.get("cleaned_df") if SESSION_DATA.get("cleaned_df") is not None else SESSION_DATA.get("raw_df")
+        if active_df is not None and not active_df.empty:
+            ds_name = SESSION_DATA.get("dataset_name", "Data")
+            tbl_name = re.sub(r'\.[a-zA-Z0-9]+$', '', ds_name).replace(" ", "_")
+            tbl_name = re.sub(r'[^a-zA-Z0-9_]', '', tbl_name) or "Data"
+            GLOBAL_DATA_MODEL.add_table(tbl_name, active_df)
+
+
+def start_render_keepalive(interval_minutes: int = 8):
+    """
+    Background daemon thread that periodically pings the Render Web Service
+    to reset Render's 15-minute free-tier inactivity timer and prevent cold-start sleeps.
+    """
+    import threading
+    import urllib.request
+    import os
+
+    def _worker():
+        # Wait 90 seconds after boot before sending first ping
+        time.sleep(90)
+        while True:
+            try:
+                base_url = os.environ.get("RENDER_EXTERNAL_URL", "https://autoanalyst-pro.onrender.com").rstrip("/")
+                ping_url = f"{base_url}/api/ping"
+                req = urllib.request.Request(
+                    ping_url,
+                    headers={"User-Agent": "AutoAnalyst-KeepAlive/1.0"}
+                )
+                with urllib.request.urlopen(req, timeout=15) as resp:
+                    status = resp.status
+                print(f"[Render KeepAlive] Ping to {ping_url} returned {status}", flush=True)
+            except Exception as e:
+                # Local development or temporary DNS resolution will simply log without crashing
+                print(f"[Render KeepAlive] Ping note: {e}", flush=True)
+            time.sleep(interval_minutes * 60)
+
+    t = threading.Thread(target=_worker, daemon=True, name="RenderKeepAlive")
+    t.start()
+
+
 def init_app_services():
-    """Initializes database schema, keep-alive daemon, and sample datasets safely on startup."""
+    """Initializes database schema, keep-alive daemons, and sample datasets safely on startup."""
     try:
         init_auth_db()
         print("[AutoAnalyst Pro] Database initialized successfully.", flush=True)
@@ -88,7 +138,12 @@ def init_app_services():
         from engine.auth import start_database_keepalive
         start_database_keepalive()
     except Exception as e:
-        print(f"[AutoAnalyst Pro] Keep-alive thread warning: {e}", flush=True)
+        print(f"[AutoAnalyst Pro] DB keep-alive thread warning: {e}", flush=True)
+    try:
+        start_render_keepalive()
+        print("[AutoAnalyst Pro] Render keep-alive pinger started.", flush=True)
+    except Exception as e:
+        print(f"[AutoAnalyst Pro] Render keep-alive warning: {e}", flush=True)
     try:
         init_all_samples()
         print("[AutoAnalyst Pro] Sample datasets verified.", flush=True)
@@ -98,6 +153,16 @@ def init_app_services():
 
 # Run service initialization on application start
 init_app_services()
+
+
+@app.route("/api/ping", methods=["GET", "HEAD"])
+def api_ping():
+    """Ultra-fast keepalive ping endpoint (no auth required) to keep Render Web Service active 24/7."""
+    return jsonify({
+        "status": "online",
+        "service": "AutoAnalyst Pro",
+        "uptime_sec": round(time.time() - SERVER_START_TIME, 1)
+    }), 200
 
 
 @app.route("/api/health", methods=["GET"])
@@ -113,6 +178,7 @@ def api_health():
     }
     try:
         conn = get_db_connection()
+
         cur = conn.cursor()
         cur.execute("SELECT count(*) FROM users")
         row = cur.fetchone()
@@ -1367,6 +1433,8 @@ def api_model_upload_multiple():
     try:
         files = request.files.getlist("files")
         if not files or len(files) == 0:
+            files = request.files.getlist("file")
+        if not files or len(files) == 0:
             return jsonify({"status": "error", "message": "No files uploaded."}), 400
 
         append_mode = request.form.get("append", "0") in ("1", "true", "True") or request.args.get("append", "0") in ("1", "true", "True")
@@ -1379,6 +1447,10 @@ def api_model_upload_multiple():
 
         from engine.data_modeler import ingest_files_into_model
         result = ingest_files_into_model(files_data, GLOBAL_DATA_MODEL, clear_existing=(not append_mode))
+        
+        import gc
+        gc.collect()
+
         safe_result = sanitize_for_json(result)
         return jsonify(safe_result)
     except Exception as e:
@@ -1393,6 +1465,7 @@ def api_model_upload_multiple():
 def api_model_schema():
     """Returns the active relational schema: tables, columns, sample rows, and foreign key relationships."""
     try:
+        sync_session_to_data_model()
         summary = GLOBAL_DATA_MODEL.get_schema_summary()
         return jsonify({"status": "success", "schema": summary})
     except Exception as e:
@@ -1432,8 +1505,7 @@ def api_model_relationship():
 def api_model_clear():
     """Clears all tables and relationships from the active relational data model."""
     try:
-        GLOBAL_DATA_MODEL.tables.clear()
-        GLOBAL_DATA_MODEL.relationships.clear()
+        GLOBAL_DATA_MODEL.clear()
         return jsonify({"status": "success", "message": "All model tables cleared.", "schema": GLOBAL_DATA_MODEL.get_schema_summary()})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -1442,12 +1514,14 @@ def api_model_clear():
 @app.route("/api/model/dax/evaluate", methods=["POST"])
 @login_required
 def api_model_dax_evaluate():
-    """Evaluates a DAX measure or table expression (SUMMARIZE, CALCULATE, DIVIDE, SUM, etc.)."""
+    """Evaluates a DAX measure or table expression (SUMMARIZE, CALCULATE, DIVIDE, SUM, etc.) with NL auto-fallback."""
     try:
         data = request.get_json() or {}
         expression = data.get("expression", "").strip()
         if not expression:
             return jsonify({"status": "error", "message": "DAX expression cannot be empty."}), 400
+
+        sync_session_to_data_model()
 
         if len(GLOBAL_DATA_MODEL.tables) == 0:
             return jsonify({"status": "error", "message": "No tables loaded in the data model. Please upload sheets or tables first."}), 400
@@ -1455,19 +1529,37 @@ def api_model_dax_evaluate():
         from engine.data_modeler import DaxEngine
         engine = DaxEngine(GLOBAL_DATA_MODEL)
 
-        if expression.upper().startswith("SUMMARIZE") or expression.upper().startswith("EVALUATE SUMMARIZE"):
-            result = engine.evaluate_summarize(expression)
-            return jsonify(result)
+        actual_expr = expression
+        nlp_explanation = None
+
+        # Check if query is explicit DAX syntax; if not, translate natural language automatically
+        is_explicit_dax = re.search(r'\b(SUM|AVERAGE|AVG|DIVIDE|CALCULATE|SUMMARIZE|COUNTROWS|MIN|MAX|COUNT)\s*\(', expression, re.I)
+        if not is_explicit_dax:
+            try:
+                nlp_res = engine.natural_language_to_dax(expression)
+                actual_expr = nlp_res["dax"]
+                nlp_explanation = nlp_res.get("explanation")
+            except Exception:
+                actual_expr = expression
+
+        if actual_expr.upper().startswith("SUMMARIZE") or actual_expr.upper().startswith("EVALUATE SUMMARIZE"):
+            result = engine.evaluate_summarize(actual_expr)
+            if nlp_explanation:
+                result["explanation"] = nlp_explanation
+            return jsonify(sanitize_for_json(result))
         else:
-            val = engine.evaluate_scalar_dax(expression)
+            val = engine.evaluate_scalar_dax(actual_expr)
             formatted = f"{val:,.2f}" if isinstance(val, (int, float, np.number)) else str(val)
-            return jsonify({
+            resp = {
                 "status": "success",
                 "type": "scalar",
-                "expression": expression,
+                "expression": actual_expr,
                 "result": val,
                 "formatted": formatted
-            })
+            }
+            if nlp_explanation:
+                resp["explanation"] = nlp_explanation
+            return jsonify(sanitize_for_json(resp))
     except Exception as e:
         print(f"[DAX Evaluation Error] {e}", flush=True)
         return jsonify({"status": "error", "message": f"DAX error: {str(e)}"}), 400
@@ -1483,6 +1575,8 @@ def api_model_dax_copilot():
         prompt = (data.get("prompt") or data.get("query") or "").strip()
         if not prompt:
             return jsonify({"status": "error", "message": "Prompt cannot be empty."}), 400
+
+        sync_session_to_data_model()
 
         if len(GLOBAL_DATA_MODEL.tables) == 0:
             return jsonify({"status": "error", "message": "No tables loaded in data model. Please ingest tables first."}), 400
@@ -1520,12 +1614,14 @@ def api_model_dax_copilot():
 def api_model_auto_measures():
     """Returns autonomously synthesized DAX measures and dimensional summaries."""
     try:
+        sync_session_to_data_model()
         from engine.data_modeler import DaxEngine
         engine = DaxEngine(GLOBAL_DATA_MODEL)
         measures = engine.generate_automated_measures()
         return jsonify(sanitize_for_json({"status": "success", "measures": measures}))
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
 
 
 @app.route("/api/model/auto-synthesize", methods=["POST"])

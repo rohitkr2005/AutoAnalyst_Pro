@@ -16,6 +16,23 @@ def _clean_col_name(c: Any) -> str:
     return str(c).strip()
 
 
+def _downcast_df(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Downcasts float64 to float32 and int64 to int32 to minimize memory usage
+    on memory-constrained cloud environments (e.g. Render 512MB RAM limit).
+    """
+    try:
+        for col in df.select_dtypes(include=['float64']).columns:
+            df[col] = df[col].astype(np.float32)
+        for col in df.select_dtypes(include=['int64']).columns:
+            c_min, c_max = df[col].min(), df[col].max()
+            if pd.notna(c_min) and pd.notna(c_max) and c_min >= -2147483648 and c_max <= 2147483647:
+                df[col] = df[col].astype(np.int32)
+    except Exception:
+        pass
+    return df
+
+
 class DataModel:
     """
     In-memory Relational Data Model managing multiple tables,
@@ -26,12 +43,21 @@ class DataModel:
         self.tables: Dict[str, pd.DataFrame] = {}
         self.relationships: List[Dict[str, Any]] = []
         self.measures: Dict[str, str] = {}  # measure_name -> dax_expression
+        self._cached_joined: Optional[pd.DataFrame] = None
+        self._cached_base: Optional[str] = None
+
+    def invalidate_cache(self):
+        """Clears cached merged dataframes to ensure freshness and free memory."""
+        self._cached_joined = None
+        self._cached_base = None
 
     def add_table(self, name: str, df: pd.DataFrame):
-        """Registers a named table in the data model."""
+        """Registers a named table in the data model with memory-optimized numeric types."""
         clean_df = df.copy()
         clean_df.columns = [_clean_col_name(c) for c in clean_df.columns]
+        clean_df = _downcast_df(clean_df)
         self.tables[name] = clean_df
+        self.invalidate_cache()
 
     def remove_table(self, name: str):
         """Removes a table and any associated relationships."""
@@ -41,12 +67,17 @@ class DataModel:
             r for r in self.relationships 
             if r["from_table"] != name and r["to_table"] != name
         ]
+        self.invalidate_cache()
 
     def clear(self):
-        """Resets the model."""
+        """Resets the model and invokes garbage collection."""
         self.tables.clear()
         self.relationships.clear()
         self.measures.clear()
+        self.invalidate_cache()
+        import gc
+        gc.collect()
+
 
     def detect_relationships(self) -> List[Dict[str, Any]]:
         """
@@ -160,6 +191,7 @@ class DataModel:
             "to_col": to_col,
             "cardinality": cardinality
         })
+        self.invalidate_cache()
         return True
 
     def remove_relationship(self, from_table: str, from_col: str, to_table: str, to_col: str):
@@ -168,6 +200,8 @@ class DataModel:
             r for r in self.relationships
             if not (r["from_table"] == from_table and r["from_col"] == from_col and r["to_table"] == to_table and r["to_col"] == to_col)
         ]
+        self.invalidate_cache()
+
 
     def get_schema_summary(self) -> Dict[str, Any]:
         """Provides full metadata of all tables, schema columns, types, and links."""
@@ -223,12 +257,16 @@ class DataModel:
         Executes relational joins across all connected tables starting
         from the primary base table (or table with highest row count).
         Deduplicates lookup tables and normalizes keys to prevent Cartesian explosions.
+        Caches and downcasts the merged table to conserve memory.
         """
         if not self.tables:
             return pd.DataFrame()
 
         if not base_table or base_table not in self.tables:
             base_table = max(self.tables.keys(), key=lambda t: len(self.tables[t]))
+
+        if self._cached_joined is not None and self._cached_base == base_table and not self._cached_joined.empty:
+            return self._cached_joined
 
         joined = self.tables[base_table].copy()
         visited_tables = {base_table}
@@ -311,7 +349,12 @@ class DataModel:
             if not progress_made:
                 break
 
-        return joined
+        joined = _downcast_df(joined)
+        self._cached_joined = joined
+        self._cached_base = base_table
+        import gc
+        gc.collect()
+        return self._cached_joined
 
 
 # ============================================================
@@ -342,22 +385,39 @@ class DaxEngine:
         self.model = model
 
     def resolve_column(self, table_name: Optional[str], col_name: str, joined_df: Optional[pd.DataFrame] = None) -> Tuple[pd.Series, str]:
-        """Finds the column Series across the model."""
-        if table_name and table_name in self.model.tables:
-            df = self.model.tables[table_name]
-            if col_name in df.columns:
-                return df[col_name], table_name
+        """Finds the column Series across the model with case-insensitive and bracket-tolerant matching."""
+        col_clean = col_name.strip("[]").strip()
 
+        # 1. Check specific table first if provided
+        if table_name:
+            t_match = None
+            for t in self.model.tables:
+                if t.lower() == table_name.lower():
+                    t_match = t
+                    break
+            if t_match:
+                df = self.model.tables[t_match]
+                if col_clean in df.columns:
+                    return df[col_clean], t_match
+                for c in df.columns:
+                    if c.lower() == col_clean.lower():
+                        return df[c], t_match
+
+        # 2. Check joined_df if provided in context
         if joined_df is not None:
-            if col_name in joined_df.columns:
-                return joined_df[col_name], "Joined"
+            if col_clean in joined_df.columns:
+                return joined_df[col_clean], "Joined"
             for c in joined_df.columns:
-                if c.endswith(f"_{col_name}") or c.lower() == col_name.lower():
+                if c.lower() == col_clean.lower() or c.lower().endswith(f"_{col_clean.lower()}"):
                     return joined_df[c], "Joined"
 
+        # 3. Check across all loaded tables
         for t_name, df in self.model.tables.items():
-            if col_name in df.columns:
-                return df[col_name], t_name
+            if col_clean in df.columns:
+                return df[col_clean], t_name
+            for c in df.columns:
+                if c.lower() == col_clean.lower():
+                    return df[c], t_name
 
         raise ValueError(f"Column '{col_name}' could not be resolved in the data model.")
 
@@ -404,34 +464,91 @@ class DaxEngine:
         """
         expr = expression.strip()
 
+        # Check for top-level binary arithmetic (+, -, *, /) where operator is at parentheses depth 0
+        def _find_top_level_op(s: str, ops: List[str]) -> Optional[Tuple[int, str]]:
+            depth = 0
+            # Scan right-to-left to respect left-to-right evaluation
+            for idx in range(len(s) - 1, -1, -1):
+                ch = s[idx]
+                if ch == ')':
+                    depth += 1
+                elif ch == '(':
+                    depth -= 1
+                elif depth == 0 and ch in ops:
+                    if idx > 0 and s[idx - 1] not in '+-*/':
+                        return idx, ch
+            return None
+
+        # 0. Check top-level + or -
+        top_add_sub = _find_top_level_op(expr, ['+', '-'])
+        if top_add_sub:
+            idx, op = top_add_sub
+            left_v = self.evaluate_scalar_dax(expr[:idx].strip(), df_context)
+            right_v = self.evaluate_scalar_dax(expr[idx + 1:].strip(), df_context)
+            if op == '+':
+                return float(left_v) + float(right_v)
+            elif op == '-':
+                return float(left_v) - float(right_v)
+
+        # 0.1 Check top-level * or /
+        top_mul_div = _find_top_level_op(expr, ['*', '/'])
+        if top_mul_div:
+            idx, op = top_mul_div
+            left_v = self.evaluate_scalar_dax(expr[:idx].strip(), df_context)
+            right_v = self.evaluate_scalar_dax(expr[idx + 1:].strip(), df_context)
+            if op == '*':
+                return float(left_v) * float(right_v)
+            elif op == '/':
+                return float(left_v) / (float(right_v) + 1e-12)
+
+        def _split_args(s: str) -> List[str]:
+            tokens = []
+            cur = []
+            depth = 0
+            for ch in s:
+                if ch == '(':
+                    depth += 1
+                elif ch == ')':
+                    depth -= 1
+                if ch == ',' and depth == 0:
+                    tokens.append("".join(cur).strip())
+                    cur = []
+                else:
+                    cur.append(ch)
+            if cur:
+                tokens.append("".join(cur).strip())
+            return tokens
+
         # 1. DIVIDE(num, den, alt)
-        divide_match = re.match(r'^DIVIDE\s*\((.+?),\s*(.+?)(?:,\s*(.+?))?\)$', expr, re.IGNORECASE)
-        if divide_match:
-            num_expr = divide_match.group(1).strip()
-            den_expr = divide_match.group(2).strip()
-            alt_expr = divide_match.group(3)
-            alt_val = float(alt_expr.strip()) if alt_expr else 0.0
+        if expr.upper().startswith("DIVIDE(") and expr.endswith(")"):
+            inner = expr[7:-1].strip()
+            args = _split_args(inner)
+            if len(args) >= 2:
+                num_expr = args[0]
+                den_expr = args[1]
+                alt_val = float(args[2]) if len(args) > 2 and args[2] else 0.0
 
-            numerator = self.evaluate_scalar_dax(num_expr, df_context)
-            denominator = self.evaluate_scalar_dax(den_expr, df_context)
+                numerator = self.evaluate_scalar_dax(num_expr, df_context)
+                denominator = self.evaluate_scalar_dax(den_expr, df_context)
 
-            if abs(float(denominator)) < 1e-12:
-                return alt_val
-            return float(numerator) / float(denominator)
+                if abs(float(denominator)) < 1e-12:
+                    return alt_val
+                return float(numerator) / float(denominator)
 
         # 2. CALCULATE(Expression, Filter1, ...)
-        calc_match = re.match(r'^CALCULATE\s*\((.+?),\s*(.+?)\)$', expr, re.IGNORECASE)
-        if calc_match:
-            base_expr = calc_match.group(1).strip()
-            filter_expr = calc_match.group(2).strip()
-
-            joined = self.model.build_joined_dataframe()
-            filtered_df = self._apply_dax_filter(joined, filter_expr)
-            return self.evaluate_scalar_dax(base_expr, filtered_df)
+        if expr.upper().startswith("CALCULATE(") and expr.endswith(")"):
+            inner = expr[10:-1].strip()
+            args = _split_args(inner)
+            if len(args) >= 2:
+                base_expr = args[0]
+                filter_expr = args[1]
+                joined = self.model.build_joined_dataframe()
+                filtered_df = self._apply_dax_filter(joined, filter_expr)
+                return self.evaluate_scalar_dax(base_expr, filtered_df)
 
         # 3. COUNTROWS(Table)
         countrows_match = re.match(r'^COUNTROWS\s*\((.+?)\)$', expr, re.IGNORECASE)
-        if countrows_match:
+        if countrows_match and not any(c in expr[10:-1] for c in ['(', ')']):
             t = countrows_match.group(1).strip()
             if df_context is not None and (t == "Model" or t not in self.model.tables):
                 return len(df_context)
@@ -441,25 +558,10 @@ class DaxEngine:
 
         # 4. Standard Aggregates
         agg_match = re.match(r'^(SUM|AVERAGE|AVG|MIN|MAX|COUNT|DISTINCTCOUNT)\s*\((.+?)\)$', expr, re.IGNORECASE)
-        if agg_match:
+        if agg_match and not any(c in agg_match.group(2) for c in ['(', ')']):
             func = agg_match.group(1)
             arg = agg_match.group(2).strip()
             return self.evaluate_aggregation(func, arg, df_context)
-
-        # 5. Arithmetic operations
-        for op in ["+", "-", "*", "/"]:
-            parts = expr.split(op, 1)
-            if len(parts) == 2 and not expr.startswith(f"{op}"):
-                left_v = self.evaluate_scalar_dax(parts[0].strip(), df_context)
-                right_v = self.evaluate_scalar_dax(parts[1].strip(), df_context)
-                if op == "+":
-                    return float(left_v) + float(right_v)
-                elif op == "-":
-                    return float(left_v) - float(right_v)
-                elif op == "*":
-                    return float(left_v) * float(right_v)
-                elif op == "/":
-                    return float(left_v) / (float(right_v) + 1e-12)
 
         try:
             return float(expr)
@@ -798,22 +900,19 @@ class DaxEngine:
                     clean_m = m_col.replace("_", " ").title()
                     clean_d = dim_col.replace("_", " ").title()
                     summarize_expr = f'SUMMARIZE({fact_table}, {dim_table}[{dim_col}], "Total {clean_m}", SUM({fact_table}[{m_col}]))'
-                    try:
-                        summary_res = self.evaluate_summarize(summarize_expr)
-                        auto_measures.append({
-                            "id": f"sum_{dim_table}_{dim_col}_{m_col}",
-                            "name": f"{clean_m} by {dim_table} {clean_d}",
-                            "title": f"{clean_m} by {dim_table} {clean_d}",
-                            "category": "Dimensional Breakdown",
-                            "expression": summarize_expr,
-                            "dax": summarize_expr,
-                            "type": "table",
-                            "chart": summary_res.get("chart"),
-                            "rows_count": summary_res.get("total_rows", 0),
-                            "description": f"Cross-table multi-dimensional breakdown of {clean_m} grouped by {dim_table}.{dim_col}."
-                        })
-                    except Exception:
-                        pass
+                    auto_measures.append({
+                        "id": f"sum_{dim_table}_{dim_col}_{m_col}",
+                        "name": f"{clean_m} by {dim_table} {clean_d}",
+                        "title": f"{clean_m} by {dim_table} {clean_d}",
+                        "category": "Dimensional Breakdown",
+                        "expression": summarize_expr,
+                        "dax": summarize_expr,
+                        "type": "table",
+                        "chart": None,
+                        "formatted": "Table",
+                        "rows_count": None,
+                        "description": f"Cross-table multi-dimensional breakdown of {clean_m} grouped by {dim_table}.{dim_col}."
+                    })
 
         return auto_measures
 
@@ -991,6 +1090,9 @@ def ingest_files_into_model(files_data: List[Tuple[str, bytes]], model: DataMode
             "measures_count": 0
         }
 
+    import gc
+    gc.collect()
+
     return {
         "status": "success",
         "loaded_tables": loaded_tables,
@@ -999,3 +1101,4 @@ def ingest_files_into_model(files_data: List[Tuple[str, bytes]], model: DataMode
         "schema": schema_summary,
         "automated_measures": automated_measures
     }
+
