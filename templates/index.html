@@ -697,14 +697,14 @@
           <!-- Dropzone & Raw Text Paste -->
           <div class="grid-2" style="margin-bottom: 2rem;">
             <div class="dropzone-container" id="dropzone">
-              <input type="file" id="file-uploader" class="file-input" accept=".csv,.tsv,.xlsx,.xls,.json">
+              <input type="file" id="file-uploader" class="file-input" multiple accept=".csv,.tsv,.xlsx,.xls,.json">
               <div class="dropzone-icon">
                 <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
               </div>
-              <div class="dropzone-title">Drag & Drop Your Raw Dataset Here</div>
-              <div class="dropzone-subtitle">Supports CSV, TSV, Excel (.xlsx, .xls) and JSON up to 32MB</div>
+              <div class="dropzone-title">Drag & Drop Your Raw Dataset(s) Here</div>
+              <div class="dropzone-subtitle">Supports single datasets or multiple relational files (CSV, TSV, Excel, JSON)</div>
               <button class="btn-primary" type="button" onclick="document.getElementById('file-uploader').click()">
-                Browse Local File
+                Browse Local File(s)
               </button>
             </div>
 

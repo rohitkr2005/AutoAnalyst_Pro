@@ -1650,31 +1650,27 @@ def api_model_auto_synthesize():
 
         table_names = list(GLOBAL_DATA_MODEL.tables.keys())
         SESSION_DATA["dataset_name"] = f"Relational Model: {' + '.join(table_names)}"
-        SESSION_DATA["raw_df"] = df.copy()
+        SESSION_DATA["raw_df"] = df
+        SESSION_DATA["current_file_path"] = f"model://{'-'.join(table_names)}"
+        SESSION_DATA["selected_sample_key"] = None
+        SESSION_DATA["cleaned_df"] = None
+        SESSION_DATA["audit_report"] = None
+        SESSION_DATA["eda_cache"] = None
+        SESSION_DATA["ml_cache"] = None
 
-        # Run Automated Cleaning
-        from engine.cleaner import clean_and_preprocess, audit_dataset_health
-        clean_df, audit_rep, py_script = clean_and_preprocess(df)
-        SESSION_DATA["cleaned_df"] = clean_df.copy()
-        SESSION_DATA["audit_report"] = audit_rep
-        SESSION_DATA["python_script"] = py_script
-
-        # Run Automated EDA
-        from engine.analytics import compute_comprehensive_eda
-        eda_rep = compute_comprehensive_eda(clean_df)
-        SESSION_DATA["eda_cache"] = eda_rep
-
-        # Run Automated ML
-        from engine.ml_engine import run_ml_pipeline
-        ml_rep = run_ml_pipeline(clean_df)
-        SESSION_DATA["ml_cache"] = ml_rep
+        from engine.cleaner import audit_dataset_health
+        raw_audit = audit_dataset_health(df)
+        SESSION_DATA["raw_audit"] = raw_audit
 
         if "user_id" in session:
-            record_user_activity(session["user_id"], SESSION_DATA["dataset_name"], len(df), audit_rep["cleaned_health_score"], "Autonomous Relational Pipeline")
+            record_user_activity(session["user_id"], SESSION_DATA["dataset_name"], len(df), raw_audit["health_score"], "Autonomous Relational Pipeline")
+
+        import gc
+        gc.collect()
 
         return jsonify({
             "status": "success",
-            "message": f"Autonomous pipeline complete: {len(table_names)} tables unified ({len(df):,} rows). Dashboard ready!",
+            "message": f"Autonomous pipeline: {len(table_names)} tables linked and unified ({len(df):,} records).",
             "dataset_name": SESSION_DATA["dataset_name"],
             "total_rows": len(df),
             "total_cols": len(df.columns),

@@ -1160,14 +1160,21 @@ function setupDropzone() {
 
   dropzone.addEventListener('drop', e => {
     const files = e.dataTransfer.files;
-    if (files.length > 0) {
+    if (files.length === 1) {
       uploadFile(files[0]);
+    } else if (files.length > 1) {
+      switchView('view-model');
+      handleMultiFileUpload(files);
     }
   });
 
   fileInput.addEventListener('change', e => {
-    if (e.target.files.length > 0) {
-      uploadFile(e.target.files[0]);
+    const files = e.target.files;
+    if (files.length === 1) {
+      uploadFile(files[0]);
+    } else if (files.length > 1) {
+      switchView('view-model');
+      handleMultiFileUpload(files);
     }
   });
 }
@@ -3030,8 +3037,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================================
 let currentModelSchema = null;
 
-async function handleMultiFileUpload(event) {
-  const files = event.target.files;
+async function handleMultiFileUpload(eventOrFiles) {
+  const files = (eventOrFiles && eventOrFiles.target) ? eventOrFiles.target.files : eventOrFiles;
   if (!files || files.length === 0) return;
 
   const totalFiles = files.length;

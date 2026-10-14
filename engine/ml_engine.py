@@ -47,19 +47,34 @@ def run_ml_pipeline(
     try:
         X = df[feature_num_cols].dropna()
         if len(X) >= 15:
+            # For large datasets (>15,000 rows), use representative sample for clustering to conserve cloud memory
+            if len(X) > 15000:
+                X_fit = X.sample(n=15000, random_state=42)
+            else:
+                X_fit = X
+
             scaler = StandardScaler()
-            X_scaled = scaler.fit_transform(X)
+            X_scaled = scaler.fit_transform(X_fit)
+
+            # Sub-sample for silhouette score evaluation (max 2,000 rows to prevent O(N^2) memory explosion)
+            if len(X_scaled) > 2000:
+                sil_indices = np.random.choice(len(X_scaled), size=2000, replace=False)
+                X_sil = X_scaled[sil_indices]
+            else:
+                sil_indices = None
+                X_sil = X_scaled
 
             # Evaluate silhouette score for k in 2..5
             best_k = 3
             best_score = -1.0
             silhouette_results = []
             
-            max_k = min(6, len(X) - 1)
+            max_k = min(6, len(X_fit) - 1)
             for k in range(2, max_k):
                 km = KMeans(n_clusters=k, random_state=42, n_init=10)
                 labels = km.fit_predict(X_scaled)
-                score = float(silhouette_score(X_scaled, labels))
+                sil_labels = labels[sil_indices] if sil_indices is not None else labels
+                score = float(silhouette_score(X_sil, sil_labels))
                 silhouette_results.append({"k": k, "score": round(score, 3)})
                 if score > best_score:
                     best_score = score
@@ -87,7 +102,7 @@ def run_ml_pipeline(
                 # Identify defining traits for this cluster
                 traits = []
                 for idx, col in enumerate(feature_num_cols):
-                    mean_all = X[col].mean()
+                    mean_all = X_fit[col].mean()
                     mean_cluster = centroid_orig[i][idx]
                     diff_pct = ((mean_cluster - mean_all) / (mean_all if mean_all != 0 else 1)) * 100
                     if abs(diff_pct) > 15:
@@ -104,7 +119,7 @@ def run_ml_pipeline(
                 })
 
             # Sample scatter points for UI rendering (up to 300 points)
-            sample_indices = np.random.choice(len(X), size=min(300, len(X)), replace=False)
+            sample_indices = np.random.choice(len(X_fit), size=min(300, len(X_fit)), replace=False)
             scatter_points = []
             for idx in sample_indices:
                 scatter_points.append({
@@ -129,9 +144,14 @@ def run_ml_pipeline(
     try:
         X_sub = df[feature_num_cols].dropna()
         if len(X_sub) >= 20:
+            if len(X_sub) > 10000:
+                X_sub_fit = X_sub.sample(n=10000, random_state=42)
+            else:
+                X_sub_fit = X_sub
+
             iso = IsolationForest(contamination=0.035, random_state=42)
-            preds = iso.fit_predict(X_sub)
-            scores = iso.decision_function(X_sub)
+            preds = iso.fit_predict(X_sub_fit)
+            scores = iso.decision_function(X_sub_fit)
 
             anomaly_indices = np.where(preds == -1)[0]
             top_anomalies = []
@@ -139,17 +159,17 @@ def run_ml_pipeline(
             # Rank by most anomalous (lowest score)
             sorted_anomaly_idx = sorted(anomaly_indices, key=lambda idx: scores[idx])
             for idx in sorted_anomaly_idx[:10]:
-                row = X_sub.iloc[idx]
+                row = X_sub_fit.iloc[idx]
                 row_dict = {col: round(float(row[col]), 2) for col in feature_num_cols[:5]}
                 top_anomalies.append({
-                    "row_index": int(X_sub.index[idx]),
+                    "row_index": int(X_sub_fit.index[idx]),
                     "anomaly_score": round(float(-1 * scores[idx]), 3),
                     "metrics": row_dict
                 })
 
             results["anomalies"] = {
                 "total_anomalies_detected": int(len(anomaly_indices)),
-                "anomaly_percentage": round((len(anomaly_indices) / len(X_sub)) * 100, 2),
+                "anomaly_percentage": round((len(anomaly_indices) / len(X_sub_fit)) * 100, 2),
                 "top_anomalies": top_anomalies
             }
     except Exception as e:
@@ -175,8 +195,13 @@ def run_ml_pipeline(
             if predictors:
                 model_data = df[predictors + [target_col]].dropna()
                 if len(model_data) >= 15:
-                    X_pred = model_data[predictors]
-                    y_pred = model_data[target_col]
+                    if len(model_data) > 10000:
+                        model_data_fit = model_data.sample(n=10000, random_state=42)
+                    else:
+                        model_data_fit = model_data
+
+                    X_pred = model_data_fit[predictors]
+                    y_pred = model_data_fit[target_col]
 
                     rf = RandomForestRegressor(n_estimators=60, max_depth=6, random_state=42)
                     rf.fit(X_pred, y_pred)

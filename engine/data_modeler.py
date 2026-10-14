@@ -274,7 +274,15 @@ class DataModel:
         if self._cached_joined is not None and self._cached_base == base_table and not self._cached_joined.empty:
             return self._cached_joined
 
-        joined = self.tables[base_table].copy()
+        base_df = self.tables[base_table]
+        # For massive base fact tables (>50,000 rows, e.g. 1.18M row clickstreams),
+        # take a representative sample of 50,000 records for the unified dashboard & ML
+        # to ensure the entire analytical pipeline fits easily within 512MB RAM without worker timeouts.
+        if len(base_df) > 50000:
+            joined = base_df.sample(n=50000, random_state=42).copy()
+        else:
+            joined = base_df.copy()
+
         visited_tables = {base_table}
 
         max_hops = len(self.tables) + 1
