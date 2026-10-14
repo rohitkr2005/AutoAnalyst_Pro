@@ -1438,6 +1438,7 @@ def api_model_upload_multiple():
             return jsonify({"status": "error", "message": "No files uploaded."}), 400
 
         append_mode = request.form.get("append", "0") in ("1", "true", "True") or request.args.get("append", "0") in ("1", "true", "True")
+        is_final = request.form.get("is_final", "1") in ("1", "true", "True") or request.args.get("is_final", "1") in ("1", "true", "True")
 
         files_data = []
         for file in files:
@@ -1446,7 +1447,7 @@ def api_model_upload_multiple():
                 files_data.append((file.filename, content))
 
         from engine.data_modeler import ingest_files_into_model
-        result = ingest_files_into_model(files_data, GLOBAL_DATA_MODEL, clear_existing=(not append_mode))
+        result = ingest_files_into_model(files_data, GLOBAL_DATA_MODEL, clear_existing=(not append_mode), compute_analytics=is_final)
         
         import gc
         gc.collect()

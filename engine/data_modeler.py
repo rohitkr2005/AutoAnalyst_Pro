@@ -18,8 +18,8 @@ def _clean_col_name(c: Any) -> str:
 
 def _downcast_df(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Downcasts float64 to float32 and int64 to int32 to minimize memory usage
-    on memory-constrained cloud environments (e.g. Render 512MB RAM limit).
+    Downcasts float64 to float32, int64 to int32, and repetitive string columns to category
+    to minimize memory usage on memory-constrained cloud environments (e.g. Render 512MB RAM limit).
     """
     try:
         for col in df.select_dtypes(include=['float64']).columns:
@@ -28,6 +28,12 @@ def _downcast_df(df: pd.DataFrame) -> pd.DataFrame:
             c_min, c_max = df[col].min(), df[col].max()
             if pd.notna(c_min) and pd.notna(c_max) and c_min >= -2147483648 and c_max <= 2147483647:
                 df[col] = df[col].astype(np.int32)
+        # For large tables (>5000 rows), convert repetitive string columns to category (saves 85%+ RAM)
+        if len(df) > 5000:
+            for col in df.select_dtypes(include=['object', 'string']).columns:
+                n_uniq = df[col].nunique()
+                if n_uniq < 2500 and n_uniq < len(df) * 0.4:
+                    df[col] = df[col].astype('category')
     except Exception:
         pass
     return df
@@ -127,9 +133,9 @@ class DataModel:
 
                         if is_match:
                             try:
-                                # Sample max 2000 non-null values for fast intersection
-                                s1 = df1[col1].dropna().head(2000).astype(str).str.strip().unique()
-                                s2_series = df2[col2].dropna().head(2000)
+                                # Sample head chunk first for instant evaluation without scanning whole million-row table
+                                s1 = df1[col1].head(5000).dropna().astype(str).str.strip().unique()
+                                s2_series = df2[col2].head(5000).dropna()
                                 s2 = s2_series.astype(str).str.strip().unique()
                                 
                                 # In table 2 (lookup table), verify key has reasonably high uniqueness to prevent Cartesian explosions
@@ -1005,7 +1011,7 @@ class DaxEngine:
 # MULTI-FILE & MULTI-SHEET INGESTION CONTROLLER
 # ============================================================
 
-def ingest_files_into_model(files_data: List[Tuple[str, bytes]], model: DataModel, clear_existing: bool = False) -> Dict[str, Any]:
+def ingest_files_into_model(files_data: List[Tuple[str, bytes]], model: DataModel, clear_existing: bool = False, compute_analytics: bool = True) -> Dict[str, Any]:
     """
     Ingests multiple files (CSV, TSV, or multi-sheet Excel workbooks)
     into the active DataModel and discovers inter-table schema relationships.
@@ -1065,6 +1071,19 @@ def ingest_files_into_model(files_data: List[Tuple[str, bytes]], model: DataMode
             except Exception as e:
                 print(f"[JSON Load Error] {filename}: {e}", flush=True)
 
+    # If this is an intermediate chunk upload, skip relationship detection and auto measures until final chunk
+    if not compute_analytics:
+        import gc
+        gc.collect()
+        return {
+            "status": "success",
+            "loaded_tables": loaded_tables,
+            "relationships_discovered": [],
+            "total_tables": len(model.tables),
+            "schema": None,
+            "automated_measures": []
+        }
+
     relationships = []
     try:
         relationships = model.detect_relationships()
@@ -1101,4 +1120,5 @@ def ingest_files_into_model(files_data: List[Tuple[str, bytes]], model: DataMode
         "schema": schema_summary,
         "automated_measures": automated_measures
     }
+
 

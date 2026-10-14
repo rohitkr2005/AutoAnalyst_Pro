@@ -3050,6 +3050,7 @@ async function handleMultiFileUpload(event) {
       const file = files[i];
       const pct = Math.round(((i) / totalFiles) * 100);
       const isAppend = i > 0;
+      const isFinal = (i === totalFiles - 1);
 
       if (progressBar) progressBar.style.width = `${pct}%`;
       if (progressPct) progressPct.textContent = `${pct}%`;
@@ -3059,8 +3060,9 @@ async function handleMultiFileUpload(event) {
       const formData = new FormData();
       formData.append('files', file);
       formData.append('append', isAppend ? '1' : '0');
+      formData.append('is_final', isFinal ? '1' : '0');
 
-      const res = await fetch(`/api/model/upload-multiple?append=${isAppend ? '1' : '0'}`, {
+      const res = await fetch(`/api/model/upload-multiple?append=${isAppend ? '1' : '0'}&is_final=${isFinal ? '1' : '0'}`, {
         method: 'POST',
         body: formData
       });
@@ -3088,7 +3090,9 @@ async function handleMultiFileUpload(event) {
 
       lastData = data;
       if (data.loaded_tables) {
-        allLoadedTables = data.loaded_tables;
+        data.loaded_tables.forEach(t => {
+          if (!allLoadedTables.includes(t)) allLoadedTables.push(t);
+        });
       }
     }
 
@@ -3105,8 +3109,12 @@ async function handleMultiFileUpload(event) {
         ).join(' ');
       }
 
-      currentModelSchema = lastData.schema;
-      renderSchemaModel(lastData.schema);
+      if (lastData.schema) {
+        currentModelSchema = lastData.schema;
+        renderSchemaModel(lastData.schema);
+      } else {
+        fetchModelSchema();
+      }
 
       // Render automated measures if present
       if (lastData.automated_measures && lastData.automated_measures.length > 0) {
@@ -3117,7 +3125,7 @@ async function handleMultiFileUpload(event) {
 
       const sidebarBadge = document.getElementById('sidebar-model-badge');
       if (sidebarBadge) {
-        sidebarBadge.textContent = `${lastData.total_tables} Tables`;
+        sidebarBadge.textContent = `${lastData.total_tables || allLoadedTables.length} Tables`;
       }
     }
   } catch (err) {
