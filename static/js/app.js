@@ -205,6 +205,10 @@ function setupNavigation() {
     if (exportDropdown && !exportDropdown.contains(e.target)) {
       document.getElementById('export-dropdown-menu')?.classList.remove('active');
     }
+    const modelExportDropdown = document.getElementById('model-export-dropdown-wrap');
+    if (modelExportDropdown && !modelExportDropdown.contains(e.target)) {
+      document.getElementById('model-export-dropdown-menu')?.classList.remove('active');
+    }
     const searchWrap = document.getElementById('topbar-search-wrap');
     if (searchWrap && !searchWrap.contains(e.target)) {
       closeSearchPalette();
@@ -466,6 +470,12 @@ function toggleExportMenu(e) {
   if (menu) menu.classList.toggle('active');
 }
 
+function toggleModelExportMenu(e) {
+  if (e) e.stopPropagation();
+  const menu = document.getElementById('model-export-dropdown-menu');
+  if (menu) menu.classList.toggle('active');
+}
+
 function downloadCleanCSV() {
   window.location.href = '/api/export-csv';
   document.getElementById('export-dropdown-menu')?.classList.remove('active');
@@ -474,6 +484,187 @@ function downloadCleanCSV() {
 function downloadPythonScript() {
   window.location.href = '/api/export-script';
   document.getElementById('export-dropdown-menu')?.classList.remove('active');
+}
+
+// Multi-Dataset Saving & Export Handlers
+function downloadMultiTablesZip() {
+  window.location.href = '/api/model/export-zip';
+  document.getElementById('export-dropdown-menu')?.classList.remove('active');
+  document.getElementById('model-export-dropdown-menu')?.classList.remove('active');
+}
+
+function downloadMultiTablesExcel() {
+  window.location.href = '/api/model/export-excel';
+  document.getElementById('export-dropdown-menu')?.classList.remove('active');
+  document.getElementById('model-export-dropdown-menu')?.classList.remove('active');
+}
+
+function downloadUnifiedModelCSV() {
+  window.location.href = '/api/model/export-unified-csv';
+  document.getElementById('export-dropdown-menu')?.classList.remove('active');
+  document.getElementById('model-export-dropdown-menu')?.classList.remove('active');
+}
+
+function downloadMultiTablesScript() {
+  window.location.href = '/api/model/export-script';
+  document.getElementById('export-dropdown-menu')?.classList.remove('active');
+  document.getElementById('model-export-dropdown-menu')?.classList.remove('active');
+}
+
+// Customized Dashboard Studio Modal
+function openCustomDashboardModal() {
+  const modal = document.getElementById('custom-dashboard-modal');
+  if (!modal) return;
+
+  // Populate default title
+  const titleInput = document.getElementById('custom-dash-title');
+  if (titleInput) {
+    titleInput.value = appState.datasetName || 'Executive Intelligence Briefing';
+  }
+
+  // Populate author if user session available
+  const authorInput = document.getElementById('custom-dash-author');
+  if (authorInput && !authorInput.value) {
+    const userDisplay = document.getElementById('sidebar-user-name')?.textContent || 'Lead BI Analyst';
+    authorInput.value = userDisplay;
+  }
+
+  // Check if multiple tables exist in model
+  const hasMultipleTables = currentModelSchema && currentModelSchema.tables && Object.keys(currentModelSchema.tables).length > 1;
+  const schemaWrap = document.getElementById('comp-schema-wrap');
+  const schemaCheck = document.getElementById('comp-schema');
+  if (schemaWrap) {
+    schemaWrap.style.display = hasMultipleTables ? 'flex' : 'none';
+  }
+  if (schemaCheck) {
+    schemaCheck.checked = !!hasMultipleTables;
+  }
+
+  // Visual selection on theme cards
+  document.querySelectorAll('.custom-dash-theme-card').forEach(card => {
+    const radio = card.querySelector('input[type="radio"]');
+    if (radio && radio.checked) {
+      card.style.borderColor = '#6366f1';
+      card.style.background = 'rgba(99, 102, 241, 0.15)';
+    } else {
+      card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+      card.style.background = 'rgba(255, 255, 255, 0.03)';
+    }
+    card.onclick = () => {
+      if (radio) {
+        radio.checked = true;
+        document.querySelectorAll('.custom-dash-theme-card').forEach(c => {
+          const r = c.querySelector('input[type="radio"]');
+          c.style.borderColor = (r && r.checked) ? '#6366f1' : 'rgba(255, 255, 255, 0.1)';
+          c.style.background = (r && r.checked) ? 'rgba(99, 102, 241, 0.15)' : 'rgba(255, 255, 255, 0.03)';
+        });
+      }
+    };
+  });
+
+  // Close other open menus
+  document.getElementById('export-dropdown-menu')?.classList.remove('active');
+  document.getElementById('model-export-dropdown-menu')?.classList.remove('active');
+
+  modal.style.display = 'flex';
+}
+
+function closeCustomDashboardModal() {
+  const modal = document.getElementById('custom-dashboard-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+function toggleAllCustomDashComponents(checked) {
+  const ids = ['comp-kpis', 'comp-trend', 'comp-breakdown', 'comp-anomalies', 'comp-drivers', 'comp-table', 'comp-schema'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.checked = checked;
+  });
+}
+
+async function submitCustomDashboardDownload() {
+  const title = document.getElementById('custom-dash-title')?.value.trim() || appState.datasetName || 'Analytics Dashboard';
+  const subtitle = document.getElementById('custom-dash-subtitle')?.value.trim() || 'Autonomous Executive Intelligence Report';
+  const author = document.getElementById('custom-dash-author')?.value.trim() || 'Lead Data Analyst';
+  
+  const themeInput = document.querySelector('input[name="custom-dash-theme"]:checked');
+  const theme = themeInput ? themeInput.value : 'dark';
+
+  const formatInput = document.querySelector('input[name="custom-dash-format"]:checked');
+  const format = formatInput ? formatInput.value : 'html';
+
+  const components = {
+    kpis: !!document.getElementById('comp-kpis')?.checked,
+    trend: !!document.getElementById('comp-trend')?.checked,
+    breakdown: !!document.getElementById('comp-breakdown')?.checked,
+    anomalies: !!document.getElementById('comp-anomalies')?.checked,
+    drivers: !!document.getElementById('comp-drivers')?.checked,
+    table_preview: !!document.getElementById('comp-table')?.checked,
+    schema_map: !!document.getElementById('comp-schema')?.checked
+  };
+
+  const chartTypeSelect = document.getElementById('dash-chart-type-select');
+  const chartType = chartTypeSelect ? chartTypeSelect.value : 'doughnut';
+
+  const colorThemeSelect = document.getElementById('dash-color-theme-select');
+  const colorTheme = colorThemeSelect ? colorThemeSelect.value : 'neon';
+
+  if (format === 'print') {
+    closeCustomDashboardModal();
+    const printDatasetEl = document.getElementById('print-meta-dataset');
+    if (printDatasetEl) printDatasetEl.textContent = title;
+    printExecutiveReport();
+    return;
+  }
+
+  showLoading(`Synthesizing customized ${format.toUpperCase()} dashboard export...`);
+
+  try {
+    const res = await fetch('/api/dashboard/export-custom', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: title,
+        subtitle: subtitle,
+        author: author,
+        theme: theme,
+        format: format,
+        components: components,
+        chart_type: chartType,
+        color_theme: colorTheme
+      })
+    });
+
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => null);
+      throw new Error((errJson && errJson.message) || `Export failed with status ${res.status}`);
+    }
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+
+    const disposition = res.headers.get('Content-Disposition');
+    let filename = `${title.toLowerCase().replace(/[^a-z0-9_-]+/g, '_')}_dashboard.${format}`;
+    if (disposition && disposition.indexOf('filename=') !== -1) {
+      const match = disposition.match(/filename="?([^";]+)"?/);
+      if (match && match[1]) filename = match[1];
+    }
+
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+
+    closeCustomDashboardModal();
+  } catch (err) {
+    console.error('Custom dashboard download error:', err);
+    alert(`Custom Dashboard Alert: ${err.message || err}`);
+  } finally {
+    hideLoading();
+  }
 }
 
 function exportCleanedCSV() {
@@ -1374,6 +1565,13 @@ function renderCleanResults(report, previewRows, cleanedCols, pythonScript) {
   const container = document.getElementById('clean-results-section');
   if (!container) return;
   container.style.display = 'block';
+
+  // Show multi-table export buttons if multiple tables are loaded
+  const hasMultiple = currentModelSchema && currentModelSchema.tables && Object.keys(currentModelSchema.tables).length > 1;
+  const zipBtn = document.getElementById('prep-btn-multi-zip');
+  const excelBtn = document.getElementById('prep-btn-multi-excel');
+  if (zipBtn) zipBtn.style.display = hasMultiple ? 'inline-flex' : 'none';
+  if (excelBtn) excelBtn.style.display = hasMultiple ? 'inline-flex' : 'none';
 
   // Dial
   const scoreEl = document.getElementById('cleaned-health-score');

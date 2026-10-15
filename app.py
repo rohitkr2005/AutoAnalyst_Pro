@@ -1110,8 +1110,16 @@ def query_data_rows():
 @app.route("/api/export-csv", methods=["GET"])
 @login_required
 def export_csv():
-    """Exports and downloads the cleaned dataset as CSV."""
+    """Exports and downloads the cleaned dataset as CSV (supports both single and multi-table models)."""
     df = SESSION_DATA["cleaned_df"] if SESSION_DATA["cleaned_df"] is not None else SESSION_DATA["raw_df"]
+    if df is None and len(GLOBAL_DATA_MODEL.tables) > 0:
+        try:
+            df = GLOBAL_DATA_MODEL.build_joined_dataframe()
+            from engine.cleaner import clean_and_preprocess
+            df, _, _ = clean_and_preprocess(df)
+        except Exception:
+            df = None
+
     if df is None:
         return "No dataset loaded to export", 400
 
@@ -1119,13 +1127,220 @@ def export_csv():
     df.to_csv(csv_buffer, index=False)
     csv_bytes = io.BytesIO(csv_buffer.getvalue().encode("utf-8"))
     
-    clean_name = SESSION_DATA.get("dataset_name", "dataset").replace(" ", "_").lower()
+    clean_name = SESSION_DATA.get("dataset_name", "dataset").replace(" ", "_").replace(":", "_").lower()
     return send_file(
         csv_bytes,
         mimetype="text/csv",
         as_attachment=True,
         download_name=f"cleaned_{clean_name}.csv"
     )
+
+
+@app.route("/api/dashboard/export-custom", methods=["POST"])
+@login_required
+def api_dashboard_export_custom():
+    """
+    Exports a fully customized dashboard in the user's chosen format:
+    - HTML: Standalone interactive dashboard file with embedded Chart.js, KPIs, and preview table
+    - PPTX: Executive PowerPoint slide deck customized with user title and author
+    - JSON: Comprehensive analytical data and configuration summary
+    """
+    try:
+        data = request.get_json() or {}
+        title = data.get("title") or SESSION_DATA.get("dataset_name") or "Analytics Dashboard"
+        subtitle = data.get("subtitle") or "Autonomous Executive Intelligence Report"
+        author = data.get("author") or session.get("user", {}).get("username") or "Lead Data Analyst"
+        theme = data.get("theme", "dark")
+        fmt = data.get("format", "html").lower()
+        components = data.get("components") or {}
+        chart_type = data.get("chart_type", "doughnut")
+        color_theme = data.get("color_theme", "neon")
+
+        df = SESSION_DATA["cleaned_df"] if SESSION_DATA["cleaned_df"] is not None else SESSION_DATA["raw_df"]
+        if df is None and len(GLOBAL_DATA_MODEL.tables) > 0:
+            try:
+                df = GLOBAL_DATA_MODEL.build_joined_dataframe()
+                from engine.cleaner import clean_and_preprocess
+                df, _, _ = clean_and_preprocess(df)
+            except Exception:
+                pass
+
+        eda_data = SESSION_DATA.get("eda_cache") or {}
+        ml_data = SESSION_DATA.get("ml_cache") or {}
+        audit_report = SESSION_DATA.get("audit_report") or SESSION_DATA.get("raw_audit") or {}
+
+        clean_slug = re.sub(r'[^a-zA-Z0-9_-]', '_', title.lower()).strip('_') or "custom_dashboard"
+
+        if fmt == "html":
+            from engine.custom_exporter import generate_standalone_html_dashboard
+            html_content = generate_standalone_html_dashboard(
+                title=title,
+                subtitle=subtitle,
+                author=author,
+                theme=theme,
+                components=components,
+                df=df,
+                eda_data=eda_data,
+                ml_data=ml_data,
+                audit_report=audit_report,
+                chart_type=chart_type,
+                color_theme=color_theme,
+                data_model=GLOBAL_DATA_MODEL
+            )
+            return Response(
+                html_content,
+                mimetype="text/html",
+                headers={"Content-Disposition": f"attachment; filename={clean_slug}_dashboard.html"}
+            )
+
+        elif fmt == "pptx":
+            from engine.pptx_generator import generate_executive_pptx
+            pptx_buf = generate_executive_pptx(
+                dataset_name=title,
+                audit_report=audit_report,
+                eda_data=eda_data,
+                ml_data=ml_data,
+                user_name=author,
+                df=df
+            )
+            return send_file(
+                pptx_buf,
+                mimetype="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                as_attachment=True,
+                download_name=f"{clean_slug}_presentation.pptx"
+            )
+
+        elif fmt == "json":
+            export_payload = {
+                "title": title,
+                "subtitle": subtitle,
+                "author": author,
+                "theme": theme,
+                "generated_at": datetime.now().isoformat(),
+                "dataset_name": SESSION_DATA.get("dataset_name"),
+                "total_records": len(df) if df is not None else 0,
+                "columns": list(df.columns) if df is not None else [],
+                "kpis": {
+                    "health_score": audit_report.get("health_score"),
+                    "total_records": len(df) if df is not None else 0
+                },
+                "eda_summary": eda_data.get("numeric_stats", {}),
+                "ml_drivers": ml_data.get("drivers", {}),
+                "multi_table_model": {
+                    "tables": list(GLOBAL_DATA_MODEL.tables.keys()),
+                    "relationships": getattr(GLOBAL_DATA_MODEL, "relationships", [])
+                }
+            }
+            return Response(
+                json.dumps(sanitize_for_json(export_payload), indent=2),
+                mimetype="application/json",
+                headers={"Content-Disposition": f"attachment; filename={clean_slug}_summary.json"}
+            )
+        else:
+            return jsonify({"status": "error", "message": f"Unsupported export format: {fmt}"}), 400
+
+    except Exception as e:
+        print(f"[Custom Dashboard Export Error] {e}", flush=True)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/model/export-zip", methods=["GET"])
+@login_required
+def api_model_export_zip():
+    """Exports all cleaned tables in the relational model plus unified model as a ZIP archive."""
+    try:
+        if len(GLOBAL_DATA_MODEL.tables) == 0:
+            return "No tables in relational model to export. Please ingest multiple datasets first.", 400
+
+        from engine.custom_exporter import export_multi_tables_zip
+        clean_unified = SESSION_DATA.get("cleaned_df")
+        ds_name = SESSION_DATA.get("dataset_name", "relational_model")
+        zip_buf = export_multi_tables_zip(GLOBAL_DATA_MODEL, cleaned_unified_df=clean_unified, dataset_name=ds_name)
+
+        return send_file(
+            zip_buf,
+            mimetype="application/zip",
+            as_attachment=True,
+            download_name="cleaned_relational_tables.zip"
+        )
+    except Exception as e:
+        print(f"[Model ZIP Export Error] {e}", flush=True)
+        return f"Error exporting model ZIP: {str(e)}", 500
+
+
+@app.route("/api/model/export-excel", methods=["GET"])
+@login_required
+def api_model_export_excel():
+    """Exports a professional multi-sheet Excel workbook with all cleaned tables and data dictionary."""
+    try:
+        if len(GLOBAL_DATA_MODEL.tables) == 0:
+            return "No tables in relational model to export. Please ingest multiple datasets first.", 400
+
+        from engine.custom_exporter import export_multi_tables_excel
+        clean_unified = SESSION_DATA.get("cleaned_df")
+        ds_name = SESSION_DATA.get("dataset_name", "Relational_Model")
+        excel_buf = export_multi_tables_excel(GLOBAL_DATA_MODEL, cleaned_unified_df=clean_unified, dataset_name=ds_name)
+
+        return send_file(
+            excel_buf,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            as_attachment=True,
+            download_name="cleaned_relational_model.xlsx"
+        )
+    except Exception as e:
+        print(f"[Model Excel Export Error] {e}", flush=True)
+        return f"Error exporting model Excel: {str(e)}", 500
+
+
+@app.route("/api/model/export-unified-csv", methods=["GET"])
+@login_required
+def api_model_export_unified_csv():
+    """Exports and downloads the cleaned unified relational model as CSV."""
+    try:
+        if len(GLOBAL_DATA_MODEL.tables) == 0:
+            return "No tables in relational model to export.", 400
+
+        df = SESSION_DATA.get("cleaned_df")
+        if df is None:
+            df = GLOBAL_DATA_MODEL.build_joined_dataframe()
+            from engine.cleaner import clean_and_preprocess
+            df, _, _ = clean_and_preprocess(df)
+
+        csv_buffer = io.StringIO()
+        df.to_csv(csv_buffer, index=False)
+        csv_bytes = io.BytesIO(csv_buffer.getvalue().encode("utf-8"))
+
+        clean_name = SESSION_DATA.get("dataset_name", "relational_model").replace(" ", "_").replace(":", "_").lower()
+        return send_file(
+            csv_bytes,
+            mimetype="text/csv",
+            as_attachment=True,
+            download_name=f"cleaned_unified_{clean_name}.csv"
+        )
+    except Exception as e:
+        print(f"[Model Unified CSV Export Error] {e}", flush=True)
+        return f"Error exporting unified CSV: {str(e)}", 500
+
+
+@app.route("/api/model/export-script", methods=["GET"])
+@login_required
+def api_model_export_script():
+    """Exports and downloads an executable multi-table Python relational ETL pipeline script."""
+    try:
+        if len(GLOBAL_DATA_MODEL.tables) == 0:
+            return "No tables in relational model.", 400
+
+        from engine.custom_exporter import export_multi_tables_python_script
+        script_code = export_multi_tables_python_script(GLOBAL_DATA_MODEL, SESSION_DATA.get("dataset_name", "Relational Model"))
+        return Response(
+            script_code,
+            mimetype="text/x-python",
+            headers={"Content-Disposition": "attachment; filename=relational_etl_pipeline.py"}
+        )
+    except Exception as e:
+        print(f"[Model Script Export Error] {e}", flush=True)
+        return f"Error exporting model script: {str(e)}", 500
+
 
 
 @app.route("/api/export-script", methods=["GET"])

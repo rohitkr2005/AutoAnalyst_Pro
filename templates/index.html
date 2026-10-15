@@ -289,6 +289,18 @@
               </span>
             </button>
             <div class="topbar-menu" id="export-dropdown-menu">
+              <!-- Customized Dashboard Studio -->
+              <button class="menu-item" id="btn-custom-dashboard" onclick="openCustomDashboardModal()" style="background: rgba(99, 102, 241, 0.08); border-bottom: 1px solid rgba(255,255,255,0.06);">
+                <span class="item-icon" style="color: #818cf8;">
+                  <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                </span>
+                <div class="item-text">
+                  <span class="item-title" style="color: #fff; font-weight: 700;">Customized Dashboard Studio</span>
+                  <span class="item-desc">Custom HTML / PPTX / PDF with widgets</span>
+                </div>
+                <span class="bullet-badge" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; font-size: 0.65rem; margin-left: auto;">CUSTOM</span>
+              </button>
+
               <button class="menu-item" id="btn-export-csv" onclick="downloadCleanCSV()">
                 <span class="item-icon">
                   <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
@@ -298,6 +310,27 @@
                   <span class="item-desc">Download sanitized dataset</span>
                 </div>
               </button>
+
+              <!-- Multi-Dataset Saving Options -->
+              <button class="menu-item" id="btn-export-multi-zip" onclick="downloadMultiTablesZip()">
+                <span class="item-icon" style="color: #38bdf8;">
+                  <svg viewBox="0 0 24 24"><path d="M21 8v13H3V8"></path><path d="M1 3h22v5H1z"></path><path d="M10 12h4"></path></svg>
+                </span>
+                <div class="item-text">
+                  <span class="item-title">All Cleaned Tables (.ZIP)</span>
+                  <span class="item-desc">Every individual table cleaned in ZIP</span>
+                </div>
+              </button>
+              <button class="menu-item" id="btn-export-multi-excel" onclick="downloadMultiTablesExcel()">
+                <span class="item-icon" style="color: #34d399;">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                </span>
+                <div class="item-text">
+                  <span class="item-title">Multi-Sheet Excel (.XLSX)</span>
+                  <span class="item-desc">All tables + Data Dictionary sheets</span>
+                </div>
+              </button>
+
               <button class="menu-item" id="btn-export-script" onclick="downloadPythonScript()">
                 <span class="item-icon">
                   <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
@@ -313,7 +346,7 @@
                 </span>
                 <div class="item-text">
                   <span class="item-title">Executive Slide Deck (.PPTX)</span>
-                  <span class="item-desc">5-slide presentation briefing</span>
+                  <span class="item-desc">Widescreen presentation briefing</span>
                 </div>
               </button>
               <button class="menu-item" id="btn-open-share-modal" onclick="openShareModal()">
@@ -450,6 +483,10 @@
                 onclick="switchSubTab('view-dashboards', 'dash-forecast')">
                 <svg class="subtab-icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                 Predictive Forecast
+              </button>
+              <button class="pill-btn" onclick="openCustomDashboardModal()" title="Download Customized Dashboard (HTML, PPTX, PDF, JSON)" style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; background: rgba(99, 102, 241, 0.15); border-color: rgba(99, 102, 241, 0.4); color: #818cf8; font-weight: 600; cursor: pointer; white-space: nowrap;">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>📥 Custom Download</span>
               </button>
             </div>
           </div>
@@ -911,6 +948,51 @@
                 <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                 Build Unified Live Dashboard →
               </button>
+
+              <!-- Multi-Dataset Export & Save Dropdown -->
+              <div class="topbar-dropdown" id="model-export-dropdown-wrap" style="position: relative;">
+                <button class="pill-btn" onclick="toggleModelExportMenu(event)" style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 600;">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  Export & Save Model ▾
+                </button>
+                <div class="topbar-menu" id="model-export-dropdown-menu" style="right: 0; min-width: 250px;">
+                  <button class="menu-item" onclick="downloadMultiTablesZip()">
+                    <span class="item-icon" style="color: #38bdf8;">📦</span>
+                    <div class="item-text">
+                      <span class="item-title">All Cleaned Tables (.ZIP)</span>
+                      <span class="item-desc">Individual cleaned CSVs in archive</span>
+                    </div>
+                  </button>
+                  <button class="menu-item" onclick="downloadMultiTablesExcel()">
+                    <span class="item-icon" style="color: #34d399;">📊</span>
+                    <div class="item-text">
+                      <span class="item-title">Multi-Sheet Excel (.XLSX)</span>
+                      <span class="item-desc">All tables + Data Dictionary sheets</span>
+                    </div>
+                  </button>
+                  <button class="menu-item" onclick="downloadUnifiedModelCSV()">
+                    <span class="item-icon" style="color: #818cf8;">📄</span>
+                    <div class="item-text">
+                      <span class="item-title">Cleaned Unified Model (.CSV)</span>
+                      <span class="item-desc">Merged relational fact-dimension table</span>
+                    </div>
+                  </button>
+                  <button class="menu-item" onclick="openCustomDashboardModal()">
+                    <span class="item-icon" style="color: #ec4899;">🎨</span>
+                    <div class="item-text">
+                      <span class="item-title">Customized Dashboard Studio</span>
+                      <span class="item-desc">HTML / PPTX / PDF with custom widgets</span>
+                    </div>
+                  </button>
+                  <button class="menu-item" onclick="downloadMultiTablesScript()">
+                    <span class="item-icon" style="color: #fbbf24;">🐍</span>
+                    <div class="item-text">
+                      <span class="item-title">Relational Python Script (.PY)</span>
+                      <span class="item-desc">Reproducible ETL code</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1215,7 +1297,16 @@
                       and executive dashboarding.</p>
                   </div>
                 </div>
-                <div>
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                  <button class="pill-btn" onclick="downloadCleanCSV()" style="font-size: 0.82rem; padding: 0.55rem 0.9rem;">
+                    📥 Cleaned CSV
+                  </button>
+                  <button class="pill-btn" id="prep-btn-multi-zip" onclick="downloadMultiTablesZip()" style="font-size: 0.82rem; padding: 0.55rem 0.9rem; color: #38bdf8; border-color: rgba(56, 189, 248, 0.3);">
+                    📦 All Tables (.ZIP)
+                  </button>
+                  <button class="pill-btn" id="prep-btn-multi-excel" onclick="downloadMultiTablesExcel()" style="font-size: 0.82rem; padding: 0.55rem 0.9rem; color: #34d399; border-color: rgba(52, 211, 153, 0.3);">
+                    📊 Multi-Sheet Excel
+                  </button>
                   <button class="btn-primary" onclick="proceedToEDA()"
                     style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
                     Explore Statistical EDA →
@@ -1836,6 +1927,167 @@
             <button class="btn-primary" onclick="testAlertDispatch()">Test Dispatch</button>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- CUSTOMIZED DASHBOARD DOWNLOAD STUDIO MODAL                   -->
+  <!-- ============================================================ -->
+  <div class="history-modal-overlay" id="custom-dashboard-modal" style="display: none;">
+    <div class="history-modal-backdrop" onclick="closeCustomDashboardModal()"></div>
+    <div class="history-modal-container" style="max-width: 680px; max-height: 90vh; overflow-y: auto;">
+      <div class="history-modal-header" style="position: sticky; top: 0; background: #0f172a; z-index: 10;">
+        <div class="history-header-title">
+          <div class="history-icon-badge" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(6, 182, 212, 0.2)); color: #38bdf8;">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          </div>
+          <div>
+            <h3>Customized Dashboard Download Studio</h3>
+            <p>Tailor components, themes, and formats for Single & Multi-Dataset Reports</p>
+          </div>
+        </div>
+        <button class="btn-close-history" onclick="closeCustomDashboardModal()" title="Close">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="history-modal-body" style="padding: 1.5rem;">
+
+        <!-- 1. Report Metadata Section -->
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="font-size: 0.88rem; color: #fff; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 6px;">
+            <span style="color: #818cf8;">1.</span> Report Branding & Metadata
+          </h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div>
+              <label style="display: block; font-size: 0.78rem; color: #94a3b8; margin-bottom: 4px; font-weight: 500;">Report Title</label>
+              <input type="text" id="custom-dash-title" class="search-field" style="width: 100%; font-size: 0.85rem;" placeholder="e.g. Executive Performance Dashboard">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.78rem; color: #94a3b8; margin-bottom: 4px; font-weight: 500;">Author / Business Unit</label>
+              <input type="text" id="custom-dash-author" class="search-field" style="width: 100%; font-size: 0.85rem;" placeholder="e.g. Lead BI Analyst">
+            </div>
+          </div>
+          <div style="margin-top: 0.6rem;">
+            <label style="display: block; font-size: 0.78rem; color: #94a3b8; margin-bottom: 4px; font-weight: 500;">Report Subtitle</label>
+            <input type="text" id="custom-dash-subtitle" class="search-field" style="width: 100%; font-size: 0.85rem;" value="Autonomous Executive Intelligence & Operational Analytics Report">
+          </div>
+        </div>
+
+        <!-- 2. Visual Theme & Style -->
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="font-size: 0.88rem; color: #fff; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 6px;">
+            <span style="color: #818cf8;">2.</span> Visual Color Theme
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.6rem;" id="custom-dash-theme-selector">
+            <label class="custom-dash-theme-card active" style="display: flex; align-items: center; gap: 8px; padding: 0.6rem 0.8rem; background: rgba(15, 23, 42, 0.7); border: 2px solid #6366f1; border-radius: 8px; cursor: pointer;">
+              <input type="radio" name="custom-dash-theme" value="dark" checked style="accent-color: #6366f1;">
+              <span style="font-size: 0.8rem; color: #fff; font-weight: 500;">🌌 Dark Slate</span>
+            </label>
+            <label class="custom-dash-theme-card" style="display: flex; align-items: center; gap: 8px; padding: 0.6rem 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer;">
+              <input type="radio" name="custom-dash-theme" value="light" style="accent-color: #4f46e5;">
+              <span style="font-size: 0.8rem; color: #fff; font-weight: 500;">☀️ Clean Light</span>
+            </label>
+            <label class="custom-dash-theme-card" style="display: flex; align-items: center; gap: 8px; padding: 0.6rem 0.8rem; background: rgba(16, 31, 66, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer;">
+              <input type="radio" name="custom-dash-theme" value="navy" style="accent-color: #38bdf8;">
+              <span style="font-size: 0.8rem; color: #fff; font-weight: 500;">🌊 Ocean Navy</span>
+            </label>
+            <label class="custom-dash-theme-card" style="display: flex; align-items: center; gap: 8px; padding: 0.6rem 0.8rem; background: rgba(10, 52, 44, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer;">
+              <input type="radio" name="custom-dash-theme" value="emerald" style="accent-color: #10b981;">
+              <span style="font-size: 0.8rem; color: #fff; font-weight: 500;">🍃 Emerald</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 3. Component Inclusions Checkboxes -->
+        <div style="margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <h4 style="font-size: 0.88rem; color: #fff; margin: 0; display: flex; align-items: center; gap: 6px;">
+              <span style="color: #818cf8;">3.</span> Select Components to Include
+            </h4>
+            <div style="font-size: 0.75rem;">
+              <a href="javascript:void(0)" onclick="toggleAllCustomDashComponents(true)" style="color: #818cf8; text-decoration: none; margin-right: 8px;">Select All</a>
+              <a href="javascript:void(0)" onclick="toggleAllCustomDashComponents(false)" style="color: #94a3b8; text-decoration: none;">Deselect All</a>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.6rem;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #cbd5e1; cursor: pointer; background: rgba(255,255,255,0.03); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+              <input type="checkbox" id="comp-kpis" checked style="accent-color: #6366f1;">
+              <span>Executive KPI Scorecard Tiles</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #cbd5e1; cursor: pointer; background: rgba(255,255,255,0.03); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+              <input type="checkbox" id="comp-trend" checked style="accent-color: #6366f1;">
+              <span>Primary Time Trend / Forecast Chart</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #cbd5e1; cursor: pointer; background: rgba(255,255,255,0.03); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+              <input type="checkbox" id="comp-breakdown" checked style="accent-color: #6366f1;">
+              <span>Category Breakdown Distribution</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #cbd5e1; cursor: pointer; background: rgba(255,255,255,0.03); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+              <input type="checkbox" id="comp-anomalies" checked style="accent-color: #6366f1;">
+              <span>Outliers & Anomaly Inspection</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #cbd5e1; cursor: pointer; background: rgba(255,255,255,0.03); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+              <input type="checkbox" id="comp-drivers" checked style="accent-color: #6366f1;">
+              <span>Algorithmic Key Drivers & Impact</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #cbd5e1; cursor: pointer; background: rgba(255,255,255,0.03); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+              <input type="checkbox" id="comp-table" checked style="accent-color: #6366f1;">
+              <span>Cleaned Data Records Preview Table</span>
+            </label>
+            <label id="comp-schema-wrap" style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #818cf8; cursor: pointer; background: rgba(99, 102, 241, 0.08); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(99, 102, 241, 0.25);">
+              <input type="checkbox" id="comp-schema" checked style="accent-color: #6366f1;">
+              <span>🔗 Relational Multi-Table Schema Graph</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 4. Format Selection & Download -->
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="font-size: 0.88rem; color: #fff; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 6px;">
+            <span style="color: #818cf8;">4.</span> Target Export Format
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.6rem;">
+            <label style="display: flex; flex-direction: column; gap: 4px; padding: 0.75rem; background: rgba(99, 102, 241, 0.12); border: 1px solid #6366f1; border-radius: 8px; cursor: pointer;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <input type="radio" name="custom-dash-format" value="html" checked style="accent-color: #6366f1;">
+                <span style="font-weight: 600; font-size: 0.82rem; color: #fff;">🌐 Standalone HTML</span>
+              </div>
+              <span style="font-size: 0.7rem; color: #94a3b8;">Interactive offline file with Chart.js</span>
+            </label>
+            <label style="display: flex; flex-direction: column; gap: 4px; padding: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <input type="radio" name="custom-dash-format" value="pptx" style="accent-color: #6366f1;">
+                <span style="font-weight: 600; font-size: 0.82rem; color: #fff;">📊 Slides (.PPTX)</span>
+              </div>
+              <span style="font-size: 0.7rem; color: #94a3b8;">Executive widescreen presentation</span>
+            </label>
+            <label style="display: flex; flex-direction: column; gap: 4px; padding: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <input type="radio" name="custom-dash-format" value="print" style="accent-color: #6366f1;">
+                <span style="font-weight: 600; font-size: 0.82rem; color: #fff;">🖨️ Print / PDF</span>
+              </div>
+              <span style="font-size: 0.7rem; color: #94a3b8;">Custom executive summary print</span>
+            </label>
+            <label style="display: flex; flex-direction: column; gap: 4px; padding: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <input type="radio" name="custom-dash-format" value="json" style="accent-color: #6366f1;">
+                <span style="font-weight: 600; font-size: 0.82rem; color: #fff;">📑 Data (.JSON)</span>
+              </div>
+              <span style="font-size: 0.7rem; color: #94a3b8;">Full metric configuration bundle</span>
+            </label>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem;">
+          <button class="pill-btn" onclick="closeCustomDashboardModal()">Cancel</button>
+          <button class="btn-primary" id="btn-submit-custom-download" onclick="submitCustomDashboardDownload()" style="display: flex; align-items: center; gap: 6px; padding: 0.55rem 1.25rem;">
+            <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Download Customized Dashboard</span>
+          </button>
+        </div>
+
       </div>
     </div>
   </div>
