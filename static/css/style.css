@@ -1484,15 +1484,39 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================================ */
-/* ENTERPRISE EXECUTIVE PRINT & PDF EXPORT STYLESHEET           */
+/* ENTERPRISE POWER BI EXECUTIVE PRINT & PDF STYLESHEET          */
+/* Strictly formatted for 2-page executive landscape reports    */
 /* ============================================================ */
+#powerbi-executive-report {
+  display: none;
+}
+
+@media screen {
+  #powerbi-executive-report {
+    display: none !important;
+  }
+}
+
 @media print {
   @page {
-    size: A4 landscape;
-    margin: 10mm 12mm 12mm 12mm;
+    size: 297mm 210mm; /* A4 Landscape */
+    margin: 0mm;
   }
 
-  /* 1. Hide all interactive web UI and non-printable tools */
+  /* 1. COMPLETELY HIDE ALL WEB APP UI, FLOATING COPILOTS & MODALS */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    width: 297mm !important;
+    min-height: 100% !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body > *:not(#powerbi-executive-report),
+  .app-shell,
   .app-sidebar,
   .sidebar-resizer,
   .sidebar-mobile-backdrop,
@@ -1503,12 +1527,14 @@ h1, h2, h3, h4, h5, h6 {
   .dashboard-controls-card,
   .btn-ai-fab,
   #btn-ai-fab,
+  .copilot-launcher,
+  #copilot-launcher,
+  #copilot-drawer,
   .modal-backdrop,
   .toast-container,
-  .view-header-bar,
-  .ai-prompt-box-wrap,
-  .dax-formula-bar-container,
-  .model-meta-card,
+  .loading-overlay,
+  .app-workspace-body,
+  .workspace-view,
   #ai-chat-drawer,
   #share-modal,
   #alerts-modal,
@@ -1516,178 +1542,529 @@ h1, h2, h3, h4, h5, h6 {
   .bg-3d-canvas {
     display: none !important;
     visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
   }
 
-  /* 2. Global Document Clean White Theme for Paper / PDF */
-  html, body, .app-shell, .app-main-wrap, .app-workspace-body, .workspace-view {
-    background: #ffffff !important;
-    color: #0f172a !important;
+  /* 2. MAKE ONLY THE DEDICATED REPORT CONTAINER VISIBLE */
+  #powerbi-executive-report {
+    display: block !important;
+    visibility: visible !important;
+    position: static !important;
+    width: 297mm !important;
     margin: 0 !important;
     padding: 0 !important;
-    width: 100% !important;
-    height: auto !important;
-    overflow: visible !important;
-    display: block !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
   }
 
-  /* 3. Executive Report Header */
-  .print-executive-header {
-    display: block !important;
-    border-bottom: 2px solid #0f172a;
-    padding-bottom: 12px;
-    margin-bottom: 20px;
-    page-break-after: avoid;
+  /* 3. STRICT 2-PAGE PAGINATION (EXACTLY 209mm PER PAGE) */
+  .pbi-page {
+    width: 297mm !important;
+    height: 209mm !important;
+    max-height: 209mm !important;
+    min-height: 209mm !important;
+    box-sizing: border-box !important;
+    padding: 7mm 12mm 5mm 12mm !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', Helvetica, Arial, sans-serif !important;
   }
 
-  .print-header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 8px;
+  .pbi-page:last-child {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
   }
 
-  .print-brand-title {
-    font-size: 20pt;
-    font-weight: 800;
-    color: #0f172a;
-    letter-spacing: -0.02em;
-    display: block;
+  /* 4. EXECUTIVE HEADER BANNER */
+  .pbi-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: 2px solid #0f172a !important;
+    padding-bottom: 6px !important;
+    margin-bottom: 7px !important;
+    flex-shrink: 0 !important;
   }
 
-  .print-brand-subtitle {
-    font-size: 10pt;
-    color: #475569;
-    font-weight: 500;
+  .pbi-brand-block {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
   }
 
-  .print-badge-verified {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+  .pbi-logo-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    background: #0f172a !important;
+    color: #ffffff !important;
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+    font-size: 9.5pt !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .pbi-logo-svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .pbi-header-titles {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .pbi-report-title {
+    font-size: 15pt !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1.15 !important;
+  }
+
+  .pbi-report-subtitle {
+    font-size: 8pt !important;
+    color: #475569 !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+  }
+
+  .pbi-meta-block {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 3px !important;
+  }
+
+  .pbi-meta-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    font-size: 8pt !important;
+    color: #334155 !important;
+  }
+
+  .pbi-badge-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  .pbi-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 2px 7px !important;
+    border-radius: 4px !important;
+    font-size: 7.2pt !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.3px !important;
+  }
+
+  .pbi-pill-success {
     background: #ecfdf5 !important;
     color: #047857 !important;
-    border: 1px solid #a7f3d0;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 8.5pt;
-    font-weight: 600;
+    border: 1px solid #a7f3d0 !important;
   }
 
-  .print-header-meta {
-    display: flex;
-    gap: 24px;
-    font-size: 9pt;
-    color: #334155;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    padding: 6px 12px;
+  .pbi-pill-confidential {
+    background: #fef2f2 !important;
+    color: #b91c1c !important;
+    border: 1px solid #fecaca !important;
   }
 
-  .print-meta-item .meta-label {
-    font-weight: 600;
-    color: #64748b;
-    margin-right: 4px;
-  }
-
-  .print-meta-item .meta-val {
-    font-weight: 600;
-    color: #0f172a;
-  }
-
-  /* 4. KPI Stat Cards on Paper */
-  .stats-grid, .grid-4, .grid-3 {
+  /* 5. POWER BI KPI CARDS GRID */
+  .pbi-kpis-row {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
-    gap: 12px !important;
-    margin-bottom: 20px !important;
-    page-break-inside: avoid;
+    gap: 10px !important;
+    margin-bottom: 7px !important;
+    flex-shrink: 0 !important;
   }
 
-  .stat-card, .metric-card {
+  .pbi-kpi-card {
     background: #f8fafc !important;
-    border: 1px solid #cbd5e1 !important;
-    border-radius: 8px !important;
-    padding: 12px !important;
-    box-shadow: none !important;
-    page-break-inside: avoid;
-  }
-
-  .stat-label {
-    color: #475569 !important;
-    font-size: 8pt !important;
-    font-weight: 600 !important;
-    text-transform: uppercase;
-  }
-
-  .stat-value {
-    color: #0f172a !important;
-    font-size: 20pt !important;
-    font-weight: 800 !important;
-    margin: 4px 0 !important;
-  }
-
-  .stat-subtext {
-    color: #64748b !important;
-    font-size: 7.5pt !important;
-  }
-
-  /* 5. Chart Cards & Canvases */
-  .glass-card, .chart-card {
-    background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
-    border-radius: 8px !important;
-    padding: 16px !important;
-    box-shadow: none !important;
-    margin-bottom: 20px !important;
-    page-break-inside: avoid;
-    break-inside: avoid;
+    border-radius: 6px !important;
+    padding: 7px 10px !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
   }
 
-  .glass-card h3, .chart-card h3 {
-    color: #0f172a !important;
-    font-size: 12pt !important;
+  .pbi-kpi-card.kpi-blue { border-top: 3.5px solid #2563eb !important; }
+  .pbi-kpi-card.kpi-emerald { border-top: 3.5px solid #059669 !important; }
+  .pbi-kpi-card.kpi-purple { border-top: 3.5px solid #7c3aed !important; }
+  .pbi-kpi-card.kpi-amber { border-top: 3.5px solid #d97706 !important; }
+
+  .pbi-kpi-label {
+    font-size: 7.2pt !important;
     font-weight: 700 !important;
-    margin-bottom: 8px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.4px !important;
+    color: #64748b !important;
+    margin-bottom: 2px !important;
   }
 
-  canvas {
-    max-width: 100% !important;
-    height: auto !important;
-    page-break-inside: avoid;
+  .pbi-kpi-value {
+    font-size: 15.5pt !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    line-height: 1.1 !important;
   }
 
-  /* 6. Data Tables on Paper */
-  .modern-table {
-    border-collapse: collapse !important;
+  .pbi-kpi-trend {
+    font-size: 7pt !important;
+    color: #475569 !important;
+    font-weight: 500 !important;
+    margin-top: 2px !important;
+  }
+
+  .pbi-kpi-trend span {
+    font-weight: 700 !important;
+    color: #059669 !important;
+  }
+
+  /* 6. SIDE-BY-SIDE POWER BI VISUALS */
+  .pbi-visuals-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    margin-bottom: 7px !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+  }
+
+  .pbi-visual-card {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 7px 9px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03) !important;
+    overflow: hidden !important;
+  }
+
+  .pbi-visual-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 4px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    padding-bottom: 3px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .pbi-visual-title-wrap {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  .pbi-visual-indicator {
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    display: inline-block !important;
+  }
+
+  .pbi-visual-indicator.dot-blue { background: #2563eb !important; }
+  .pbi-visual-indicator.dot-cyan { background: #06b6d4 !important; }
+
+  .pbi-visual-title {
+    font-size: 9pt !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+  }
+
+  .pbi-visual-tag {
+    font-size: 6.8pt !important;
+    font-weight: 600 !important;
+    color: #1d4ed8 !important;
+    background: #eff6ff !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+  }
+
+  .pbi-chart-container {
+    flex: 1 1 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
     width: 100% !important;
-    font-size: 8.5pt !important;
-    page-break-inside: avoid;
+    min-height: 0 !important;
+    max-height: 82mm !important;
+    overflow: hidden !important;
   }
 
-  .modern-table th {
+  .pbi-chart-img {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 80mm !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+
+  /* 7. STRATEGIC INSIGHTS STRIP */
+  .pbi-insights-strip {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    padding: 6px 9px !important;
+    margin-bottom: 5px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .pbi-insight-col {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .pbi-insight-icon {
+    font-size: 11pt !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .pbi-insight-text {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .pbi-insight-heading {
+    font-size: 7.5pt !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin-bottom: 1px !important;
+  }
+
+  .pbi-insight-body {
+    font-size: 6.8pt !important;
+    color: #475569 !important;
+    line-height: 1.25 !important;
+  }
+
+  /* 8. PAGE FOOTER BAR */
+  .pbi-page-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-top: 1px solid #cbd5e1 !important;
+    padding-top: 3px !important;
+    font-size: 7pt !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+    flex-shrink: 0 !important;
+  }
+
+  .pbi-footer-center {
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+  }
+
+  /* 9. PAGE 2 ARCHITECTURE & SCHEMA CARDS */
+  .pbi-architecture-section {
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 6px 9px !important;
+    background: #ffffff !important;
+    margin-bottom: 7px !important;
+    flex-shrink: 0 !important;
+    max-height: 60mm !important;
+    overflow: hidden !important;
+  }
+
+  .pbi-section-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 4px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    padding-bottom: 2px !important;
+  }
+
+  .pbi-section-title {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 8.5pt !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+  }
+
+  .pbi-tables-summary-grid {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 6px !important;
+    margin-bottom: 5px !important;
+  }
+
+  .pbi-table-card {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 4px !important;
+    padding: 4px 6px !important;
+    font-size: 6.8pt !important;
+  }
+
+  .pbi-tbl-name {
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin-bottom: 2px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .pbi-tbl-meta {
+    color: #059669 !important;
+    font-weight: 600 !important;
+    margin-bottom: 3px !important;
+  }
+
+  .pbi-tbl-cols {
+    color: #64748b !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-family: monospace !important;
+    font-size: 6.2pt !important;
+  }
+
+  .pbi-rel-chips-wrap {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 5px !important;
+    margin-top: 4px !important;
+  }
+
+  .pbi-rel-chip {
+    background: #eff6ff !important;
+    border: 1px solid #bfdbfe !important;
+    color: #1e40af !important;
+    font-size: 6.5pt !important;
+    font-weight: 600 !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+
+  .pbi-dax-chip {
+    background: #fdf4ff !important;
+    border: 1px solid #f5d0fe !important;
+    color: #86198f !important;
+    font-size: 6.5pt !important;
+    font-weight: 600 !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+  }
+
+  /* 10. PAGE 2 ANALYTICAL DATA MATRIX TABLE */
+  .pbi-matrix-section {
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    background: #ffffff !important;
+    padding: 6px 9px !important;
+    margin-bottom: 7px !important;
+    flex: 1 1 auto !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .pbi-matrix-table-wrap {
+    width: 100% !important;
+    overflow: hidden !important;
+    margin-top: 3px !important;
+  }
+
+  .pbi-matrix-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 7pt !important;
+  }
+
+  .pbi-matrix-table th {
     background: #f1f5f9 !important;
     color: #0f172a !important;
-    border: 1px solid #cbd5e1 !important;
-    padding: 6px 8px !important;
     font-weight: 700 !important;
+    border: 1px solid #cbd5e1 !important;
+    padding: 3.5px 6px !important;
+    text-transform: uppercase !important;
+    font-size: 6.5pt !important;
+    letter-spacing: 0.3px !important;
   }
 
-  .modern-table td {
+  .pbi-matrix-table td {
     border: 1px solid #e2e8f0 !important;
+    padding: 2.8px 6px !important;
     color: #1e293b !important;
-    padding: 5px 8px !important;
+    font-family: 'JetBrains Mono', Consolas, monospace !important;
+    font-size: 6.7pt !important;
   }
 
-  .modern-table tr:nth-child(even) td {
+  .pbi-matrix-table tr:nth-child(even) td {
     background: #f8fafc !important;
   }
-}
 
-/* Screen default: Hide print header banner */
-@media screen {
-  .print-executive-header {
-    display: none !important;
+  /* 11. GOVERNANCE & AUDIT STRIP */
+  .pbi-governance-strip {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    padding: 5px 9px !important;
+    margin-bottom: 5px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .pbi-gov-col {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .pbi-gov-heading {
+    font-size: 7.2pt !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin-bottom: 1px !important;
+  }
+
+  .pbi-gov-text {
+    font-size: 6.5pt !important;
+    color: #475569 !important;
+    line-height: 1.25 !important;
   }
 }
 

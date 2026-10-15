@@ -539,10 +539,43 @@ def generate_standalone_html_dashboard(
     .badge-warning {{ background: rgba(245, 158, 11, 0.15); color: #fbbf24; }}
     .schema-pill {{ background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8; padding: 6px 12px; border-radius: 8px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px; margin: 4px; }}
     @media print {{
+      @page {{
+        size: 297mm 210mm;
+        margin: 0mm;
+      }}
+      html, body {{
+        background: #ffffff !important;
+        color: #0f172a !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 297mm !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }}
       .header, .actions, .btn {{ display: none !important; }}
-      body {{ background: #ffffff !important; color: #000000 !important; }}
-      .card {{ border: 1px solid #ccc !important; box-shadow: none !important; break-inside: avoid; }}
-      th, td {{ color: #000000 !important; }}
+      .container {{
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 8mm 12mm 6mm 12mm !important;
+        width: 297mm !important;
+        box-sizing: border-box !important;
+      }}
+      .card {{
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+        color: #0f172a !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }}
+      .card-title, .stat-val {{ color: #0f172a !important; }}
+      .stat-label, .stat-sub, p, span, li {{ color: #475569 !important; }}
+      th {{ background: #f1f5f9 !important; color: #0f172a !important; border: 1px solid #cbd5e1 !important; }}
+      td {{ color: #1e293b !important; border: 1px solid #e2e8f0 !important; }}
+      .schema-pill {{ background: #eff6ff !important; border-color: #bfdbfe !important; color: #1e40af !important; }}
+      .badge-success {{ background: #ecfdf5 !important; color: #047857 !important; border: 1px solid #a7f3d0 !important; }}
+      .badge-warning {{ background: #fef3c7 !important; color: #b45309 !important; border: 1px solid #fde68a !important; }}
+      .print-page-break {{ page-break-after: always !important; break-after: page !important; }}
     }}
   </style>
 </head>
