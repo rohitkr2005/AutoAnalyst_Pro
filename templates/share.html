@@ -211,8 +211,15 @@
     Powered by <strong>AutoAnalyst Pro</strong> • Autonomous Data Science & Live Dashboard Studio
   </footer>
 
+  <script type="application/json" id="snapshot-data">{{ snapshot_json | safe }}</script>
   <script>
-    const SNAPSHOT_DATA = {{ snapshot_json | safe }};
+    let SNAPSHOT_DATA = {};
+    try {
+      const rawText = document.getElementById('snapshot-data')?.textContent || '{}';
+      SNAPSHOT_DATA = JSON.parse(rawText);
+    } catch (e) {
+      console.error('Failed to parse snapshot JSON data:', e);
+    }
     let sharedChartInstance = null;
 
     function initSharedChart() {

@@ -774,11 +774,11 @@ def generate_standalone_html_dashboard(
             html_code += """            </tr>\n"""
         html_code += """          </tbody>\n        </table>\n      </div>\n    </div>\n"""
 
-    # Embed Chart.js Scripts and Embedded Data
-    trend_labels_json = json.dumps(trend_labels)
-    trend_values_json = json.dumps(trend_values)
-    breakdown_labels_json = json.dumps(breakdown_labels)
-    breakdown_values_json = json.dumps(breakdown_values)
+    # Embed Chart.js Scripts and Embedded Data safely
+    trend_labels_json = json.dumps(trend_labels).replace("</", "<\\/")
+    trend_values_json = json.dumps(trend_values).replace("</", "<\\/")
+    breakdown_labels_json = json.dumps(breakdown_labels).replace("</", "<\\/")
+    breakdown_values_json = json.dumps(breakdown_values).replace("</", "<\\/")
     accent_color = th["accent"]
 
     html_code += f"""

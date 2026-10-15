@@ -9,6 +9,7 @@ import re
 import pandas as pd
 from typing import Dict, Any, List, Optional, Tuple
 from engine.auth import get_database_url, PSYCOPG2_AVAILABLE
+from engine.security_utils import validate_safe_db_url
 
 if PSYCOPG2_AVAILABLE:
     import psycopg2
@@ -16,14 +17,34 @@ if PSYCOPG2_AVAILABLE:
 
 
 def is_safe_read_query(query: str) -> Tuple[bool, str]:
-    """Ensures SQL statements are strictly read-only queries."""
-    q = query.strip().upper()
-    dangerous_keywords = ["DROP", "DELETE", "TRUNCATE", "UPDATE", "INSERT", "ALTER", "GRANT", "REVOKE"]
-    for kw in dangerous_keywords:
-        if re.search(r'\b' + kw + r'\b', q):
-            return False, f"Prohibited modification statement: '{kw}' is not allowed in analyst query mode."
-    if not (q.startswith("SELECT") or q.startswith("WITH")):
+    """Ensures SQL statements are strictly single read-only queries."""
+    if not query or not isinstance(query, str):
+        return False, "Query cannot be empty."
+
+    # Strip SQL comments
+    cleaned = re.sub(r'--.*$', '', query, flags=re.MULTILINE)
+    cleaned = re.sub(r'/\*.*?\*/', '', cleaned, flags=re.DOTALL).strip()
+    
+    if not (cleaned.upper().startswith("SELECT") or cleaned.upper().startswith("WITH")):
         return False, "Query must start with SELECT or WITH."
+
+    # Remove string literals to prevent bypasses or false matches
+    without_strings = re.sub(r"'(''|[^'])*'", "''", cleaned)
+    
+    # Check for multiple stacked queries separated by semicolon
+    if ";" in without_strings.rstrip(";"):
+        return False, "Multiple or stacked SQL statements are not permitted."
+
+    dangerous_keywords = [
+        "DROP", "DELETE", "TRUNCATE", "UPDATE", "INSERT", "ALTER", "GRANT", "REVOKE",
+        "CREATE", "EXECUTE", "COPY", "CALL", "VACUUM", "REINDEX", "COMMENT", "SECURITY",
+        "LOCK", "SET", "RESET", "DO", "DISCARD"
+    ]
+    q_upper = without_strings.upper()
+    for kw in dangerous_keywords:
+        if re.search(r'\b' + kw + r'\b', q_upper):
+            return False, f"Prohibited modification statement: '{kw}' is not allowed in analyst query mode."
+
     return True, ""
 
 
@@ -33,7 +54,12 @@ def get_default_connection_url() -> str:
 
 
 def test_db_connection(db_url: Optional[str] = None) -> Dict[str, Any]:
-    """Tests connectivity to PostgreSQL / Supabase database."""
+    """Tests connectivity to PostgreSQL / Supabase database with SSRF protection."""
+    if db_url:
+        is_safe, err = validate_safe_db_url(db_url)
+        if not is_safe:
+            return {"status": "error", "message": f"Connection rejected: {err}"}
+
     url = (db_url or get_default_connection_url()).strip()
     if not url:
         return {"status": "error", "message": "No database connection URL configured."}
@@ -42,6 +68,7 @@ def test_db_connection(db_url: Optional[str] = None) -> Dict[str, Any]:
 
     try:
         conn = psycopg2.connect(url, connect_timeout=6)
+        conn.set_session(readonly=True)
         cur = conn.cursor()
         cur.execute("SELECT version();")
         version = cur.fetchone()[0]
@@ -53,6 +80,11 @@ def test_db_connection(db_url: Optional[str] = None) -> Dict[str, Any]:
 
 def list_db_tables(db_url: Optional[str] = None) -> Dict[str, Any]:
     """Retrieves all user tables in the public schema with row estimates."""
+    if db_url:
+        is_safe, err = validate_safe_db_url(db_url)
+        if not is_safe:
+            return {"status": "error", "message": f"Connection rejected: {err}"}
+
     url = (db_url or get_default_connection_url()).strip()
     if not url:
         return {"status": "error", "message": "No database connection URL configured."}
@@ -61,6 +93,7 @@ def list_db_tables(db_url: Optional[str] = None) -> Dict[str, Any]:
 
     try:
         conn = psycopg2.connect(url, connect_timeout=6)
+        conn.set_session(readonly=True)
         cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("""
             SELECT 
@@ -84,6 +117,11 @@ def list_db_tables(db_url: Optional[str] = None) -> Dict[str, Any]:
 
 def load_db_table_data(table_name: str, db_url: Optional[str] = None, limit: int = 10000) -> Tuple[Optional[pd.DataFrame], Optional[str]]:
     """Loads a full table into a pandas DataFrame."""
+    if db_url:
+        is_safe, err = validate_safe_db_url(db_url)
+        if not is_safe:
+            return None, f"Connection rejected: {err}"
+
     url = (db_url or get_default_connection_url()).strip()
     if not url:
         return None, "No database connection URL configured."
@@ -92,10 +130,11 @@ def load_db_table_data(table_name: str, db_url: Optional[str] = None, limit: int
 
     # Validate table name to prevent SQL injection
     if not re.match(r'^[a-zA-Z0-9_]+$', table_name):
-        return None, "Invalid table name."
+        return None, "Invalid table name format."
 
     try:
         conn = psycopg2.connect(url, connect_timeout=8)
+        conn.set_session(readonly=True)
         sql = f'SELECT * FROM "{table_name}" LIMIT {int(limit)};'
         df = pd.read_sql(sql, conn)
         conn.close()
@@ -110,6 +149,11 @@ def execute_custom_db_query(sql_query: str, db_url: Optional[str] = None, limit:
     if not safe:
         return {"status": "error", "message": err}
 
+    if db_url:
+        is_safe, url_err = validate_safe_db_url(db_url)
+        if not is_safe:
+            return {"status": "error", "message": f"Connection rejected: {url_err}"}
+
     url = (db_url or get_default_connection_url()).strip()
     if not url:
         return {"status": "error", "message": "No database connection URL configured."}
@@ -123,6 +167,7 @@ def execute_custom_db_query(sql_query: str, db_url: Optional[str] = None, limit:
 
     try:
         conn = psycopg2.connect(url, connect_timeout=8)
+        conn.set_session(readonly=True)
         df = pd.read_sql(q_clean, conn)
         conn.close()
 

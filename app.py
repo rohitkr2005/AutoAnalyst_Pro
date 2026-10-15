@@ -12,7 +12,7 @@ import time
 import threading
 import webbrowser
 import secrets
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 from dotenv import load_dotenv
 
@@ -32,11 +32,18 @@ from engine.sample_datasets import init_all_samples, SAMPLES_DIR
 from engine.cleaner import sniff_and_read_csv, audit_dataset_health, clean_and_preprocess
 from engine.analytics import compute_comprehensive_eda
 from engine.ml_engine import run_ml_pipeline
+from engine.security_utils import (
+    validate_safe_external_url,
+    safe_post_webhook,
+    sanitize_filename,
+    escape_json_for_script
+)
 
 # Initialize Flask app
 app = Flask(__name__, static_folder="static", template_folder="templates")
 app.config["MAX_CONTENT_LENGTH"] = 512 * 1024 * 1024  # 512MB max upload size
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "autoanalyst-secure-session-key-2026-production")
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 if os.environ.get("RENDER") or os.environ.get("FLASK_ENV") == "production":
@@ -253,6 +260,27 @@ def apply_security_headers(response):
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(), payment=()"
+    response.headers["Cross-Origin-Opener-Policy"] = "same-origin-allow-popups"
+
+    if os.environ.get("RENDER") or os.environ.get("FLASK_ENV") == "production" or request.is_secure:
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+
+    # Strict Content-Security-Policy with whitelisted CDNs for Chart.js, Google Auth, and Google Fonts
+    csp_policy = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://accounts.google.com https://apis.google.com; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; "
+        "font-src 'self' https://fonts.gstatic.com data:; "
+        "img-src 'self' data: blob: https:; "
+        "connect-src 'self' https://*.supabase.co https://*.googleapis.com https://accounts.google.com https://api.github.com; "
+        "frame-src 'self' https://accounts.google.com; "
+        "frame-ancestors 'self'; "
+        "object-src 'none'; "
+        "base-uri 'self'; "
+        "form-action 'self';"
+    )
+    response.headers["Content-Security-Policy"] = csp_policy
     return response
 
 
@@ -467,6 +495,10 @@ def api_supabase_session():
 @app.route("/api/auth/register", methods=["POST"])
 def api_register():
     try:
+        client_ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",")[0].strip()
+        if not check_rate_limit(f"reg:{client_ip}", max_requests=5, window_seconds=60):
+            return jsonify({"status": "error", "message": "Too many registration attempts. Please wait 1 minute before trying again."}), 429
+
         data = request.get_json() or {}
         username = data.get("username", "")
         email = data.get("email", "")
@@ -770,7 +802,8 @@ def upload_file():
     try:
         if "file" in request.files:
             uploaded_file = request.files["file"]
-            filename = uploaded_file.filename or "uploaded_data.csv"
+            raw_filename = uploaded_file.filename or "uploaded_data.csv"
+            filename = sanitize_filename(raw_filename)
             file_bytes = uploaded_file.read()
             df = sniff_and_read_csv(file_bytes, filename)
             dataset_name = filename
@@ -1487,7 +1520,8 @@ def view_shared_dashboard(token: str):
     except Exception:
         snapshot = {}
 
-    return render_template("share.html", dashboard=dashboard, snapshot=snapshot, snapshot_json=dashboard["snapshot_json"])
+    safe_snapshot_json = escape_json_for_script(dashboard.get("snapshot_json", "{}"))
+    return render_template("share.html", dashboard=dashboard, snapshot=snapshot, snapshot_json=safe_snapshot_json)
 
 
 @app.route("/api/db/test", methods=["POST"])
@@ -1594,17 +1628,11 @@ def api_test_alert():
         }
 
         if webhook_url:
-            import urllib.request
-            req = urllib.request.Request(
-                webhook_url,
-                data=json.dumps(payload).encode("utf-8"),
-                headers={"Content-Type": "application/json", "User-Agent": "AutoAnalystPro-Alerts/1.0"}
-            )
-            try:
-                with urllib.request.urlopen(req, timeout=5) as response:
-                    return jsonify({"status": "success", "message": f"Webhook dispatched successfully! Response code: {response.getcode()}", "payload": payload})
-            except Exception as we:
-                return jsonify({"status": "error", "message": f"Webhook delivery failed: {str(we)}", "payload": payload}), 400
+            success, code, msg = safe_post_webhook(webhook_url, json.dumps(payload).encode("utf-8"), timeout=5)
+            if success:
+                return jsonify({"status": "success", "message": f"Webhook dispatched successfully! Response code: {code}", "payload": payload})
+            else:
+                return jsonify({"status": "error", "message": f"Webhook delivery failed: {msg}", "payload": payload}), 400
 
         return jsonify({
             "status": "success",
@@ -1661,8 +1689,9 @@ def api_model_upload_multiple():
         files_data = []
         for file in files:
             if file.filename:
+                clean_name = sanitize_filename(file.filename)
                 content = file.read()
-                files_data.append((file.filename, content))
+                files_data.append((clean_name, content))
 
         from engine.data_modeler import ingest_files_into_model
         result = ingest_files_into_model(files_data, GLOBAL_DATA_MODEL, clear_existing=(not append_mode), compute_analytics=is_final)
