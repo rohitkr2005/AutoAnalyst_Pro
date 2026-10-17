@@ -120,11 +120,42 @@ document.addEventListener('DOMContentLoaded', () => {
   initSidebarResizer();
 });
 
+// Universal API Response Parser with graceful handling of non-JSON / HTML / Cloud error pages
+async function safeParseJsonResponse(res) {
+  if (res.status === 401) {
+    setTimeout(() => { window.location.href = '/login?msg=session_expired'; }, 1800);
+    return { status: 'error', message: 'Your session has expired. Redirecting to login...' };
+  }
+  let rawText = '';
+  try {
+    rawText = await res.text();
+  } catch (e) {
+    return { status: 'error', message: `Network read failure (HTTP ${res.status}).` };
+  }
+
+  // Attempt standard JSON parsing
+  try {
+    return JSON.parse(rawText);
+  } catch (_) {
+    // Server or proxy returned HTML / non-JSON error
+    if (res.status === 413) {
+      return { status: 'error', message: 'The uploaded file exceeds the maximum allowed cloud size (HTTP 413). Please upload a dataset under 50MB.' };
+    }
+    if (res.status === 502 || res.status === 503) {
+      return { status: 'error', message: 'Server memory limit reached or worker restarting (HTTP 502/503). The dataset requires more RAM than available on the free cloud tier.' };
+    }
+    if (res.status === 504) {
+      return { status: 'error', message: 'The server timed out while processing this dataset (HTTP 504). Please try a smaller file or subset.' };
+    }
+    return { status: 'error', message: `Server error (HTTP ${res.status}): Please check dataset format and size.` };
+  }
+}
+
 // Authentication Session Verification
 async function checkAuthSession() {
   try {
     const res = await fetch('/api/auth/me');
-    const data = await res.json();
+    const data = await safeParseJsonResponse(res);
     if (data.status === 'success' && data.authenticated) {
       appState.currentUser = data.user;
       const displayName = data.user.full_name || data.user.username;
@@ -1980,11 +2011,11 @@ async function loadSample(sampleId) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sample_id: sampleId })
     });
-    const data = await res.json();
+    const data = await safeParseJsonResponse(res);
     if (data.status === 'success') {
       onDatasetLoaded(data);
     } else {
-      alert(`Error loading dataset: ${data.message}`);
+      alert(`Error loading dataset: ${data.message || 'Failed to load sample'}`);
     }
   } catch (err) {
     alert(`Request error: ${err.message}`);
@@ -1995,6 +2026,13 @@ async function loadSample(sampleId) {
 
 // API: Upload Local File
 async function uploadFile(file) {
+  if (!file) return;
+  const fileSizeMB = file.size / (1024 * 1024);
+  if (fileSizeMB > 120) {
+    alert(`File is ${fileSizeMB.toFixed(1)}MB. Cloud hosting has a 100MB limit per file. Please upload a smaller subset or use a compressed CSV.`);
+    return;
+  }
+
   showLoading(`Reading & sniffing ${file.name}...`);
   const formData = new FormData();
   formData.append('file', file);
@@ -2004,11 +2042,11 @@ async function uploadFile(file) {
       method: 'POST',
       body: formData
     });
-    const data = await res.json();
+    const data = await safeParseJsonResponse(res);
     if (data.status === 'success') {
       onDatasetLoaded(data);
     } else {
-      alert(`Upload error: ${data.message}`);
+      alert(`Upload error: ${data.message || 'Unknown processing error'}`);
     }
   } catch (err) {
     alert(`Failed to upload file: ${err.message}`);
@@ -2114,14 +2152,14 @@ async function triggerCleanPipeline() {
         decompose_composites: true
       })
     });
-    const data = await res.json();
+    const data = await safeParseJsonResponse(res);
     if (data.status === 'success') {
       appState.auditReport = data.audit_report;
       appState.cleanedColumns = data.cleaned_columns;
       renderCleanResults(data.audit_report, data.preview, data.cleaned_columns, data.python_script);
       document.getElementById('step-nav-2')?.classList.add('completed');
     } else {
-      alert(`Cleaning error: ${data.message}`);
+      alert(`Cleaning error: ${data.message || 'Failed to complete cleaning'}`);
     }
   } catch (err) {
     alert(`Request error: ${err.message}`);

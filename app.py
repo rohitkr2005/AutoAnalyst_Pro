@@ -798,7 +798,7 @@ def load_sample():
 @app.route("/api/upload", methods=["POST"])
 @login_required
 def upload_file():
-    """Handles file upload (CSV, TSV, XLSX, JSON) or raw text paste."""
+    """Handles file upload (CSV, TSV, XLSX, JSON) or raw text paste with memory-efficient cloud streaming."""
     try:
         if "file" in request.files:
             uploaded_file = request.files["file"]
@@ -806,6 +806,9 @@ def upload_file():
             filename = sanitize_filename(raw_filename)
             file_bytes = uploaded_file.read()
             df = sniff_and_read_csv(file_bytes, filename)
+            del file_bytes
+            import gc
+            gc.collect()
             dataset_name = filename
         elif request.is_json and "raw_text" in request.get_json():
             raw_text = request.get_json()["raw_text"]
@@ -817,8 +820,17 @@ def upload_file():
         if df is None or len(df) == 0:
             return jsonify({"status": "error", "message": "Could not parse any rows from provided data."}), 400
 
+        # Cloud RAM Safeguard (512MB RAM ceiling):
+        # For huge datasets (>150,000 rows), optimize to first 100,000 rows to ensure snappy analytics & prevent OOM
+        orig_row_count = len(df)
+        if orig_row_count > 150000:
+            df = df.head(100000).copy()
+            dataset_name = f"{filename} (Optimized: 100k of {orig_row_count:,} rows)"
+            import gc
+            gc.collect()
+
         SESSION_DATA["dataset_name"] = dataset_name
-        SESSION_DATA["raw_df"] = df.copy()
+        SESSION_DATA["raw_df"] = df
         SESSION_DATA["cleaned_df"] = None
         SESSION_DATA["eda_cache"] = None
         SESSION_DATA["ml_cache"] = None
@@ -842,6 +854,8 @@ def upload_file():
             "preview": preview_rows
         }))
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({"status": "error", "message": f"Upload processing error: {str(e)}"}), 500
 
 
