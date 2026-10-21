@@ -508,25 +508,25 @@
         let color, glowColor;
         if (isDark) {
           if (p.colorType === 0) {
-            color = 'rgba(99, 102, 241, 0.85)';
-            glowColor = '#6366f1';
+            color = 'rgba(211, 189, 168, 0.85)';
+            glowColor = '#D3BDA8';
           } else if (p.colorType === 1) {
-            color = 'rgba(6, 182, 212, 0.9)';
-            glowColor = '#06b6d4';
+            color = 'rgba(219, 203, 188, 0.9)';
+            glowColor = '#DBCBBC';
           } else {
-            color = 'rgba(16, 185, 129, 0.85)';
-            glowColor = '#10b981';
+            color = 'rgba(125, 168, 147, 0.85)';
+            glowColor = '#7DA893';
           }
         } else {
           if (p.colorType === 0) {
-            color = 'rgba(79, 70, 229, 0.75)';
-            glowColor = '#4f46e5';
+            color = 'rgba(138, 107, 83, 0.75)';
+            glowColor = '#8A6B53';
           } else if (p.colorType === 1) {
-            color = 'rgba(2, 132, 199, 0.75)';
-            glowColor = '#0284c7';
+            color = 'rgba(119, 124, 122, 0.75)';
+            glowColor = '#777C7A';
           } else {
-            color = 'rgba(5, 150, 105, 0.75)';
-            glowColor = '#059669';
+            color = 'rgba(74, 122, 98, 0.75)';
+            glowColor = '#4A7A62';
           }
         }
 
@@ -624,7 +624,7 @@
           if (pt) {
             ctx.beginPath();
             ctx.arc(pt.screenX, pt.screenY, 2.2 * pt.scale, 0, Math.PI * 2);
-            ctx.fillStyle = isDark ? (k === 0 ? '#06b6d4' : '#c084fc') : (k === 0 ? '#0284c7' : '#7c3aed');
+            ctx.fillStyle = isDark ? (k === 0 ? '#D3BDA8' : '#DBCBBC') : (k === 0 ? '#8A6B53' : '#777C7A');
             ctx.fill();
           }
         }

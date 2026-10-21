@@ -44,36 +44,39 @@ const chartInstances = {
   daxPreview: null
 };
 
-// Color palettes for Chart.js
+// Curated Artisanal Color Palettes for Chart.js (Non-AI Generated)
 const CHART_COLORS = {
-  indigo: '#6366f1',
-  indigoLight: 'rgba(99, 102, 241, 0.25)',
-  cyan: '#06b6d4',
-  cyanLight: 'rgba(6, 182, 212, 0.25)',
-  emerald: '#10b981',
-  emeraldLight: 'rgba(16, 185, 129, 0.25)',
-  amber: '#f59e0b',
-  amberLight: 'rgba(245, 158, 11, 0.25)',
-  rose: '#f43f5e',
-  roseLight: 'rgba(244, 63, 94, 0.25)',
-  purple: '#8b5cf6',
-  palette: ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6', '#14b8a6']
+  primary: '#D3BDA8',
+  primaryLight: 'rgba(211, 189, 168, 0.25)',
+  indigo: '#D3BDA8',
+  indigoLight: 'rgba(211, 189, 168, 0.25)',
+  cyan: '#9BA7B0',
+  cyanLight: 'rgba(155, 167, 176, 0.25)',
+  emerald: '#7DA893',
+  emeraldLight: 'rgba(125, 168, 147, 0.25)',
+  amber: '#D48B68',
+  amberLight: 'rgba(212, 139, 104, 0.25)',
+  rose: '#C86A64',
+  roseLight: 'rgba(200, 106, 100, 0.25)',
+  purple: '#A48FA6',
+  palette: ['#D3BDA8', '#7DA893', '#D48B68', '#9BA7B0', '#C86A64', '#DBCBBC', '#C5A880', '#777C7A']
 };
 
 const THEME_PALETTES = {
-  neon: ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6', '#14b8a6'],
-  emerald: ['#10b981', '#059669', '#34d399', '#047857', '#6ee7b7', '#14b8a6', '#0f766e', '#115e59'],
-  sunset: ['#f59e0b', '#f97316', '#ef4444', '#ec4899', '#fbbf24', '#f43f5e', '#ea580c', '#e11d48'],
-  violet: ['#8b5cf6', '#a855f7', '#6366f1', '#c084fc', '#d946ef', '#4f46e5', '#7c3aed', '#9333ea']
+  editorial: ['#D3BDA8', '#7DA893', '#D48B68', '#9BA7B0', '#C86A64', '#DBCBBC', '#C5A880', '#777C7A'],
+  neon: ['#D3BDA8', '#7DA893', '#D48B68', '#9BA7B0', '#C86A64', '#DBCBBC', '#C5A880', '#777C7A'],
+  emerald: ['#7DA893', '#92B59D', '#6A9680', '#567F6A', '#A3C4AF', '#BBD7C6', '#D3BDA8', '#777C7A'],
+  sunset: ['#D48B68', '#DE9E7D', '#C87852', '#B96641', '#E8B196', '#D3BDA8', '#C5A880', '#33303F'],
+  violet: ['#A48FA6', '#B7A2B9', '#8E7A90', '#777C7A', '#DBCBBC', '#D3BDA8', '#9BA7B0', '#2A222B']
 };
 
 // Theme-Aware Chart Colors
 function getThemeChartColors() {
   const isDark = window.ThemeManager ? window.ThemeManager.isDark() : true;
   return {
-    textColor: isDark ? '#94a3b8' : '#475569',
-    gridColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(15, 23, 42, 0.08)',
-    radarGrid: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.1)'
+    textColor: isDark ? '#DBCBBC' : '#5A525C',
+    gridColor: isDark ? 'rgba(119, 124, 122, 0.15)' : 'rgba(119, 124, 122, 0.20)',
+    radarGrid: isDark ? 'rgba(119, 124, 122, 0.22)' : 'rgba(119, 124, 122, 0.25)'
   };
 }
 
@@ -605,7 +608,7 @@ async function preparePowerBiReport(customOptions = {}) {
       datasets: [{
         label: orig.datasets[0]?.label || 'Category Breakdown',
         data: orig.datasets[0]?.data.slice(0, 6),
-        backgroundColor: ['#2563eb', '#06b6d4', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'],
+        backgroundColor: CHART_COLORS.palette.slice(0, 6),
         borderColor: '#ffffff',
         borderWidth: 2
       }]
@@ -617,7 +620,7 @@ async function preparePowerBiReport(customOptions = {}) {
       datasets: [{
         label: 'Model Volume Allocation',
         data: currentModelSchema.tables.map(t => t.rows || 1),
-        backgroundColor: ['#2563eb', '#06b6d4', '#10b981', '#f59e0b', '#8b5cf6'],
+        backgroundColor: CHART_COLORS.palette.slice(0, 5),
         borderColor: '#ffffff',
         borderWidth: 2
       }]
@@ -633,7 +636,7 @@ async function preparePowerBiReport(customOptions = {}) {
         datasets: [{
           label: `${catKeys[0]} Breakdown`,
           data: dist.slice(0, 6).map(d => d.count),
-          backgroundColor: ['#2563eb', '#06b6d4', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'],
+          backgroundColor: CHART_COLORS.palette.slice(0, 6),
           borderColor: '#ffffff',
           borderWidth: 2
         }]
@@ -648,7 +651,7 @@ async function preparePowerBiReport(customOptions = {}) {
       datasets: [{
         label: 'Distribution Share',
         data: [45, 25, 20, 10],
-        backgroundColor: ['#2563eb', '#06b6d4', '#10b981', '#f59e0b'],
+        backgroundColor: CHART_COLORS.palette.slice(0, 4),
         borderColor: '#ffffff',
         borderWidth: 2
       }]
@@ -1149,10 +1152,10 @@ function openCustomDashboardModal() {
   document.querySelectorAll('.custom-dash-theme-card').forEach(card => {
     const radio = card.querySelector('input[type="radio"]');
     if (radio && radio.checked) {
-      card.style.borderColor = '#6366f1';
-      card.style.background = 'rgba(99, 102, 241, 0.15)';
+      card.style.borderColor = '#D3BDA8';
+      card.style.background = 'rgba(211, 189, 168, 0.15)';
     } else {
-      card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+      card.style.borderColor = 'rgba(119, 124, 122, 0.25)';
       card.style.background = 'rgba(255, 255, 255, 0.03)';
     }
     card.onclick = () => {
@@ -1160,8 +1163,8 @@ function openCustomDashboardModal() {
         radio.checked = true;
         document.querySelectorAll('.custom-dash-theme-card').forEach(c => {
           const r = c.querySelector('input[type="radio"]');
-          c.style.borderColor = (r && r.checked) ? '#6366f1' : 'rgba(255, 255, 255, 0.1)';
-          c.style.background = (r && r.checked) ? 'rgba(99, 102, 241, 0.15)' : 'rgba(255, 255, 255, 0.03)';
+          c.style.borderColor = (r && r.checked) ? '#D3BDA8' : 'rgba(119, 124, 122, 0.25)';
+          c.style.background = (r && r.checked) ? 'rgba(211, 189, 168, 0.15)' : 'rgba(255, 255, 255, 0.03)';
         });
       }
     };
@@ -2445,8 +2448,8 @@ async function renderPairwiseScatter() {
           datasets: [{
             label: `${xCol} vs ${yCol}`,
             data: points,
-            backgroundColor: 'rgba(6, 182, 212, 0.6)',
-            borderColor: '#06b6d4',
+            backgroundColor: 'rgba(211, 189, 168, 0.6)',
+            borderColor: '#D3BDA8',
             pointRadius: 4,
             pointHoverRadius: 6
           }]
@@ -3016,17 +3019,17 @@ function renderAnomalyRadar() {
         {
           label: `Top Outlier (Row #${anom.top_anomalies[0].row_index})`,
           data: anomalyVals,
-          backgroundColor: 'rgba(244, 63, 94, 0.25)',
-          borderColor: '#f43f5e',
-          pointBackgroundColor: '#f43f5e',
+          backgroundColor: 'rgba(200, 106, 100, 0.25)',
+          borderColor: '#C86A64',
+          pointBackgroundColor: '#C86A64',
           borderWidth: 2
         },
         {
           label: 'Dataset Average (Baseline)',
           data: baselineVals,
-          backgroundColor: 'rgba(16, 185, 129, 0.2)',
-          borderColor: '#10b981',
-          pointBackgroundColor: '#10b981',
+          backgroundColor: 'rgba(125, 168, 147, 0.2)',
+          borderColor: '#7DA893',
+          pointBackgroundColor: '#7DA893',
           borderWidth: 2
         }
       ]
