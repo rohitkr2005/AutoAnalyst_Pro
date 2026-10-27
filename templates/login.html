@@ -151,9 +151,9 @@
     }
 
     .auth-tab-btn.active {
-      background: #D3BDA8;
-      color: #2A222B;
-      box-shadow: 0 2px 10px rgba(211, 189, 168, 0.35);
+      background: var(--primary);
+      color: var(--primary-contrast);
+      box-shadow: 0 2px 10px var(--primary-glow);
     }
 
     /* Continue with Google Button */
@@ -316,15 +316,15 @@
     .btn-submit {
       width: 100%;
       padding: 0.85rem;
-      background: linear-gradient(135deg, #D3BDA8 0%, #C4AB94 100%);
-      color: #2A222B;
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: var(--primary);
+      color: var(--primary-contrast);
+      border: 1px solid transparent;
       border-radius: 10px;
       font-family: 'Outfit', sans-serif;
       font-size: 1.02rem;
       font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(211, 189, 168, 0.3);
+      box-shadow: var(--shadow-md);
       transition: all 0.25s ease;
       display: flex;
       align-items: center;
@@ -335,9 +335,9 @@
 
     .btn-submit:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 22px rgba(211, 189, 168, 0.45);
-      background: linear-gradient(135deg, #E2D3C4 0%, #D3BDA8 100%);
-      color: #1F1920;
+      box-shadow: var(--shadow-lg);
+      background: var(--primary-hover);
+      color: var(--primary-contrast);
     }
 
     .divider {
@@ -490,20 +490,20 @@
           <svg class="brand-logo-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="brandLogoGradAuth" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#33303F"/>
-                <stop offset="100%" stop-color="#2A222B"/>
+                <stop offset="0%" stop-color="#282838"/>
+                <stop offset="100%" stop-color="#151420"/>
               </linearGradient>
               <linearGradient id="barGradWhiteAuth" x1="0" y1="28" x2="0" y2="0" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#DBCBBC" stop-opacity="0.45"/>
-                <stop offset="100%" stop-color="#F6F1EC" stop-opacity="0.95"/>
+                <stop offset="0%" stop-color="#C5C5CD" stop-opacity="0.45"/>
+                <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
               </linearGradient>
             </defs>
             <rect width="32" height="32" rx="8" fill="url(#brandLogoGradAuth)"/>
             <rect x="6" y="18" width="4" height="8" rx="1.5" fill="url(#barGradWhiteAuth)"/>
             <rect x="13" y="13" width="4" height="13" rx="1.5" fill="url(#barGradWhiteAuth)"/>
-            <rect x="20" y="8" width="4" height="18" rx="1.5" fill="#D3BDA8"/>
-            <path d="M 7 15 L 14 10 L 22 5" stroke="#D3BDA8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="22" cy="5" r="2.2" fill="#D3BDA8"/>
+            <rect x="20" y="8" width="4" height="18" rx="1.5" fill="var(--primary)"/>
+            <path d="M 7 15 L 14 10 L 22 5" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="22" cy="5" r="2.2" fill="var(--primary)"/>
           </svg>
         </div>
         <h1>AutoAnalyst Pro</h1>
@@ -702,6 +702,10 @@
       </button>
       <div class="demo-credentials-note">
         Pre-seeds demo account: <code>admin</code> / <code>Password123!</code>
+      </div>
+
+      <div style="margin-top: 1.5rem; text-align: center; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+        By continuing, you agree to our <a href="/terms" target="_blank" style="color: var(--primary); text-decoration: underline;">Terms & Conditions</a> and <a href="/privacy" target="_blank" style="color: var(--primary); text-decoration: underline;">Privacy Policy</a>.
       </div>
 
     </div>

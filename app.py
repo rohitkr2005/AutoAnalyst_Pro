@@ -732,8 +732,33 @@ def home():
     return render_template("home.html", logged_in=logged_in, user=user)
 
 
-@app.route("/app")
+@app.route("/privacy")
+@app.route("/privacy-policy")
+def privacy_page():
+    """Enterprise Privacy Policy & Data Processing Agreement Page."""
+    user = None
+    logged_in = False
+    if "user_id" in session:
+        user = get_user_by_id(session["user_id"])
+        logged_in = bool(user)
+    return render_template("privacy.html", logged_in=logged_in, user=user)
+
+
+@app.route("/terms")
+@app.route("/terms-of-service")
+@app.route("/tos")
+def terms_page():
+    """Enterprise Terms of Service & Master Subscription Agreement Page."""
+    user = None
+    logged_in = False
+    if "user_id" in session:
+        user = get_user_by_id(session["user_id"])
+        logged_in = bool(user)
+    return render_template("terms.html", logged_in=logged_in, user=user)
+
+
 @app.route("/studio")
+@app.route("/app")
 @login_required
 def studio_page():
     """Enterprise BI Analytics & Data Cleansing Studio."""

@@ -34,7 +34,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 2.5rem;
-      background: rgba(31, 25, 32, 0.92);
+      background: rgba(21, 20, 32, 0.94);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-subtle);
@@ -42,8 +42,8 @@
     }
 
     [data-theme="light"] .home-header {
-      background: rgba(247, 244, 239, 0.94);
-      border-bottom: 1px solid rgba(119, 124, 122, 0.22);
+      background: rgba(249, 249, 251, 0.94);
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .home-brand {
@@ -131,7 +131,7 @@
     .btn-header-primary {
       font-size: 0.88rem;
       font-weight: 600;
-      color: #1F1920;
+      color: var(--primary-contrast);
       background: var(--primary);
       border: 1px solid transparent;
       border-radius: 6px;
@@ -240,7 +240,7 @@
       font-family: 'Inter', sans-serif;
       font-size: 1.05rem;
       font-weight: 600;
-      color: #1F1920;
+      color: var(--primary-contrast);
       background: var(--primary);
       border: 1px solid transparent;
       border-radius: 8px;
@@ -250,13 +250,13 @@
       display: inline-flex;
       align-items: center;
       gap: 0.6rem;
-      box-shadow: 0 4px 14px rgba(211, 189, 168, 0.25);
+      box-shadow: var(--shadow-md);
     }
 
     .btn-hero-launch:hover {
       background: var(--primary-hover);
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(211, 189, 168, 0.35);
+      box-shadow: var(--shadow-lg);
     }
 
     .btn-hero-demo {
@@ -712,7 +712,7 @@
     }
 
     .code-block {
-      background: #141115;
+      background: #010016;
       border: 1px solid var(--border-subtle);
       border-radius: 8px;
       padding: 1.25rem;
@@ -792,20 +792,20 @@
         <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
           <defs>
             <linearGradient id="brandLogoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#33303F"/>
-              <stop offset="100%" stop-color="#1F1920"/>
+              <stop offset="0%" stop-color="#282838"/>
+              <stop offset="100%" stop-color="#151420"/>
             </linearGradient>
             <linearGradient id="barGradWhite" x1="0" y1="28" x2="0" y2="0" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#DBCBBC" stop-opacity="0.45"/>
-              <stop offset="100%" stop-color="#F6F1EC" stop-opacity="0.95"/>
+              <stop offset="0%" stop-color="#C5C5CD" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
             </linearGradient>
           </defs>
           <rect width="32" height="32" rx="8" fill="url(#brandLogoGrad)"/>
           <rect x="6" y="18" width="4" height="8" rx="1.5" fill="url(#barGradWhite)"/>
           <rect x="13" y="13" width="4" height="13" rx="1.5" fill="url(#barGradWhite)"/>
-          <rect x="20" y="8" width="4" height="18" rx="1.5" fill="#D3BDA8"/>
-          <path d="M 7 15 L 14 10 L 22 5" stroke="#D3BDA8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="22" cy="5" r="2.2" fill="#D3BDA8"/>
+          <rect x="20" y="8" width="4" height="18" rx="1.5" fill="var(--primary)"/>
+          <path d="M 7 15 L 14 10 L 22 5" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="22" cy="5" r="2.2" fill="var(--primary)"/>
         </svg>
       </div>
       <span class="home-brand-name">AutoAnalyst</span>
@@ -819,13 +819,28 @@
       <a href="#datasets" class="home-nav-link">Live Datasets</a>
       <a href="#security" class="home-nav-link">Architecture & Security</a>
       <a href="#docs" class="home-nav-link">Documentation</a>
+      <a href="/privacy" class="home-nav-link">Privacy</a>
+      <a href="/terms" class="home-nav-link">Terms</a>
     </nav>
 
     <!-- Right Header Actions -->
     <div class="home-header-actions">
-      <!-- Theme Switcher -->
-      <button class="btn-header-ghost" onclick="toggleHomeTheme()" title="Toggle Theme" style="padding: 0.45rem 0.65rem;">
-        <span id="home-theme-icon">🌙</span>
+      <!-- Theme Switcher (Crisp SVG Icons - No Emojis) -->
+      <button class="btn-header-ghost" id="btn-theme-toggle" onclick="toggleHomeTheme()" title="Toggle Light / Dark Mode" aria-label="Toggle Theme" style="padding: 0.45rem 0.65rem; display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px;">
+        <svg id="home-theme-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg id="home-theme-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
       </button>
 
       {% if logged_in %}
@@ -1231,6 +1246,8 @@
         <a href="#capabilities" class="footer-link">Features</a>
         <a href="#security" class="footer-link">Security</a>
         <a href="#docs" class="footer-link">Documentation</a>
+        <a href="/privacy" class="footer-link">Privacy Policy</a>
+        <a href="/terms" class="footer-link">Terms & Conditions</a>
         <a href="/studio" class="footer-link">Studio</a>
       </div>
 
@@ -1259,9 +1276,19 @@
     }
 
     function updateThemeIcon(theme) {
-      const icon = document.getElementById('home-theme-icon');
-      if (icon) {
-        icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+      const sun = document.getElementById('home-theme-sun');
+      const moon = document.getElementById('home-theme-moon');
+      const btn = document.getElementById('btn-theme-toggle');
+      if (sun && moon) {
+        if (theme === 'dark') {
+          sun.style.display = 'block';
+          moon.style.display = 'none';
+          if (btn) btn.setAttribute('title', 'Switch to Light Mode');
+        } else {
+          sun.style.display = 'none';
+          moon.style.display = 'block';
+          if (btn) btn.setAttribute('title', 'Switch to Dark Mode');
+        }
       }
     }
 

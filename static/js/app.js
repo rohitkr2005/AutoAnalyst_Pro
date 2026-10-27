@@ -44,39 +44,39 @@ const chartInstances = {
   daxPreview: null
 };
 
-// Curated Artisanal Color Palettes for Chart.js (Non-AI Generated)
+// Curated Artisanal Color Palettes for Chart.js (Neutral Scale WCAG AAA / AA)
 const CHART_COLORS = {
-  primary: '#D3BDA8',
-  primaryLight: 'rgba(211, 189, 168, 0.25)',
-  indigo: '#D3BDA8',
-  indigoLight: 'rgba(211, 189, 168, 0.25)',
-  cyan: '#9BA7B0',
-  cyanLight: 'rgba(155, 167, 176, 0.25)',
-  emerald: '#7DA893',
-  emeraldLight: 'rgba(125, 168, 147, 0.25)',
-  amber: '#D48B68',
-  amberLight: 'rgba(212, 139, 104, 0.25)',
-  rose: '#C86A64',
-  roseLight: 'rgba(200, 106, 100, 0.25)',
-  purple: '#A48FA6',
-  palette: ['#D3BDA8', '#7DA893', '#D48B68', '#9BA7B0', '#C86A64', '#DBCBBC', '#C5A880', '#777C7A']
+  primary: '#DFDFE4',
+  primaryLight: 'rgba(223, 223, 228, 0.25)',
+  indigo: '#C5C5CD',
+  indigoLight: 'rgba(197, 197, 205, 0.25)',
+  cyan: '#ADACB5',
+  cyanLight: 'rgba(173, 172, 181, 0.25)',
+  emerald: '#6EE7B7',
+  emeraldLight: 'rgba(110, 231, 183, 0.25)',
+  amber: '#FBBF24',
+  amberLight: 'rgba(251, 191, 36, 0.25)',
+  rose: '#F87171',
+  roseLight: 'rgba(248, 113, 113, 0.25)',
+  purple: '#6C6881',
+  palette: ['#DFDFE4', '#6EE7B7', '#ADACB5', '#C5C5CD', '#898897', '#6C6881', '#48485C', '#282838']
 };
 
 const THEME_PALETTES = {
-  editorial: ['#D3BDA8', '#7DA893', '#D48B68', '#9BA7B0', '#C86A64', '#DBCBBC', '#C5A880', '#777C7A'],
-  neon: ['#D3BDA8', '#7DA893', '#D48B68', '#9BA7B0', '#C86A64', '#DBCBBC', '#C5A880', '#777C7A'],
-  emerald: ['#7DA893', '#92B59D', '#6A9680', '#567F6A', '#A3C4AF', '#BBD7C6', '#D3BDA8', '#777C7A'],
-  sunset: ['#D48B68', '#DE9E7D', '#C87852', '#B96641', '#E8B196', '#D3BDA8', '#C5A880', '#33303F'],
-  violet: ['#A48FA6', '#B7A2B9', '#8E7A90', '#777C7A', '#DBCBBC', '#D3BDA8', '#9BA7B0', '#2A222B']
+  editorial: ['#DFDFE4', '#6EE7B7', '#ADACB5', '#C5C5CD', '#898897', '#6C6881', '#48485C', '#282838'],
+  neon: ['#DFDFE4', '#6EE7B7', '#ADACB5', '#C5C5CD', '#898897', '#6C6881', '#48485C', '#282838'],
+  emerald: ['#6EE7B7', '#92B59D', '#6A9680', '#567F6A', '#A3C4AF', '#BBD7C6', '#DFDFE4', '#ADACB5'],
+  sunset: ['#FBBF24', '#DE9E7D', '#C87852', '#B96641', '#E8B196', '#DFDFE4', '#C5C5CD', '#282838'],
+  violet: ['#6C6881', '#B7A2B9', '#8E7A90', '#ADACB5', '#C5C5CD', '#DFDFE4', '#898897', '#151420']
 };
 
 // Theme-Aware Chart Colors
 function getThemeChartColors() {
   const isDark = window.ThemeManager ? window.ThemeManager.isDark() : true;
   return {
-    textColor: isDark ? '#DBCBBC' : '#5A525C',
-    gridColor: isDark ? 'rgba(119, 124, 122, 0.15)' : 'rgba(119, 124, 122, 0.20)',
-    radarGrid: isDark ? 'rgba(119, 124, 122, 0.22)' : 'rgba(119, 124, 122, 0.25)'
+    textColor: isDark ? '#DFDFE4' : '#48485C',
+    gridColor: isDark ? 'rgba(173, 172, 181, 0.16)' : 'rgba(108, 104, 129, 0.15)',
+    radarGrid: isDark ? 'rgba(173, 172, 181, 0.22)' : 'rgba(108, 104, 129, 0.22)'
   };
 }
 
@@ -1160,10 +1160,10 @@ function openCustomDashboardModal() {
   document.querySelectorAll('.custom-dash-theme-card').forEach(card => {
     const radio = card.querySelector('input[type="radio"]');
     if (radio && radio.checked) {
-      card.style.borderColor = '#D3BDA8';
-      card.style.background = 'rgba(211, 189, 168, 0.15)';
+      card.style.borderColor = 'var(--primary)';
+      card.style.background = 'var(--primary-light)';
     } else {
-      card.style.borderColor = 'rgba(119, 124, 122, 0.25)';
+      card.style.borderColor = 'var(--border-subtle)';
       card.style.background = 'rgba(255, 255, 255, 0.03)';
     }
     card.onclick = () => {
@@ -1171,8 +1171,8 @@ function openCustomDashboardModal() {
         radio.checked = true;
         document.querySelectorAll('.custom-dash-theme-card').forEach(c => {
           const r = c.querySelector('input[type="radio"]');
-          c.style.borderColor = (r && r.checked) ? '#D3BDA8' : 'rgba(119, 124, 122, 0.25)';
-          c.style.background = (r && r.checked) ? 'rgba(211, 189, 168, 0.15)' : 'rgba(255, 255, 255, 0.03)';
+          c.style.borderColor = (r && r.checked) ? 'var(--primary)' : 'var(--border-subtle)';
+          c.style.background = (r && r.checked) ? 'var(--primary-light)' : 'rgba(255, 255, 255, 0.03)';
         });
       }
     };
@@ -2456,8 +2456,8 @@ async function renderPairwiseScatter() {
           datasets: [{
             label: `${xCol} vs ${yCol}`,
             data: points,
-            backgroundColor: 'rgba(211, 189, 168, 0.6)',
-            borderColor: '#D3BDA8',
+            backgroundColor: 'rgba(223, 223, 228, 0.5)',
+            borderColor: '#DFDFE4',
             pointRadius: 4,
             pointHoverRadius: 6
           }]

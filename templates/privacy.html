@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - AutoAnalyst Pro</title>
+  <meta name="description" content="AutoAnalyst Pro Enterprise Privacy Policy and Data Processing Agreement. Learn how we protect your proprietary datasets with zero-retention ephemeral processing.">
+
+  <!-- Typography: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/css/style.css">
+
+  <style>
+    .legal-body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Fixed Senior Top Header */
+    .legal-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      background: rgba(21, 20, 32, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: all 0.25s ease;
+    }
+
+    [data-theme="light"] .legal-header {
+      background: rgba(249, 249, 251, 0.94);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .legal-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .legal-brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .legal-brand-tier {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--border-accent);
+      margin-left: 0.4rem;
+      text-transform: uppercase;
+    }
+
+    .legal-nav {
+      display: flex;
+      align-items: center;
+      gap: 1.8rem;
+    }
+
+    .legal-nav-link {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.18s ease;
+    }
+
+    .legal-nav-link:hover,
+    .legal-nav-link.active {
+      color: var(--primary);
+    }
+
+    .legal-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-header-ghost {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      background: transparent;
+      border: 1px solid var(--border-card);
+      border-radius: 6px;
+      padding: 0.5rem 1.1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-header-ghost:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-focus);
+    }
+
+    .btn-header-primary {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--primary-contrast);
+      background: var(--primary);
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 0.55rem 1.25rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-header-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Hero / Header Container */
+    .legal-hero {
+      padding: 130px 2rem 40px 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .legal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      background: var(--primary-light);
+      border: 1px solid var(--border-accent);
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.25rem;
+    }
+
+    .legal-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .legal-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 780px;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .legal-meta-strip {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      padding: 1rem 1.5rem;
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .legal-meta-item strong {
+      color: var(--text-primary);
+    }
+
+    /* Content Layout (Sidebar TOC + Main Content) */
+    .legal-layout {
+      max-width: 1200px;
+      margin: 0 auto 5rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 3rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    @media (max-width: 900px) {
+      .legal-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .legal-sidebar {
+        display: none;
+      }
+      .legal-header {
+        padding: 0 1.25rem;
+      }
+      .legal-nav {
+        display: none;
+      }
+    }
+
+    /* Sticky Sidebar Navigation */
+    .legal-sidebar {
+      position: sticky;
+      top: 100px;
+      height: fit-content;
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .legal-toc-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .legal-toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .legal-toc-link {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: block;
+      padding: 0.35rem 0.6rem;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+      line-height: 1.4;
+    }
+
+    .legal-toc-link:hover {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    /* Main Article Content */
+    .legal-content {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 2.75rem;
+      line-height: 1.7;
+    }
+
+    .legal-section {
+      margin-bottom: 2.75rem;
+      scroll-margin-top: 100px;
+    }
+
+    .legal-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .legal-section h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .legal-section h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 1.5rem 0 0.6rem 0;
+    }
+
+    .legal-section p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .legal-section ul {
+      margin: 0 0 1.25rem 1.5rem;
+      padding: 0;
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+    }
+
+    .legal-section li {
+      margin-bottom: 0.5rem;
+    }
+
+    .highlight-card {
+      background: var(--primary-light);
+      border: 1px solid var(--border-accent);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .highlight-card h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .highlight-card p {
+      margin-bottom: 0;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+
+    /* Footer */
+    .legal-footer {
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-sidebar);
+      padding: 3rem 2rem;
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .footer-link {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .footer-link:hover,
+    .footer-link.active {
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body class="legal-body">
+
+  <!-- ============================================================ -->
+  <!-- TOP NAVIGATION HEADER                                         -->
+  <!-- ============================================================ -->
+  <header class="legal-header">
+    <a href="/" class="legal-brand">
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
+          <defs>
+            <linearGradient id="brandLogoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#282838"/>
+              <stop offset="100%" stop-color="#151420"/>
+            </linearGradient>
+            <linearGradient id="barGradWhite" x1="0" y1="28" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#C5C5CD" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+            </linearGradient>
+          </defs>
+          <rect width="32" height="32" rx="8" fill="url(#brandLogoGrad)"/>
+          <rect x="6" y="18" width="4" height="8" rx="1.5" fill="url(#barGradWhite)"/>
+          <rect x="13" y="13" width="4" height="13" rx="1.5" fill="url(#barGradWhite)"/>
+          <rect x="20" y="8" width="4" height="18" rx="1.5" fill="var(--primary)"/>
+          <path d="M 7 15 L 14 10 L 22 5" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="22" cy="5" r="2.2" fill="var(--primary)"/>
+        </svg>
+      </div>
+      <span class="legal-brand-name">AutoAnalyst</span>
+      <span class="legal-brand-tier">Enterprise BI</span>
+    </a>
+
+    <!-- Center Navigation Links -->
+    <nav class="legal-nav" aria-label="Header Navigation">
+      <a href="/" class="legal-nav-link">Platform</a>
+      <a href="/#capabilities" class="legal-nav-link">Capabilities</a>
+      <a href="/#security" class="legal-nav-link">Security</a>
+      <a href="/privacy" class="legal-nav-link active">Privacy Policy</a>
+      <a href="/terms" class="legal-nav-link">Terms & Conditions</a>
+    </nav>
+
+    <!-- Header Actions with SVG Theme Switcher -->
+    <div class="legal-header-actions">
+      <!-- Theme Switcher (Crisp SVG Icons - No Emojis) -->
+      <button class="btn-header-ghost" id="btn-theme-toggle" onclick="toggleLegalTheme()" title="Toggle Light / Dark Mode" aria-label="Toggle Theme" style="padding: 0.45rem 0.65rem; display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px;">
+        <svg id="legal-theme-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg id="legal-theme-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
+      {% if logged_in %}
+        <a href="/studio" class="btn-header-primary">
+          Open Studio
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+      {% else %}
+        <a href="/login" class="btn-header-ghost">Sign In</a>
+        <a href="/studio" class="btn-header-primary">
+          Launch Studio
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- ============================================================ -->
+  <!-- HERO TITLE                                                   -->
+  <!-- ============================================================ -->
+  <section class="legal-hero">
+    <div class="legal-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      Security & Privacy Architecture
+    </div>
+    <h1 class="legal-title">Enterprise Privacy Policy</h1>
+    <p class="legal-subtitle">
+      AutoAnalyst Pro is built with a fundamental security thesis: your proprietary business datasets belong exclusively to you. We employ an in-memory, zero-retention processing architecture that never trains models on client data.
+    </p>
+
+    <div class="legal-meta-strip">
+      <div class="legal-meta-item">Effective Date: <strong>October 27, 2026</strong></div>
+      <div class="legal-meta-item">Version: <strong>2026.4 (Enterprise Edition)</strong></div>
+      <div class="legal-meta-item">Jurisdiction: <strong>GDPR, CCPA & Global ISO/IEC 27001 Aligned</strong></div>
+      <div class="legal-meta-item">DPO Contact: <strong>privacy@autoanalyst.io</strong></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- MAIN LAYOUT                                                  -->
+  <!-- ============================================================ -->
+  <main class="legal-layout">
+    <!-- Sticky Table of Contents -->
+    <aside class="legal-sidebar" aria-label="Table of Contents">
+      <div class="legal-toc-title">Policy Sections</div>
+      <ul class="legal-toc-list">
+        <li><a href="#overview" class="legal-toc-link">1. Architectural Commitment</a></li>
+        <li><a href="#data-collected" class="legal-toc-link">2. Information We Process</a></li>
+        <li><a href="#zero-retention" class="legal-toc-link">3. Zero Data Retention Architecture</a></li>
+        <li><a href="#dax-privacy" class="legal-toc-link">4. DAX & Relational Model Security</a></li>
+        <li><a href="#encryption" class="legal-toc-link">5. Cryptography & Vault Standards</a></li>
+        <li><a href="#infrastructure" class="legal-toc-link">6. Cloud Providers & Isolation</a></li>
+        <li><a href="#gdpr-ccpa" class="legal-toc-link">7. Rights Under GDPR & CCPA</a></li>
+        <li><a href="#cookies" class="legal-toc-link">8. Cookies & Local Session Storage</a></li>
+        <li><a href="#retention-deletion" class="legal-toc-link">9. Retention & Account Erasure</a></li>
+        <li><a href="#contact" class="legal-toc-link">10. DPO & Regulatory Inquiries</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <article class="legal-content">
+
+      <!-- Section 1 -->
+      <section class="legal-section" id="overview">
+        <h2>1. Architectural Commitment</h2>
+        <p>
+          AutoAnalyst Pro ("AutoAnalyst", "we", "us", or "our") provides an autonomous enterprise business intelligence, automated dataset cleansing, relational star-schema synthesis, and DAX query computation platform.
+        </p>
+        <p>
+          This Privacy Policy governs the processing of technical and operational data when users interact with the AutoAnalyst Pro web platform, API endpoints, and analytical workspace studios. Our technical architecture is intentionally engineered around <strong>data minimization</strong> and <strong>transient memory computation</strong>: your analytical data is never commodified, sold, or utilized for foundational machine learning model pre-training.
+        </p>
+      </section>
+
+      <!-- Section 2 -->
+      <section class="legal-section" id="data-collected">
+        <h2>2. Information We Process</h2>
+        <p>We classify data processed within AutoAnalyst Pro into three strict tiers:</p>
+        
+        <h3>2.1 Account & Identity Data</h3>
+        <p>
+          When you register for an AutoAnalyst workspace, we collect your full name, username, enterprise email address, and an encrypted hash of your password (argon2id / bcrypt standard). If you authenticate through single-sign-on (Google OAuth 2.0), we receive your verified email address and public account identifier from your identity provider.
+        </p>
+
+        <h3>2.2 Uploaded Dataset Payloads (Customer Data)</h3>
+        <p>
+          Customer Data includes tabular datasets, CSVs, Excel workbooks (XLSX), Parquet files, SQL schemas, and JSON exports that you upload into the AutoAnalyst cleansing and relational modeling engines.
+        </p>
+
+        <h3>2.3 Technical Telemetry & Operational Metrics</h3>
+        <p>
+          To maintain platform reliability and prevent denial-of-service disruptions, our servers log standard HTTP request metadata, including IP addresses, browser user-agent tokens, endpoint response latency, and system resource utilization. These operational logs are retained solely for diagnostic telemetry and are automatically rotated.
+        </p>
+      </section>
+
+      <!-- Section 3 -->
+      <section class="legal-section" id="zero-retention">
+        <h2>3. Zero Data Retention Architecture</h2>
+        <div class="highlight-card">
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            In-Memory Ephemeral Execution
+          </h4>
+          <p>
+            When you ingest a dataset into AutoAnalyst Pro, processing, automated schema resolution, anomaly detection, and DAX calculations occur strictly in ephemeral volatile memory (RAM).
+          </p>
+        </div>
+        <p>
+          Unlike legacy BI systems that mirror your entire enterprise warehouse into permanent SaaS persistence stores, AutoAnalyst Pro processes customer uploads in isolated worker sandboxes. 
+        </p>
+        <ul>
+          <li><strong>No Permanent Storage of Raw Data:</strong> We do not store raw customer CSV or Excel rows on persistent disks unless you explicitly click "Save to Workspace Vault".</li>
+          <li><strong>Session Eviction:</strong> When your authenticated session terminates, or when you trigger "Clear Workspace Data", all in-memory DataFrames and DAX semantic trees are immediately garbage collected and securely purged from memory.</li>
+          <li><strong>No AI Model Training:</strong> None of your proprietary financial metrics, healthcare records, operational KPIs, or DAX measure formulations are ever transferred to third-party generative AI vendors or utilized to fine-tune external machine learning models.</li>
+        </ul>
+      </section>
+
+      <!-- Section 4 -->
+      <section class="legal-section" id="dax-privacy">
+        <h2>4. DAX & Relational Model Security</h2>
+        <p>
+          The AutoAnalyst Relational Modeler synthesizes Star-Schema designs and calculates DAX expressions (including <code>CALCULATE</code>, <code>DIVIDE</code>, <code>SUMX</code>, and Time Intelligence) completely inside your private process boundary.
+        </p>
+        <p>
+          When you execute the DAX Copilot, only your table schema structure (column names, data types, and high-level cardinality metrics) is examined to recommend measure formulations. No raw row values or customer identifying records are leaked in the synthesis process.
+        </p>
+      </section>
+
+      <!-- Section 5 -->
+      <section class="legal-section" id="encryption">
+        <h2>5. Cryptography & Vault Standards</h2>
+        <p>We apply defense-in-depth cryptographic controls across all platform surfaces:</p>
+        <ul>
+          <li><strong>Data in Transit:</strong> All HTTP traffic is enforced over TLS 1.3 encryption with strict HTTP Strict Transport Security (HSTS) headers. Direct HTTP calls are automatically rejected.</li>
+          <li><strong>Data at Rest:</strong> Account credentials, workspace configurations, and generated executive presentation templates are stored using AES-256 block encryption.</li>
+          <li><strong>Database Isolation:</strong> PostgreSQL data layers are governed by Row-Level Security (RLS) policies ensuring complete multi-tenant tenant isolation; no user or workspace can query records belonging to another tenant identifier.</li>
+          <li><strong>Session Integrity:</strong> Session tokens are signed using cryptographic SHA-256 HMAC tokens with <code>HttpOnly</code>, <code>Secure</code>, and <code>SameSite=Lax</code> security attributes.</li>
+        </ul>
+      </section>
+
+      <!-- Section 6 -->
+      <section class="legal-section" id="infrastructure">
+        <h2>6. Cloud Providers & Sub-processors</h2>
+        <p>
+          AutoAnalyst Pro leverages enterprise cloud infrastructure providers adhering to ISO 27001, SOC 2 Type II, and FedRAMP certification standards:
+        </p>
+        <ul>
+          <li><strong>Render Services, Inc.:</strong> Web application hosting, container orchestration, and server execution environments in high-availability US/EU regions.</li>
+          <li><strong>Supabase Inc. / AWS:</strong> Managed cloud database hosting, managed PostgreSQL storage, and enterprise identity infrastructure.</li>
+          <li><strong>Google Cloud Identity:</strong> OAuth 2.0 delegated authentication provider for single-sign-on verification.</li>
+        </ul>
+      </section>
+
+      <!-- Section 7 -->
+      <section class="legal-section" id="gdpr-ccpa">
+        <h2>7. Rights Under GDPR & CCPA</h2>
+        <p>
+          Under the General Data Protection Regulation (Regulation (EU) 2016/679) and California Consumer Privacy Act (CCPA), you maintain comprehensive privacy prerogatives:
+        </p>
+        <ul>
+          <li><strong>Right to Access:</strong> You may request an exported copy of all account data and workspace metadata associated with your profile.</li>
+          <li><strong>Right to Rectification:</strong> You may correct inaccurate profile details at any time from your account settings.</li>
+          <li><strong>Right to Erasure ("Right to Be Forgotten"):</strong> You may permanently purge your user profile, saved workspaces, and relational metadata with zero retention.</li>
+          <li><strong>Right to Restrict Processing:</strong> You may withdraw consent for optional product telemetry at any time.</li>
+          <li><strong>Non-Discrimination:</strong> We do not discriminate against any user exercising their statutory privacy rights.</li>
+        </ul>
+      </section>
+
+      <!-- Section 8 -->
+      <section class="legal-section" id="cookies">
+        <h2>8. Cookies & Local Session Storage</h2>
+        <p>
+          AutoAnalyst Pro uses minimal cookies and HTML5 local storage strictly necessary for platform functionality:
+        </p>
+        <ul>
+          <li><code>session</code>: Encrypted authentication session cookie required to maintain your login state.</li>
+          <li><code>analytica_theme_pref</code>: Client-side local storage key storing your visual interface preference (<code>dark</code> or <code>light</code>).</li>
+          <li><strong>No Third-Party Ad Trackers:</strong> We do not deploy third-party advertising cookies, cross-site retargeting pixels, or invasive behavioral beacons.</li>
+        </ul>
+      </section>
+
+      <!-- Section 9 -->
+      <section class="legal-section" id="retention-deletion">
+        <h2>9. Retention & Account Erasure</h2>
+        <p>
+          We retain your account profile details only for the duration of your active subscription. If you choose to close your account, your authentication record and all associated workspace configurations are permanently deleted from our live production databases within 48 hours.
+        </p>
+      </section>
+
+      <!-- Section 10 -->
+      <section class="legal-section" id="contact">
+        <h2>10. DPO & Regulatory Inquiries</h2>
+        <p>
+          For questions regarding this Privacy Policy, data subject access requests, or to contact our appointed Data Protection Officer, please reach out to:
+        </p>
+        <div class="highlight-card">
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            AutoAnalyst Office of Data Privacy
+          </h4>
+          <p>
+            Email: <strong>privacy@autoanalyst.io</strong><br>
+            Legal Inquiries: <strong>legal@autoanalyst.io</strong><br>
+            Address: AutoAnalyst Technologies Inc., Enterprise Data Privacy Group, 500 Howard Street, Suite 400, San Francisco, CA 94105.
+          </p>
+        </div>
+      </article>
+    </main>
+
+  <!-- ============================================================ -->
+  <!-- ENTERPRISE FOOTER                                            -->
+  <!-- ============================================================ -->
+  <footer class="legal-footer">
+    <div class="footer-inner">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span class="legal-brand-name" style="font-size: 1.1rem;">AutoAnalyst Pro</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">© 2026 AutoAnalyst Inc. All rights reserved.</span>
+      </div>
+
+      <div class="footer-links">
+        <a href="/" class="footer-link">Platform</a>
+        <a href="/privacy" class="footer-link active">Privacy Policy</a>
+        <a href="/terms" class="footer-link">Terms & Conditions</a>
+        <a href="/#security" class="footer-link">Security Whitepaper</a>
+        <a href="/studio" class="footer-link">Studio</a>
+      </div>
+
+      <div style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--accent-emerald); font-weight: 500;">
+        <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--accent-emerald);"></span>
+        Zero Data Retention Active
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Theme toggle for legal pages (Uses crisp SVG icons, NO emojis)
+    function initLegalTheme() {
+      const saved = localStorage.getItem('analytica_theme_pref') || 'dark';
+      const effective = saved === 'light' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', effective);
+      updateLegalThemeIcon(effective);
+    }
+
+    function toggleLegalTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('analytica_theme_pref', next);
+      updateLegalThemeIcon(next);
+    }
+
+    function updateLegalThemeIcon(theme) {
+      const sun = document.getElementById('legal-theme-sun');
+      const moon = document.getElementById('legal-theme-moon');
+      const btn = document.getElementById('btn-theme-toggle');
+      if (sun && moon) {
+        if (theme === 'dark') {
+          sun.style.display = 'block';
+          moon.style.display = 'none';
+          if (btn) btn.setAttribute('title', 'Switch to Light Mode');
+        } else {
+          sun.style.display = 'none';
+          moon.style.display = 'block';
+          if (btn) btn.setAttribute('title', 'Switch to Dark Mode');
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initLegalTheme);
+  </script>
+</body>
+</html>

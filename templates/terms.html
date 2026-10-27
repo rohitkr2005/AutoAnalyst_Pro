@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms & Conditions - AutoAnalyst Pro</title>
+  <meta name="description" content="AutoAnalyst Pro Enterprise Terms and Conditions of Service. Review customer data ownership, acceptable use policies, and SLA commitments.">
+
+  <!-- Typography: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/css/style.css">
+
+  <style>
+    .legal-body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Fixed Senior Top Header */
+    .legal-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      background: rgba(21, 20, 32, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: all 0.25s ease;
+    }
+
+    [data-theme="light"] .legal-header {
+      background: rgba(249, 249, 251, 0.94);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .legal-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .legal-brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .legal-brand-tier {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--border-accent);
+      margin-left: 0.4rem;
+      text-transform: uppercase;
+    }
+
+    .legal-nav {
+      display: flex;
+      align-items: center;
+      gap: 1.8rem;
+    }
+
+    .legal-nav-link {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.18s ease;
+    }
+
+    .legal-nav-link:hover,
+    .legal-nav-link.active {
+      color: var(--primary);
+    }
+
+    .legal-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-header-ghost {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      background: transparent;
+      border: 1px solid var(--border-card);
+      border-radius: 6px;
+      padding: 0.5rem 1.1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-header-ghost:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-focus);
+    }
+
+    .btn-header-primary {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--primary-contrast);
+      background: var(--primary);
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 0.55rem 1.25rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-header-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Hero Container */
+    .legal-hero {
+      padding: 130px 2rem 40px 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .legal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      background: var(--primary-light);
+      border: 1px solid var(--border-accent);
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.25rem;
+    }
+
+    .legal-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .legal-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 780px;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .legal-meta-strip {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      padding: 1rem 1.5rem;
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .legal-meta-item strong {
+      color: var(--text-primary);
+    }
+
+    /* Content Layout */
+    .legal-layout {
+      max-width: 1200px;
+      margin: 0 auto 5rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 3rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    @media (max-width: 900px) {
+      .legal-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .legal-sidebar {
+        display: none;
+      }
+      .legal-header {
+        padding: 0 1.25rem;
+      }
+      .legal-nav {
+        display: none;
+      }
+    }
+
+    /* Sticky Sidebar Navigation */
+    .legal-sidebar {
+      position: sticky;
+      top: 100px;
+      height: fit-content;
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .legal-toc-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .legal-toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .legal-toc-link {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: block;
+      padding: 0.35rem 0.6rem;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+      line-height: 1.4;
+    }
+
+    .legal-toc-link:hover {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    /* Main Article Content */
+    .legal-content {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 2.75rem;
+      line-height: 1.7;
+    }
+
+    .legal-section {
+      margin-bottom: 2.75rem;
+      scroll-margin-top: 100px;
+    }
+
+    .legal-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .legal-section h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .legal-section h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 1.5rem 0 0.6rem 0;
+    }
+
+    .legal-section p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .legal-section ul {
+      margin: 0 0 1.25rem 1.5rem;
+      padding: 0;
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+    }
+
+    .legal-section li {
+      margin-bottom: 0.5rem;
+    }
+
+    .highlight-card {
+      background: var(--primary-light);
+      border: 1px solid var(--border-accent);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .highlight-card h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .highlight-card p {
+      margin-bottom: 0;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+
+    /* Footer */
+    .legal-footer {
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-sidebar);
+      padding: 3rem 2rem;
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .footer-link {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .footer-link:hover,
+    .footer-link.active {
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body class="legal-body">
+
+  <!-- ============================================================ -->
+  <!-- TOP NAVIGATION HEADER                                         -->
+  <!-- ============================================================ -->
+  <header class="legal-header">
+    <a href="/" class="legal-brand">
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
+          <defs>
+            <linearGradient id="brandLogoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#282838"/>
+              <stop offset="100%" stop-color="#151420"/>
+            </linearGradient>
+            <linearGradient id="barGradWhite" x1="0" y1="28" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#C5C5CD" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+            </linearGradient>
+          </defs>
+          <rect width="32" height="32" rx="8" fill="url(#brandLogoGrad)"/>
+          <rect x="6" y="18" width="4" height="8" rx="1.5" fill="url(#barGradWhite)"/>
+          <rect x="13" y="13" width="4" height="13" rx="1.5" fill="url(#barGradWhite)"/>
+          <rect x="20" y="8" width="4" height="18" rx="1.5" fill="var(--primary)"/>
+          <path d="M 7 15 L 14 10 L 22 5" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="22" cy="5" r="2.2" fill="var(--primary)"/>
+        </svg>
+      </div>
+      <span class="legal-brand-name">AutoAnalyst</span>
+      <span class="legal-brand-tier">Enterprise BI</span>
+    </a>
+
+    <!-- Center Navigation Links -->
+    <nav class="legal-nav" aria-label="Header Navigation">
+      <a href="/" class="legal-nav-link">Platform</a>
+      <a href="/#capabilities" class="legal-nav-link">Capabilities</a>
+      <a href="/#security" class="legal-nav-link">Security</a>
+      <a href="/privacy" class="legal-nav-link">Privacy Policy</a>
+      <a href="/terms" class="legal-nav-link active">Terms & Conditions</a>
+    </nav>
+
+    <!-- Header Actions with SVG Theme Switcher -->
+    <div class="legal-header-actions">
+      <!-- Theme Switcher (Crisp SVG Icons - No Emojis) -->
+      <button class="btn-header-ghost" id="btn-theme-toggle" onclick="toggleLegalTheme()" title="Toggle Light / Dark Mode" aria-label="Toggle Theme" style="padding: 0.45rem 0.65rem; display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px;">
+        <svg id="legal-theme-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg id="legal-theme-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
+      {% if logged_in %}
+        <a href="/studio" class="btn-header-primary">
+          Open Studio
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+      {% else %}
+        <a href="/login" class="btn-header-ghost">Sign In</a>
+        <a href="/studio" class="btn-header-primary">
+          Launch Studio
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- ============================================================ -->
+  <!-- HERO TITLE                                                   -->
+  <!-- ============================================================ -->
+  <section class="legal-hero">
+    <div class="legal-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      Master Subscription & Terms of Service
+    </div>
+    <h1 class="legal-title">Terms & Conditions of Service</h1>
+    <p class="legal-subtitle">
+      These Terms govern access to and usage of the AutoAnalyst Pro autonomous data science studio, relational data modeler, DAX calculation engine, and executive reporting suite.
+    </p>
+
+    <div class="legal-meta-strip">
+      <div class="legal-meta-item">Effective Date: <strong>October 27, 2026</strong></div>
+      <div class="legal-meta-item">Version: <strong>2026.4 (Enterprise Edition)</strong></div>
+      <div class="legal-meta-item">IP Ownership: <strong>100% Customer Owned</strong></div>
+      <div class="legal-meta-item">Legal Inquiries: <strong>legal@autoanalyst.io</strong></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- MAIN LAYOUT                                                  -->
+  <!-- ============================================================ -->
+  <main class="legal-layout">
+    <!-- Sticky Table of Contents -->
+    <aside class="legal-sidebar" aria-label="Table of Contents">
+      <div class="legal-toc-title">Agreement Sections</div>
+      <ul class="legal-toc-list">
+        <li><a href="#acceptance" class="legal-toc-link">1. Acceptance of Terms</a></li>
+        <li><a href="#ownership" class="legal-toc-link">2. Customer Data Ownership</a></li>
+        <li><a href="#acceptable-use" class="legal-toc-link">3. Acceptable Use Policy</a></li>
+        <li><a href="#slas-availability" class="legal-toc-link">4. Availability & SLA Commitments</a></li>
+        <li><a href="#algorithmic-outputs" class="legal-toc-link">5. Cleansing & DAX Engine Outputs</a></li>
+        <li><a href="#billing-plans" class="legal-toc-link">6. Subscription & Billing Terms</a></li>
+        <li><a href="#confidentiality" class="legal-toc-link">7. Mutual Confidentiality</a></li>
+        <li><a href="#liability" class="legal-toc-link">8. Limitation of Liability</a></li>
+        <li><a href="#termination" class="legal-toc-link">9. Suspension & Termination</a></li>
+        <li><a href="#governing-law" class="legal-toc-link">10. Governing Law & Dispute Forum</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <article class="legal-content">
+
+      <!-- Section 1 -->
+      <section class="legal-section" id="acceptance">
+        <h2>1. Acceptance of Terms</h2>
+        <p>
+          By creating an account, accessing, or using AutoAnalyst Pro (the "Service"), whether via our web interface, API, or automated pipelines, you ("Customer", "User", or "Organization") agree to be legally bound by these Terms & Conditions ("Terms"), together with our <a href="/privacy" style="color: var(--primary); text-decoration: underline;">Privacy Policy</a>.
+        </p>
+        <p>
+          If you are accepting on behalf of an enterprise entity, you warrant that you possess full corporate authority to bind that entity to these Terms. If you do not agree to these Terms in full, you must discontinue access to the Service immediately.
+        </p>
+      </section>
+
+      <!-- Section 2 -->
+      <section class="legal-section" id="ownership">
+        <h2>2. Customer Data Ownership & Intellectual Property</h2>
+        <div class="highlight-card">
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Complete Intellectual Property Sovereignty
+          </h4>
+          <p>
+            You retain 100% full, exclusive ownership of all uploaded datasets, schema definitions, relational star-models, synthesized DAX measures, and generated executive presentations. AutoAnalyst claims zero copyright or proprietary interest in your analytical content.
+          </p>
+        </div>
+        <p>
+          AutoAnalyst Pro grants you a revocable, non-exclusive, non-transferable worldwide license to utilize our software interface, calculation engine, and automated presentation builders during the term of your active subscription.
+        </p>
+        <p>
+          You grant AutoAnalyst solely the transient technical right to parse, compute, and render your data in memory for the sole purpose of delivering the requested analyses to your authenticated browser session.
+        </p>
+      </section>
+
+      <!-- Section 3 -->
+      <section class="legal-section" id="acceptable-use">
+        <h2>3. Acceptable Use Policy & Platform Guardrails</h2>
+        <p>You agree to use AutoAnalyst Pro in compliance with applicable laws and industry standards. You shall not:</p>
+        <ul>
+          <li>Ingest malicious executables, trojans, ransomware, or payloads designed to breach server sandboxes.</li>
+          <li>Perform unauthorized penetration testing, vulnerability scanning, or distributed denial-of-service (DDoS) simulations without prior written consent from AutoAnalyst Security.</li>
+          <li>Reverse engineer, decompile, or extract the proprietary core source code of the DAX syntax compiler or autonomous schema resolution heuristic engine.</li>
+          <li>Resell, white-label, or syndicate the raw computation endpoints without an active Enterprise OEM agreement.</li>
+          <li>Bypass rate limits, per-file ingestion size limits (512 MB per workbook), or automated compute worker quotas.</li>
+        </ul>
+      </section>
+
+      <!-- Section 4 -->
+      <section class="legal-section" id="slas-availability">
+        <h2>4. Availability & Service Level Agreements (SLAs)</h2>
+        <p>
+          We architect AutoAnalyst Pro for high-availability enterprise workloads, targeting a 99.9% monthly service uptime. Scheduled platform maintenance windows are conducted during off-peak hours and communicated via in-app status banners at least 48 hours in advance.
+        </p>
+        <p>
+          Enterprise Tier subscriptions include dedicated support response times (&lt; 2 hours for critical incidents) and priority execution worker allocation for large-scale multi-table modeling jobs.
+        </p>
+      </section>
+
+      <!-- Section 5 -->
+      <section class="legal-section" id="algorithmic-outputs">
+        <h2>5. Cleansing & DAX Engine Outputs</h2>
+        <p>
+          AutoAnalyst Pro features advanced statistical algorithms for missing value imputation, z-score anomaly detection, relational foreign key deduction, and DAX expression compilation.
+        </p>
+        <p>
+          While our engines achieve verified high accuracy (&gt; 99.8% on standardized benchmarks), you acknowledge that algorithmic recommendations, automated data cleansings, and executive presentation summaries are assistive tools designed for skilled analysts. The Customer maintains final operational discretion and audit responsibility for all business decisions made utilizing synthesized metrics.
+        </p>
+      </section>
+
+      <!-- Section 6 -->
+      <section class="legal-section" id="billing-plans">
+        <h2>6. Subscription & Billing Terms</h2>
+        <p>
+          Access to AutoAnalyst Pro features is tiered into Community, Professional, and Enterprise packages. Paid subscriptions are billed in advance on a recurring monthly or annual schedule.
+        </p>
+        <ul>
+          <li><strong>Payment Processing:</strong> Transactions are processed via secure PCI-DSS Level 1 compliant payment gateways. AutoAnalyst does not store raw credit card numbers.</li>
+          <li><strong>Cancellations:</strong> You may cancel your subscription at any time through your account portal. Upon cancellation, your access remains active until the end of your prepaid billing period.</li>
+          <li><strong>Refund Policy:</strong> We offer a 14-day money-back guarantee for initial subscriptions if the platform fails to meet your technical requirements.</li>
+        </ul>
+      </section>
+
+      <!-- Section 7 -->
+      <section class="legal-section" id="confidentiality">
+        <h2>7. Mutual Confidentiality</h2>
+        <p>
+          "Confidential Information" encompasses all proprietary data, business records, financial figures, customer names, and technical architecture disclosed by either party during the term of service.
+        </p>
+        <p>
+          Each party agrees to safeguard the other's Confidential Information with the same degree of care it exercises for its own confidential assets (and in no event less than reasonable care). AutoAnalyst shall never disclose Customer Data to any third party except as strictly necessary to fulfill the service (e.g. underlying SOC 2 cloud infrastructure providers) or as compelled by valid court subpoena.
+        </p>
+      </section>
+
+      <!-- Section 8 -->
+      <section class="legal-section" id="liability">
+        <h2>8. Limitation of Liability</h2>
+        <p>
+          To the maximum extent permitted by applicable law, neither party shall be liable for indirect, incidental, punitive, special, or consequential damages, including loss of profits, goodwill, data corruption, or business interruption.
+        </p>
+        <p>
+          AutoAnalyst Pro's total cumulative liability under these Terms, whether in contract, tort, or warranty, shall not exceed the aggregate amount paid by the Customer to AutoAnalyst during the twelve (12) month period immediately preceding the event giving rise to liability.
+        </p>
+      </section>
+
+      <!-- Section 9 -->
+      <section class="legal-section" id="termination">
+        <h2>9. Suspension & Termination</h2>
+        <p>
+          Either party may terminate these Terms for convenience with thirty (30) days written notice, or immediately for material breach if the breaching party fails to cure within fifteen (15) days of notice.
+        </p>
+        <p>
+          Upon termination or account closure, all customer session tokens are revoked, and all stored workspace definitions and metadata are irreversibly expunged from live production databases in compliance with our zero-retention policy.
+        </p>
+      </section>
+
+      <!-- Section 10 -->
+      <section class="legal-section" id="governing-law">
+        <h2>10. Governing Law & Dispute Forum</h2>
+        <p>
+          These Terms and any dispute arising from or related to the Service shall be governed by and construed in accordance with the laws of the State of California, United States, without giving effect to conflicts of law principles.
+        </p>
+        <p>
+          Any dispute, controversy, or claim arising out of or relating to these Terms shall be settled by binding arbitration administered by JAMS in San Francisco, California, conducted in the English language before a single arbitrator.
+        </p>
+        <div class="highlight-card">
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            Contact for Legal Notices
+          </h4>
+          <p>
+            Official legal notices should be dispatched to:<br>
+            <strong>AutoAnalyst Technologies Inc. - Enterprise Legal Counsel</strong><br>
+            500 Howard Street, Suite 400, San Francisco, CA 94105<br>
+            Email: <strong>legal@autoanalyst.io</strong>
+          </p>
+        </div>
+      </section>
+    </article>
+  </main>
+
+  <!-- ============================================================ -->
+  <!-- ENTERPRISE FOOTER                                            -->
+  <!-- ============================================================ -->
+  <footer class="legal-footer">
+    <div class="footer-inner">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span class="legal-brand-name" style="font-size: 1.1rem;">AutoAnalyst Pro</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">© 2026 AutoAnalyst Inc. All rights reserved.</span>
+      </div>
+
+      <div class="footer-links">
+        <a href="/" class="footer-link">Platform</a>
+        <a href="/privacy" class="footer-link">Privacy Policy</a>
+        <a href="/terms" class="footer-link active">Terms & Conditions</a>
+        <a href="/#security" class="footer-link">Security Whitepaper</a>
+        <a href="/studio" class="footer-link">Studio</a>
+      </div>
+
+      <div style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--accent-emerald); font-weight: 500;">
+        <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--accent-emerald);"></span>
+        Enterprise Terms Active
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Theme toggle for legal pages (Uses crisp SVG icons, NO emojis)
+    function initLegalTheme() {
+      const saved = localStorage.getItem('analytica_theme_pref') || 'dark';
+      const effective = saved === 'light' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', effective);
+      updateLegalThemeIcon(effective);
+    }
+
+    function toggleLegalTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('analytica_theme_pref', next);
+      updateLegalThemeIcon(next);
+    }
+
+    function updateLegalThemeIcon(theme) {
+      const sun = document.getElementById('legal-theme-sun');
+      const moon = document.getElementById('legal-theme-moon');
+      const btn = document.getElementById('btn-theme-toggle');
+      if (sun && moon) {
+        if (theme === 'dark') {
+          sun.style.display = 'block';
+          moon.style.display = 'none';
+          if (btn) btn.setAttribute('title', 'Switch to Light Mode');
+        } else {
+          sun.style.display = 'none';
+          moon.style.display = 'block';
+          if (btn) btn.setAttribute('title', 'Switch to Dark Mode');
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initLegalTheme);
+  </script>
+</body>
+</html>

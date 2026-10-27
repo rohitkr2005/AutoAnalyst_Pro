@@ -56,20 +56,20 @@
             <svg class="brand-logo-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="brandLogoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#33303F"/>
-                  <stop offset="100%" stop-color="#2A222B"/>
+                  <stop offset="0%" stop-color="#282838"/>
+                  <stop offset="100%" stop-color="#151420"/>
                 </linearGradient>
                 <linearGradient id="barGradWhite" x1="0" y1="28" x2="0" y2="0" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#DBCBBC" stop-opacity="0.45"/>
-                  <stop offset="100%" stop-color="#F6F1EC" stop-opacity="0.95"/>
+                  <stop offset="0%" stop-color="#C5C5CD" stop-opacity="0.45"/>
+                  <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
                 </linearGradient>
               </defs>
               <rect width="32" height="32" rx="8" fill="url(#brandLogoGrad)"/>
               <rect x="6" y="18" width="4" height="8" rx="1.5" fill="url(#barGradWhite)"/>
               <rect x="13" y="13" width="4" height="13" rx="1.5" fill="url(#barGradWhite)"/>
-              <rect x="20" y="8" width="4" height="18" rx="1.5" fill="#D3BDA8"/>
-              <path d="M 7 15 L 14 10 L 22 5" stroke="#D3BDA8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="22" cy="5" r="2.2" fill="#D3BDA8"/>
+              <rect x="20" y="8" width="4" height="18" rx="1.5" fill="var(--primary)"/>
+              <path d="M 7 15 L 14 10 L 22 5" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="22" cy="5" r="2.2" fill="var(--primary)"/>
             </svg>
           </div>
           <div class="brand-details">
@@ -909,7 +909,7 @@
                 <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
                 Auto-Detect Schema Links
               </button>
-              <button class="btn-primary" id="btn-auto-synthesize-model" onclick="runAutonomousAutoModel()" style="background: linear-gradient(135deg, #D3BDA8 0%, #C4AB94 100%); color: #2A222B; font-weight: 600; border: none; display: flex; align-items: center; gap: 6px; font-size: 0.84rem; padding: 0.55rem 1.1rem; box-shadow: 0 4px 14px var(--primary-glow);">
+              <button class="btn-primary" id="btn-auto-synthesize-model" onclick="runAutonomousAutoModel()" style="background: var(--primary); color: var(--primary-contrast); font-weight: 600; border: none; display: flex; align-items: center; gap: 6px; font-size: 0.84rem; padding: 0.55rem 1.1rem; box-shadow: 0 4px 14px var(--primary-glow);">
                 <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
                 ⚡ Auto-Model & Synthesize Live Dashboard
               </button>
@@ -994,7 +994,7 @@
                   <span id="model-upload-progress-pct" style="color: var(--primary); font-weight: 700;">0%</span>
                 </div>
                 <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
-                  <div id="model-upload-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #D3BDA8, #C4AB94); transition: width 0.2s ease;"></div>
+                  <div id="model-upload-progress-bar" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.2s ease;"></div>
                 </div>
               </div>
 
@@ -1121,7 +1121,7 @@
                 <input type="text" id="dax-copilot-input" class="search-field" style="flex: 1; font-size: 0.88rem; padding: 0.6rem 0.9rem;"
                   placeholder='Ask AnalystIQ: e.g. "total sales by region", "profit margin by category", or "top 5 orders by revenue"'
                   onkeydown="if(event.key === 'Enter') executeDaxCopilot()">
-                <button type="button" class="btn-primary" id="btn-run-dax-copilot" onclick="executeDaxCopilot()" style="padding: 0.6rem 1.25rem; font-size: 0.84rem; display: flex; align-items: center; gap: 6px; white-space: nowrap; background: linear-gradient(135deg, #D3BDA8, #C4AB94); color: #2A222B; font-weight: 600;">
+                <button type="button" class="btn-primary" id="btn-run-dax-copilot" onclick="executeDaxCopilot()" style="padding: 0.6rem 1.25rem; font-size: 0.84rem; display: flex; align-items: center; gap: 6px; white-space: nowrap; background: var(--primary); color: var(--primary-contrast); font-weight: 600;">
                   <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                   <span>Ask AnalystIQ</span>
                 </button>
@@ -1950,8 +1950,8 @@
             <span style="color: var(--primary);">2.</span> Visual Color Theme
           </h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.6rem;" id="custom-dash-theme-selector">
-            <label class="custom-dash-theme-card active" style="display: flex; align-items: center; gap: 8px; padding: 0.6rem 0.8rem; background: rgba(42, 34, 43, 0.8); border: 2px solid #D3BDA8; border-radius: 8px; cursor: pointer;">
-              <input type="radio" name="custom-dash-theme" value="dark" checked style="accent-color: #D3BDA8;">
+            <label class="custom-dash-theme-card active" style="display: flex; align-items: center; gap: 8px; padding: 0.6rem 0.8rem; background: var(--bg-card-solid); border: 2px solid var(--primary); border-radius: 8px; cursor: pointer;">
+              <input type="radio" name="custom-dash-theme" value="dark" checked style="accent-color: var(--primary);">
               <span style="font-size: 0.8rem; color: #fff; font-weight: 500;">🍷 Aubergine Noir</span>
             </label>
             <label class="custom-dash-theme-card" style="display: flex; align-items: center; gap: 8px; padding: 0.6rem 0.8rem; background: rgba(247, 244, 239, 0.15); border: 1px solid rgba(119,124,122,0.3); border-radius: 8px; cursor: pointer;">
@@ -1982,31 +1982,31 @@
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.6rem;">
             <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #cbd5e1; cursor: pointer; background: rgba(255,255,255,0.03); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
-              <input type="checkbox" id="comp-kpis" checked style="accent-color: #D3BDA8;">
+              <input type="checkbox" id="comp-kpis" checked style="accent-color: var(--primary);">
               <span>Executive KPI Scorecard Tiles</span>
             </label>
             <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #cbd5e1; cursor: pointer; background: rgba(255,255,255,0.03); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
-              <input type="checkbox" id="comp-trend" checked style="accent-color: #D3BDA8;">
+              <input type="checkbox" id="comp-trend" checked style="accent-color: var(--primary);">
               <span>Primary Time Trend / Forecast Chart</span>
             </label>
             <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #cbd5e1; cursor: pointer; background: rgba(255,255,255,0.03); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
-              <input type="checkbox" id="comp-breakdown" checked style="accent-color: #D3BDA8;">
+              <input type="checkbox" id="comp-breakdown" checked style="accent-color: var(--primary);">
               <span>Category Breakdown Distribution</span>
             </label>
             <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #cbd5e1; cursor: pointer; background: rgba(255,255,255,0.03); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
-              <input type="checkbox" id="comp-anomalies" checked style="accent-color: #D3BDA8;">
+              <input type="checkbox" id="comp-anomalies" checked style="accent-color: var(--primary);">
               <span>Outliers & Anomaly Inspection</span>
             </label>
             <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #cbd5e1; cursor: pointer; background: rgba(255,255,255,0.03); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
-              <input type="checkbox" id="comp-drivers" checked style="accent-color: #D3BDA8;">
+              <input type="checkbox" id="comp-drivers" checked style="accent-color: var(--primary);">
               <span>Algorithmic Key Drivers & Impact</span>
             </label>
             <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #cbd5e1; cursor: pointer; background: rgba(255,255,255,0.03); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
-              <input type="checkbox" id="comp-table" checked style="accent-color: #D3BDA8;">
+              <input type="checkbox" id="comp-table" checked style="accent-color: var(--primary);">
               <span>Cleaned Data Records Preview Table</span>
             </label>
-            <label id="comp-schema-wrap" style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--primary); cursor: pointer; background: rgba(211, 189, 168, 0.10); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid rgba(211, 189, 168, 0.30);">
-              <input type="checkbox" id="comp-schema" checked style="accent-color: #D3BDA8;">
+            <label id="comp-schema-wrap" style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--primary); cursor: pointer; background: var(--primary-light); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--border-accent);">
+              <input type="checkbox" id="comp-schema" checked style="accent-color: var(--primary);">
               <span>🔗 Relational Multi-Table Schema Graph</span>
             </label>
           </div>
@@ -2018,30 +2018,30 @@
             <span style="color: var(--primary);">4.</span> Target Export Format
           </h4>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.6rem;">
-            <label style="display: flex; flex-direction: column; gap: 4px; padding: 0.75rem; background: rgba(211, 189, 168, 0.12); border: 1px solid #D3BDA8; border-radius: 8px; cursor: pointer;">
+            <label style="display: flex; flex-direction: column; gap: 4px; padding: 0.75rem; background: var(--primary-light); border: 1px solid var(--primary); border-radius: 8px; cursor: pointer;">
               <div style="display: flex; align-items: center; gap: 6px;">
-                <input type="radio" name="custom-dash-format" value="html" checked style="accent-color: #D3BDA8;">
+                <input type="radio" name="custom-dash-format" value="html" checked style="accent-color: var(--primary);">
                 <span style="font-weight: 600; font-size: 0.82rem; color: #fff;">🌐 Standalone HTML</span>
               </div>
               <span style="font-size: 0.7rem; color: #94a3b8;">Interactive offline file with Chart.js</span>
             </label>
             <label style="display: flex; flex-direction: column; gap: 4px; padding: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer;">
               <div style="display: flex; align-items: center; gap: 6px;">
-                <input type="radio" name="custom-dash-format" value="pptx" style="accent-color: #D3BDA8;">
+                <input type="radio" name="custom-dash-format" value="pptx" style="accent-color: var(--primary);">
                 <span style="font-weight: 600; font-size: 0.82rem; color: #fff;">📊 Slides (.PPTX)</span>
               </div>
               <span style="font-size: 0.7rem; color: #94a3b8;">Executive widescreen presentation</span>
             </label>
             <label style="display: flex; flex-direction: column; gap: 4px; padding: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer;">
               <div style="display: flex; align-items: center; gap: 6px;">
-                <input type="radio" name="custom-dash-format" value="print" style="accent-color: #D3BDA8;">
+                <input type="radio" name="custom-dash-format" value="print" style="accent-color: var(--primary);">
                 <span style="font-weight: 600; font-size: 0.82rem; color: #fff;">🖨️ Print / PDF</span>
               </div>
               <span style="font-size: 0.7rem; color: #94a3b8;">Custom executive summary print</span>
             </label>
             <label style="display: flex; flex-direction: column; gap: 4px; padding: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer;">
               <div style="display: flex; align-items: center; gap: 6px;">
-                <input type="radio" name="custom-dash-format" value="json" style="accent-color: #D3BDA8;">
+                <input type="radio" name="custom-dash-format" value="json" style="accent-color: var(--primary);">
                 <span style="font-weight: 600; font-size: 0.82rem; color: #fff;">📑 Data (.JSON)</span>
               </div>
               <span style="font-size: 0.7rem; color: #94a3b8;">Full metric configuration bundle</span>
