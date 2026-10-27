@@ -11,6 +11,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="alternate icon" href="/favicon.ico">
+
   <link rel="stylesheet" href="/static/css/style.css">
 
   <style>
@@ -79,28 +83,57 @@
       border: 1px solid var(--border-accent);
       margin-left: 0.4rem;
       text-transform: uppercase;
+      transition: all 0.2s ease;
+    }
+
+    [data-theme="light"] .home-brand-tier {
+      background: #F4F3F6;
+      color: #282838;
+      border: 1px solid #DFDFE4;
     }
 
     /* Center Header Navigation */
     .home-nav {
       display: flex;
       align-items: center;
-      gap: 1.8rem;
-    }
-
-    .home-nav-link {
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      text-decoration: none;
-      transition: color 0.18s ease;
-      display: inline-flex;
-      align-items: center;
       gap: 0.35rem;
     }
 
+    .home-nav-link {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 0.45rem 0.8rem;
+      border-radius: 6px;
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+
     .home-nav-link:hover {
+      color: var(--text-primary);
+      background: var(--subtab-hover);
+    }
+
+    .home-nav-link.active {
       color: var(--primary);
+      font-weight: 600;
+      background: var(--primary-light);
+    }
+
+    .home-nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0.75rem;
+      right: 0.75rem;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+      box-shadow: 0 0 6px var(--primary-glow);
     }
 
     /* Header Actions */
@@ -790,22 +823,14 @@
     <a href="/" class="home-brand">
       <div class="home-brand-logo">
         <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
-          <defs>
-            <linearGradient id="brandLogoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#282838"/>
-              <stop offset="100%" stop-color="#151420"/>
-            </linearGradient>
-            <linearGradient id="barGradWhite" x1="0" y1="28" x2="0" y2="0" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#C5C5CD" stop-opacity="0.45"/>
-              <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-            </linearGradient>
-          </defs>
-          <rect width="32" height="32" rx="8" fill="url(#brandLogoGrad)"/>
-          <rect x="6" y="18" width="4" height="8" rx="1.5" fill="url(#barGradWhite)"/>
-          <rect x="13" y="13" width="4" height="13" rx="1.5" fill="url(#barGradWhite)"/>
-          <rect x="20" y="8" width="4" height="18" rx="1.5" fill="var(--primary)"/>
-          <path d="M 7 15 L 14 10 L 22 5" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="22" cy="5" r="2.2" fill="var(--primary)"/>
+          <rect width="32" height="32" rx="8" fill="#151420" stroke="rgba(255, 255, 255, 0.18)" stroke-width="1"/>
+          <!-- Ascending Bar Chart Columns (High Contrast in both Light & Dark modes) -->
+          <rect x="6" y="18" width="4" height="8" rx="1.5" fill="#898897"/>
+          <rect x="13" y="13" width="4" height="13" rx="1.5" fill="#DFDFE4"/>
+          <rect x="20" y="8" width="4" height="18" rx="1.5" fill="#FFFFFF"/>
+          <!-- Upward Performance Trend Line & Peak Marker -->
+          <path d="M 7 15 L 14 10 L 22 5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="22" cy="5" r="2.2" fill="#FFFFFF"/>
         </svg>
       </div>
       <span class="home-brand-name">AutoAnalyst</span>
@@ -814,13 +839,13 @@
 
     <!-- Center Navigation Links -->
     <nav class="home-nav" aria-label="Home Navigation">
-      <a href="#platform" class="home-nav-link">Platform</a>
-      <a href="#capabilities" class="home-nav-link">Capabilities</a>
-      <a href="#datasets" class="home-nav-link">Live Datasets</a>
-      <a href="#security" class="home-nav-link">Architecture & Security</a>
-      <a href="#docs" class="home-nav-link">Documentation</a>
-      <a href="/privacy" class="home-nav-link">Privacy</a>
-      <a href="/terms" class="home-nav-link">Terms</a>
+      <a href="#platform" class="home-nav-link active" data-section="platform">Platform</a>
+      <a href="#capabilities" class="home-nav-link" data-section="capabilities">Capabilities</a>
+      <a href="#datasets" class="home-nav-link" data-section="datasets">Live Datasets</a>
+      <a href="#security" class="home-nav-link" data-section="security">Architecture & Security</a>
+      <a href="#docs" class="home-nav-link" data-section="docs">Documentation</a>
+      <a href="/privacy" class="home-nav-link">Privacy Policy</a>
+      <a href="/terms" class="home-nav-link">Terms & Conditions</a>
     </nav>
 
     <!-- Right Header Actions -->
@@ -1292,7 +1317,52 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', initHomeTheme);
+    // ScrollSpy for Active Section Navigation in Header
+    function initScrollSpy() {
+      const navLinks = document.querySelectorAll('.home-nav-link[data-section]');
+      const sections = [];
+      
+      navLinks.forEach(link => {
+        const id = link.getAttribute('data-section');
+        const el = document.getElementById(id);
+        if (el) sections.push({ id, el, link });
+      });
+
+      function updateActiveNav() {
+        const scrollY = window.scrollY + 140;
+        let currentId = sections.length > 0 ? sections[0].id : null;
+
+        for (let i = 0; i < sections.length; i++) {
+          const s = sections[i];
+          const top = s.el.offsetTop;
+          const height = s.el.offsetHeight;
+          if (scrollY >= top && scrollY < top + height) {
+            currentId = s.id;
+            break;
+          } else if (scrollY >= top) {
+            currentId = s.id;
+          }
+        }
+
+        navLinks.forEach(link => {
+          if (link.getAttribute('data-section') === currentId) {
+            link.classList.add('active');
+            link.setAttribute('aria-current', 'true');
+          } else {
+            link.classList.remove('active');
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+
+      window.addEventListener('scroll', updateActiveNav, { passive: true });
+      updateActiveNav();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initHomeTheme();
+      initScrollSpy();
+    });
   </script>
 </body>
 </html>

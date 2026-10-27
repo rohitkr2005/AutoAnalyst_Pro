@@ -20,7 +20,7 @@ load_dotenv()
 
 import numpy as np
 import pandas as pd
-from flask import Flask, render_template, render_template_string, request, jsonify, send_file, Response, session, redirect, url_for
+from flask import Flask, render_template, render_template_string, request, jsonify, send_file, send_from_directory, Response, session, redirect, url_for
 
 from engine.auth import (
     init_auth_db, register_user, authenticate_user, get_user_by_id, 
@@ -718,8 +718,28 @@ def api_forgot_password_reset():
 
 
 # ==========================================
-# DASHBOARD & PIPELINE ROUTES
+# DASHBOARD, LEGAL & STATIC ROUTES
 # ==========================================
+
+@app.route("/favicon.ico")
+def favicon_ico():
+    """Serves crisp multi-resolution favicon.ico directly for browsers and web crawlers."""
+    return send_from_directory(
+        os.path.join(app.root_path, "static"),
+        "favicon.ico",
+        mimetype="image/vnd.microsoft.icon"
+    )
+
+
+@app.route("/favicon.svg")
+def favicon_svg():
+    """Serves modern crisp vector SVG favicon."""
+    return send_from_directory(
+        os.path.join(app.root_path, "static"),
+        "favicon.svg",
+        mimetype="image/svg+xml"
+    )
+
 
 @app.route("/")
 def home():

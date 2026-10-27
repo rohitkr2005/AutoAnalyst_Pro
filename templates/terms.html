@@ -11,6 +11,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="alternate icon" href="/favicon.ico">
+
   <link rel="stylesheet" href="/static/css/style.css">
 
   <style>
@@ -25,7 +29,7 @@
     }
 
     /* Fixed Senior Top Header */
-    .legal-header {
+    .home-header {
       position: fixed;
       top: 0;
       left: 0;
@@ -43,12 +47,12 @@
       transition: all 0.25s ease;
     }
 
-    [data-theme="light"] .legal-header {
+    [data-theme="light"] .home-header {
       background: rgba(249, 249, 251, 0.94);
       border-bottom: 1px solid var(--border-subtle);
     }
 
-    .legal-brand {
+    .home-brand {
       display: flex;
       align-items: center;
       gap: 0.85rem;
@@ -56,7 +60,13 @@
       color: var(--text-primary);
     }
 
-    .legal-brand-name {
+    .home-brand-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .home-brand-name {
       font-family: 'Outfit', sans-serif;
       font-size: 1.35rem;
       font-weight: 700;
@@ -64,7 +74,7 @@
       color: var(--text-primary);
     }
 
-    .legal-brand-tier {
+    .home-brand-tier {
       font-size: 0.62rem;
       font-weight: 700;
       letter-spacing: 0.08em;
@@ -75,28 +85,60 @@
       border: 1px solid var(--border-accent);
       margin-left: 0.4rem;
       text-transform: uppercase;
+      transition: all 0.2s ease;
     }
 
-    .legal-nav {
+    [data-theme="light"] .home-brand-tier {
+      background: #F4F3F6;
+      color: #282838;
+      border: 1px solid #DFDFE4;
+    }
+
+    /* Center Header Navigation */
+    .home-nav {
       display: flex;
       align-items: center;
-      gap: 1.8rem;
+      gap: 0.35rem;
     }
 
-    .legal-nav-link {
-      font-size: 0.9rem;
+    .home-nav-link {
+      font-size: 0.88rem;
       font-weight: 500;
       color: var(--text-secondary);
       text-decoration: none;
-      transition: color 0.18s ease;
+      padding: 0.45rem 0.8rem;
+      border-radius: 6px;
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
     }
 
-    .legal-nav-link:hover,
-    .legal-nav-link.active {
+    .home-nav-link:hover {
+      color: var(--text-primary);
+      background: var(--subtab-hover);
+    }
+
+    .home-nav-link.active {
       color: var(--primary);
+      font-weight: 600;
+      background: var(--primary-light);
     }
 
-    .legal-header-actions {
+    .home-nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0.75rem;
+      right: 0.75rem;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+      box-shadow: 0 0 6px var(--primary-glow);
+    }
+
+    .home-header-actions {
       display: flex;
       align-items: center;
       gap: 1rem;
@@ -397,45 +439,39 @@
 <body class="legal-body">
 
   <!-- ============================================================ -->
-  <!-- TOP NAVIGATION HEADER                                         -->
+  <!-- TOP NAVIGATION HEADER (Identical to Home)                     -->
   <!-- ============================================================ -->
-  <header class="legal-header">
-    <a href="/" class="legal-brand">
-      <div style="display: flex; align-items: center; justify-content: center;">
+  <header class="home-header">
+    <a href="/" class="home-brand">
+      <div class="home-brand-logo">
         <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
-          <defs>
-            <linearGradient id="brandLogoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#282838"/>
-              <stop offset="100%" stop-color="#151420"/>
-            </linearGradient>
-            <linearGradient id="barGradWhite" x1="0" y1="28" x2="0" y2="0" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#C5C5CD" stop-opacity="0.45"/>
-              <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-            </linearGradient>
-          </defs>
-          <rect width="32" height="32" rx="8" fill="url(#brandLogoGrad)"/>
-          <rect x="6" y="18" width="4" height="8" rx="1.5" fill="url(#barGradWhite)"/>
-          <rect x="13" y="13" width="4" height="13" rx="1.5" fill="url(#barGradWhite)"/>
-          <rect x="20" y="8" width="4" height="18" rx="1.5" fill="var(--primary)"/>
-          <path d="M 7 15 L 14 10 L 22 5" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="22" cy="5" r="2.2" fill="var(--primary)"/>
+          <rect width="32" height="32" rx="8" fill="#151420" stroke="rgba(255, 255, 255, 0.18)" stroke-width="1"/>
+          <!-- Ascending Bar Chart Columns (High Contrast in both Light & Dark modes) -->
+          <rect x="6" y="18" width="4" height="8" rx="1.5" fill="#898897"/>
+          <rect x="13" y="13" width="4" height="13" rx="1.5" fill="#DFDFE4"/>
+          <rect x="20" y="8" width="4" height="18" rx="1.5" fill="#FFFFFF"/>
+          <!-- Upward Performance Trend Line & Peak Marker -->
+          <path d="M 7 15 L 14 10 L 22 5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="22" cy="5" r="2.2" fill="#FFFFFF"/>
         </svg>
       </div>
-      <span class="legal-brand-name">AutoAnalyst</span>
-      <span class="legal-brand-tier">Enterprise BI</span>
+      <span class="home-brand-name">AutoAnalyst</span>
+      <span class="home-brand-tier">Enterprise BI</span>
     </a>
 
-    <!-- Center Navigation Links -->
-    <nav class="legal-nav" aria-label="Header Navigation">
-      <a href="/" class="legal-nav-link">Platform</a>
-      <a href="/#capabilities" class="legal-nav-link">Capabilities</a>
-      <a href="/#security" class="legal-nav-link">Security</a>
-      <a href="/privacy" class="legal-nav-link">Privacy Policy</a>
-      <a href="/terms" class="legal-nav-link active">Terms & Conditions</a>
+    <!-- Center Navigation Links (Exact 7-Item Alignment) -->
+    <nav class="home-nav" aria-label="Header Navigation">
+      <a href="/#platform" class="home-nav-link">Platform</a>
+      <a href="/#capabilities" class="home-nav-link">Capabilities</a>
+      <a href="/#datasets" class="home-nav-link">Live Datasets</a>
+      <a href="/#security" class="home-nav-link">Architecture & Security</a>
+      <a href="/#docs" class="home-nav-link">Documentation</a>
+      <a href="/privacy" class="home-nav-link">Privacy Policy</a>
+      <a href="/terms" class="home-nav-link active" aria-current="page">Terms & Conditions</a>
     </nav>
 
     <!-- Header Actions with SVG Theme Switcher -->
-    <div class="legal-header-actions">
+    <div class="home-header-actions">
       <!-- Theme Switcher (Crisp SVG Icons - No Emojis) -->
       <button class="btn-header-ghost" id="btn-theme-toggle" onclick="toggleLegalTheme()" title="Toggle Light / Dark Mode" aria-label="Toggle Theme" style="padding: 0.45rem 0.65rem; display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px;">
         <svg id="legal-theme-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">

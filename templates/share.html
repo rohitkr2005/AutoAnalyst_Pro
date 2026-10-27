@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ dashboard.title }} - AutoAnalyst Pro Shared Dashboard</title>
   
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="alternate icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/static/favicon.svg">
+
   <!-- Modern Google Fonts: Outfit & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -89,11 +94,14 @@
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.35rem;">
           <div class="brand-icon-box" style="width: 32px; height: 32px;">
             <svg class="brand-logo-svg" viewBox="0 0 32 32" fill="none">
-              <rect width="32" height="32" rx="8" fill="#282838"/>
-              <rect x="6" y="18" width="4" height="8" rx="1.5" fill="#C5C5CD"/>
-              <rect x="13" y="13" width="4" height="13" rx="1.5" fill="#FFFFFF"/>
-              <rect x="20" y="8" width="4" height="18" rx="1.5" fill="var(--primary)"/>
-              <path d="M 7 15 L 14 10 L 22 5" stroke="var(--primary)" stroke-width="2"/>
+              <rect width="32" height="32" rx="8" fill="#151420" stroke="rgba(255, 255, 255, 0.18)" stroke-width="1.2"/>
+              <!-- Ascending Bar Chart Columns (High Contrast in both Light & Dark modes) -->
+              <rect x="6" y="18" width="4" height="8" rx="1.5" fill="#898897"/>
+              <rect x="13" y="13" width="4" height="13" rx="1.5" fill="#DFDFE4"/>
+              <rect x="20" y="8" width="4" height="18" rx="1.5" fill="#FFFFFF"/>
+              <!-- Upward Performance Trend Line & Peak Marker -->
+              <path d="M 7 15 L 14 10 L 22 5" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="22" cy="5" r="2.2" fill="#FFFFFF"/>
             </svg>
           </div>
           <span style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.15rem; color: #fff;">AutoAnalyst Pro</span>

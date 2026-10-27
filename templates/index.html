@@ -4,7 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AutoAnalyst Pro - AI-Powered Analytics & BI Studio</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="alternate icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/static/favicon.svg">
 
   <!-- Modern Google Fonts: Outfit & Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,22 +57,14 @@
         <div class="brand-row">
           <div class="brand-icon-box" id="sidebar-brand-icon-box" onclick="handleSidebarLogoClick()" title="AutoAnalyst Pro (Click to expand sidebar)" style="cursor: pointer;">
             <svg class="brand-logo-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="brandLogoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#282838"/>
-                  <stop offset="100%" stop-color="#151420"/>
-                </linearGradient>
-                <linearGradient id="barGradWhite" x1="0" y1="28" x2="0" y2="0" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#C5C5CD" stop-opacity="0.45"/>
-                  <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-                </linearGradient>
-              </defs>
-              <rect width="32" height="32" rx="8" fill="url(#brandLogoGrad)"/>
-              <rect x="6" y="18" width="4" height="8" rx="1.5" fill="url(#barGradWhite)"/>
-              <rect x="13" y="13" width="4" height="13" rx="1.5" fill="url(#barGradWhite)"/>
-              <rect x="20" y="8" width="4" height="18" rx="1.5" fill="var(--primary)"/>
-              <path d="M 7 15 L 14 10 L 22 5" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="22" cy="5" r="2.2" fill="var(--primary)"/>
+              <rect width="32" height="32" rx="8" fill="#151420" stroke="rgba(255, 255, 255, 0.18)" stroke-width="1.2"/>
+              <!-- Ascending Bar Chart Columns (High Contrast in both Light & Dark modes) -->
+              <rect x="6" y="18" width="4" height="8" rx="1.5" fill="#898897"/>
+              <rect x="13" y="13" width="4" height="13" rx="1.5" fill="#DFDFE4"/>
+              <rect x="20" y="8" width="4" height="18" rx="1.5" fill="#FFFFFF"/>
+              <!-- Upward Performance Trend Line & Peak Marker -->
+              <path d="M 7 15 L 14 10 L 22 5" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="22" cy="5" r="2.2" fill="#FFFFFF"/>
             </svg>
           </div>
           <div class="brand-details">

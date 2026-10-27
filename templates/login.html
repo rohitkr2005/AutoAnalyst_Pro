@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign In - AutoAnalyst Pro</title>
   
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="alternate icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/static/favicon.svg">
+
   <!-- Modern Google Fonts: Outfit & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,12 +58,80 @@
       transition: background-color var(--transition-normal);
     }
 
-    /* Fixed top theme switcher */
-    .auth-theme-header {
+    /* Fixed top navigation & theme bar */
+    .auth-top-bar {
       position: fixed;
       top: 1.25rem;
+      left: 1.5rem;
       right: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       z-index: 100;
+      pointer-events: none;
+    }
+
+    .auth-nav-home,
+    .auth-top-bar .theme-switch-control {
+      pointer-events: auto;
+    }
+
+    .auth-nav-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.5rem 1.05rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 9999px;
+      color: var(--text-primary);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.86rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .auth-nav-home:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateX(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .auth-header-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: transform 0.2s ease;
+    }
+
+    .auth-header-link:hover .auth-logo {
+      transform: scale(1.06);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+
+    .auth-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+    }
+
+    .auth-back-link:hover {
+      color: var(--primary);
+      background: var(--subtab-hover);
+      text-decoration: underline;
     }
 
     /* Ambient animated glow backdrop */
@@ -106,12 +179,13 @@
       height: 54px;
       margin: 0 auto 1rem;
       border-radius: 14px;
-      background: linear-gradient(135deg, #33303F 0%, #2A222B 100%);
+      background: #151420;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 25px rgba(211, 189, 168, 0.25);
-      border: 1px solid rgba(211, 189, 168, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .auth-header h1 {
@@ -441,8 +515,16 @@
 
   <div class="ambient-glow"></div>
 
-  <!-- 3-Mode Theme Switcher on Auth Screen -->
-  <div class="auth-theme-header">
+  <!-- Top Navigation & Theme Bar (Option to return to Home) -->
+  <header class="auth-top-bar">
+    <a href="/" class="auth-nav-home" title="Return to AutoAnalyst Home Page">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      <span>Back to Home</span>
+    </a>
+
     <div class="theme-switch-control" role="group" aria-label="Theme Selection">
       <button class="theme-btn" data-theme-val="light" onclick="setThemeMode('light')" title="Light Mode">
         <span class="theme-icon svg-icon">
@@ -479,36 +561,30 @@
         <span class="theme-text">System</span>
       </button>
     </div>
-  </div>
+  </header>
 
   <div class="auth-card-container">
     <div class="auth-card">
       
-      <!-- Brand Header -->
-      <div class="auth-header">
-        <div class="auth-logo">
-          <svg class="brand-logo-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="brandLogoGradAuth" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#282838"/>
-                <stop offset="100%" stop-color="#151420"/>
-              </linearGradient>
-              <linearGradient id="barGradWhiteAuth" x1="0" y1="28" x2="0" y2="0" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#C5C5CD" stop-opacity="0.45"/>
-                <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-              </linearGradient>
-            </defs>
-            <rect width="32" height="32" rx="8" fill="url(#brandLogoGradAuth)"/>
-            <rect x="6" y="18" width="4" height="8" rx="1.5" fill="url(#barGradWhiteAuth)"/>
-            <rect x="13" y="13" width="4" height="13" rx="1.5" fill="url(#barGradWhiteAuth)"/>
-            <rect x="20" y="8" width="4" height="18" rx="1.5" fill="var(--primary)"/>
-            <path d="M 7 15 L 14 10 L 22 5" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="22" cy="5" r="2.2" fill="var(--primary)"/>
-          </svg>
+      <!-- Brand Header (Clickable Link to Home) -->
+      <a href="/" class="auth-header-link" title="Return to AutoAnalyst Home Page">
+        <div class="auth-header">
+          <div class="auth-logo">
+            <svg class="brand-logo-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 32px; height: 32px;">
+              <rect width="32" height="32" rx="8" fill="#151420" stroke="rgba(255, 255, 255, 0.18)" stroke-width="1.2"/>
+              <!-- Ascending Bar Chart Columns (High Contrast in both Light & Dark modes) -->
+              <rect x="6" y="18" width="4" height="8" rx="1.5" fill="#898897"/>
+              <rect x="13" y="13" width="4" height="13" rx="1.5" fill="#DFDFE4"/>
+              <rect x="20" y="8" width="4" height="18" rx="1.5" fill="#FFFFFF"/>
+              <!-- Upward Performance Trend Line & Peak Marker -->
+              <path d="M 7 15 L 14 10 L 22 5" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="22" cy="5" r="2.2" fill="#FFFFFF"/>
+            </svg>
+          </div>
+          <h1>AutoAnalyst Pro</h1>
+          <p>Autonomous Data Science & Live Dashboard Studio</p>
         </div>
-        <h1>AutoAnalyst Pro</h1>
-        <p>Autonomous Data Science & Live Dashboard Studio</p>
-      </div>
+      </a>
 
       <!-- Auth Tabs: Sign In / Create Account -->
       <div class="auth-tabs">
@@ -706,6 +782,17 @@
 
       <div style="margin-top: 1.5rem; text-align: center; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
         By continuing, you agree to our <a href="/terms" target="_blank" style="color: var(--primary); text-decoration: underline;">Terms & Conditions</a> and <a href="/privacy" target="_blank" style="color: var(--primary); text-decoration: underline;">Privacy Policy</a>.
+      </div>
+
+      <!-- Return to Home Page Option -->
+      <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); text-align: center;">
+        <a href="/" class="auth-back-link" title="Return to AutoAnalyst Home Page">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Return to Home Page</span>
+        </a>
       </div>
 
     </div>
