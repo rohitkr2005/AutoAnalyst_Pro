@@ -121,6 +121,14 @@ document.addEventListener('DOMContentLoaded', () => {
   setupDropzone();
   setupExportButtons();
   initSidebarResizer();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const sampleToLoad = urlParams.get('load_sample');
+  if (sampleToLoad) {
+    setTimeout(() => {
+      loadSample(sampleToLoad);
+    }, 450);
+  }
 });
 
 // Universal API Response Parser with graceful handling of non-JSON / HTML / Cloud error pages

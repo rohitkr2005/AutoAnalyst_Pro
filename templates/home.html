@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoAnalyst Pro - Enterprise Business Intelligence, Autonomous Cleansing & DAX Studio</title>
+  <meta name="description" content="Autonomous enterprise data science, intelligent data cleansing, relational data modeling, Power BI-compatible DAX engine, and board-ready executive presentations.">
+
+  <!-- Typography: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/css/style.css">
+
+  <style>
+    /* Enterprise Home Page Architecture & Styling */
+    .home-body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* Fixed Senior Top Header */
+    .home-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      background: rgba(31, 25, 32, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: all 0.25s ease;
+    }
+
+    [data-theme="light"] .home-header {
+      background: rgba(247, 244, 239, 0.94);
+      border-bottom: 1px solid rgba(119, 124, 122, 0.22);
+    }
+
+    .home-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .home-brand-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .home-brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .home-brand-tier {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--border-accent);
+      margin-left: 0.4rem;
+      text-transform: uppercase;
+    }
+
+    /* Center Header Navigation */
+    .home-nav {
+      display: flex;
+      align-items: center;
+      gap: 1.8rem;
+    }
+
+    .home-nav-link {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .home-nav-link:hover {
+      color: var(--primary);
+    }
+
+    /* Header Actions */
+    .home-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-header-ghost {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      background: transparent;
+      border: 1px solid var(--border-card);
+      border-radius: 6px;
+      padding: 0.5rem 1.1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .btn-header-ghost:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-focus);
+    }
+
+    .btn-header-primary {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #1F1920;
+      background: var(--primary);
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 0.55rem 1.25rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-header-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.35rem 0.8rem;
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+    }
+
+    .user-avatar-small {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    /* Hero Section */
+    .home-hero-section {
+      padding: 140px 2rem 80px 2rem;
+      max-width: 1280px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.4rem 1rem;
+      background: var(--primary-light);
+      border: 1px solid var(--border-accent);
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1.75rem;
+    }
+
+    .status-dot-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 8px var(--accent-emerald);
+    }
+
+    .hero-headline {
+      font-family: 'Outfit', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      max-width: 980px;
+      margin: 0 auto 1.5rem auto;
+    }
+
+    .hero-subhead {
+      font-size: 1.18rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      max-width: 760px;
+      margin: 0 auto 2.5rem auto;
+      font-weight: 400;
+    }
+
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 3.5rem;
+    }
+
+    .btn-hero-launch {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #1F1920;
+      background: var(--primary);
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 0.85rem 2rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      box-shadow: 0 4px 14px rgba(211, 189, 168, 0.25);
+    }
+
+    .btn-hero-launch:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(211, 189, 168, 0.35);
+    }
+
+    .btn-hero-demo {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      padding: 0.85rem 1.8rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .btn-hero-demo:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-focus);
+      transform: translateY(-1px);
+    }
+
+    /* Enterprise Metric Strip */
+    .hero-metric-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      max-width: 1100px;
+      margin: 0 auto 4rem auto;
+      padding: 1.5rem;
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .metric-cell {
+      text-align: center;
+      padding: 0.5rem 1rem;
+      border-right: 1px solid var(--border-subtle);
+    }
+
+    .metric-cell:last-child {
+      border-right: none;
+    }
+
+    .metric-number {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+    }
+
+    .metric-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    /* Platform Interactive Mock Preview */
+    .hero-mockup-wrapper {
+      max-width: 1160px;
+      margin: 0 auto 6rem auto;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-card);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+      position: relative;
+    }
+
+    .mockup-window-header {
+      height: 42px;
+      background: var(--bg-sidebar);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      padding: 0 1.25rem;
+      gap: 0.6rem;
+    }
+
+    .mockup-dots {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mockup-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .mockup-dot.red { background: #ef4444; }
+    .mockup-dot.yellow { background: #f59e0b; }
+    .mockup-dot.green { background: #10b981; }
+
+    .mockup-title {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-left: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .mockup-content {
+      padding: 1.75rem;
+      background: var(--bg-primary);
+    }
+
+    .mockup-hero-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem;
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .mockup-dial-group {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      text-align: left;
+    }
+
+    /* Fixed Dial Circle with No Text Bleed */
+    .mockup-dial {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 4px solid var(--accent-emerald);
+      background: var(--bg-primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+
+    .mockup-dial-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--accent-emerald);
+      line-height: 1;
+    }
+
+    .mockup-dial-lbl {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      max-width: 82px;
+      text-align: center;
+      line-height: 1.15;
+      margin-top: 4px;
+    }
+
+    .mockup-banner-text h4 {
+      font-size: 1.2rem;
+      color: var(--text-primary);
+      margin-bottom: 0.35rem;
+    }
+
+    .mockup-banner-text p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      max-width: 520px;
+    }
+
+    /* Comparison Cards in Mockup */
+    .mockup-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .mockup-kpi {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: left;
+    }
+
+    .mockup-kpi-lbl {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .mockup-kpi-val {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      color: var(--text-primary);
+    }
+
+    .mockup-kpi-val .before {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    .mockup-kpi-val .after {
+      color: var(--accent-emerald);
+    }
+
+    /* Section Headers */
+    .section-wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section-tag {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .section-desc {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 680px;
+      line-height: 1.6;
+      margin-bottom: 3rem;
+    }
+
+    /* Capabilities 4-Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-focus);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .feature-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-card p {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      flex: 1;
+      margin-bottom: 1.25rem;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 1rem;
+    }
+
+    .feature-list li {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-list li svg {
+      color: var(--accent-emerald);
+      flex-shrink: 0;
+    }
+
+    /* Datasets Grid */
+    .datasets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .dataset-card {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+
+    .dataset-card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+
+    .dataset-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .dataset-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.15rem 0.55rem;
+      border-radius: 4px;
+      background: var(--bg-input);
+      color: var(--text-secondary);
+    }
+
+    .dataset-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .dataset-card p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-dataset-launch {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      border: 1px solid var(--border-accent);
+      border-radius: 6px;
+      padding: 0.55rem 1rem;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .btn-dataset-launch:hover {
+      background: var(--primary);
+      color: #1F1920;
+    }
+
+    /* Security Section */
+    .security-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .security-card {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 1.75rem;
+    }
+
+    .security-card h4 {
+      font-size: 1.15rem;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .security-card p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* Docs Section */
+    .docs-card {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 2.25rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    @media (max-width: 860px) {
+      .docs-card { grid-template-columns: 1fr; }
+      .home-header { padding: 0 1.25rem; }
+      .home-nav { display: none; }
+      .hero-headline { font-size: 2.4rem; }
+      .mockup-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .code-block {
+      background: #141115;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #e2e8f0;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+
+    .code-keyword { color: #f43f5e; }
+    .code-fn { color: #38bdf8; }
+    .code-str { color: #34d399; }
+    .code-comment { color: #64748b; font-style: italic; }
+
+    /* Footer */
+    .home-footer {
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-sidebar);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .footer-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .footer-link {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .footer-link:hover {
+      color: var(--primary);
+    }
+
+    .footer-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      color: var(--accent-emerald);
+      font-weight: 500;
+    }
+
+    .footer-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+    }
+  </style>
+</head>
+
+<body class="home-body">
+
+  <!-- ============================================================ -->
+  <!-- SENIOR TOP NAVIGATION HEADER                                  -->
+  <!-- ============================================================ -->
+  <header class="home-header">
+    <a href="/" class="home-brand">
+      <div class="home-brand-logo">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
+          <defs>
+            <linearGradient id="brandLogoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#33303F"/>
+              <stop offset="100%" stop-color="#1F1920"/>
+            </linearGradient>
+            <linearGradient id="barGradWhite" x1="0" y1="28" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#DBCBBC" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#F6F1EC" stop-opacity="0.95"/>
+            </linearGradient>
+          </defs>
+          <rect width="32" height="32" rx="8" fill="url(#brandLogoGrad)"/>
+          <rect x="6" y="18" width="4" height="8" rx="1.5" fill="url(#barGradWhite)"/>
+          <rect x="13" y="13" width="4" height="13" rx="1.5" fill="url(#barGradWhite)"/>
+          <rect x="20" y="8" width="4" height="18" rx="1.5" fill="#D3BDA8"/>
+          <path d="M 7 15 L 14 10 L 22 5" stroke="#D3BDA8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="22" cy="5" r="2.2" fill="#D3BDA8"/>
+        </svg>
+      </div>
+      <span class="home-brand-name">AutoAnalyst</span>
+      <span class="home-brand-tier">Enterprise BI</span>
+    </a>
+
+    <!-- Center Navigation Links -->
+    <nav class="home-nav" aria-label="Home Navigation">
+      <a href="#platform" class="home-nav-link">Platform</a>
+      <a href="#capabilities" class="home-nav-link">Capabilities</a>
+      <a href="#datasets" class="home-nav-link">Live Datasets</a>
+      <a href="#security" class="home-nav-link">Architecture & Security</a>
+      <a href="#docs" class="home-nav-link">Documentation</a>
+    </nav>
+
+    <!-- Right Header Actions -->
+    <div class="home-header-actions">
+      <!-- Theme Switcher -->
+      <button class="btn-header-ghost" onclick="toggleHomeTheme()" title="Toggle Theme" style="padding: 0.45rem 0.65rem;">
+        <span id="home-theme-icon">🌙</span>
+      </button>
+
+      {% if logged_in %}
+        <div class="user-pill">
+          <div class="user-avatar-small">{{ (user.full_name or user.username or 'DA')[:2].upper() }}</div>
+          <span>{{ user.full_name or user.username }}</span>
+        </div>
+        <a href="/studio" class="btn-header-primary">
+          Open Studio
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+        <a href="/api/auth/logout" class="btn-header-ghost" style="padding: 0.45rem 0.75rem;">Sign Out</a>
+      {% else %}
+        <a href="/login" class="btn-header-ghost">Sign In</a>
+        <a href="/studio" class="btn-header-primary">
+          Launch Studio
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- ============================================================ -->
+  <!-- HERO SECTION                                                 -->
+  <!-- ============================================================ -->
+  <section class="home-hero-section" id="platform">
+    <div class="hero-eyebrow">
+      <span class="status-dot-pulse"></span>
+      Autonomous BI & Data Intelligence Platform
+    </div>
+
+    <h1 class="hero-headline">
+      Enterprise Analytics, Automated Data Cleansing & Relational DAX Modeling
+    </h1>
+
+    <p class="hero-subhead">
+      Transform messy CSVs and relational database schemas into clean, standardized datasets, relational star-models, and executive board-ready dashboards in seconds.
+    </p>
+
+    <div class="hero-ctas">
+      <a href="/studio" class="btn-hero-launch">
+        Launch Analytics Studio
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </a>
+      <a href="#datasets" class="btn-hero-demo">
+        Explore Sample Workspaces
+      </a>
+      <a href="#security" class="btn-hero-demo">
+        Security Whitepaper
+      </a>
+    </div>
+
+    <!-- Enterprise Metric Badges Strip -->
+    <div class="hero-metric-strip">
+      <div class="metric-cell">
+        <div class="metric-number">99.8%</div>
+        <div class="metric-label">Cleansing Accuracy</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-number">512 MB</div>
+        <div class="metric-label">Max Ingestion Size</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-number">&lt; 150ms</div>
+        <div class="metric-label">DAX Query Latency</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-number">AES-256</div>
+        <div class="metric-label">Vault Encryption</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-number">Zero</div>
+        <div class="metric-label">Cloud Data Retention</div>
+      </div>
+    </div>
+
+    <!-- Platform Mockup Preview -->
+    <div class="hero-mockup-wrapper">
+      <div class="mockup-window-header">
+        <div class="mockup-dots">
+          <span class="mockup-dot red"></span>
+          <span class="mockup-dot yellow"></span>
+          <span class="mockup-dot green"></span>
+        </div>
+        <span class="mockup-title">autoanalyst-pro // studio // data-prep-and-clean</span>
+      </div>
+
+      <div class="mockup-content">
+        <!-- Banner Mockup with in-bounds Dial -->
+        <div class="mockup-hero-banner">
+          <div class="mockup-dial-group">
+            <div class="mockup-dial">
+              <span class="mockup-dial-val">89.3</span>
+              <span class="mockup-dial-lbl">Cleaned Score</span>
+            </div>
+            <div class="mockup-banner-text">
+              <h4>Dataset Successfully Cleaned & Standardized</h4>
+              <p>Autonomous data quality sniffer applied smart type casting, winsorization outlier clipping, and missing value imputation.</p>
+            </div>
+          </div>
+          <a href="/studio" class="btn-header-primary" style="font-size: 0.85rem;">
+            Enter Live Workspace →
+          </a>
+        </div>
+
+        <!-- KPI Grid in Mockup -->
+        <div class="mockup-kpi-grid">
+          <div class="mockup-kpi">
+            <div class="mockup-kpi-lbl">Cleanliness Health Score</div>
+            <div class="mockup-kpi-val">
+              <span class="before">86%</span>
+              <span class="after">89.3% (+3.3%)</span>
+            </div>
+          </div>
+          <div class="mockup-kpi">
+            <div class="mockup-kpi-lbl">Missing Cells Count</div>
+            <div class="mockup-kpi-val">
+              <span class="before">436</span>
+              <span class="after">0 (Purged)</span>
+            </div>
+          </div>
+          <div class="mockup-kpi">
+            <div class="mockup-kpi-lbl">Duplicate Rows Purged</div>
+            <div class="mockup-kpi-val">
+              <span class="before">18 found</span>
+              <span class="after">0 Clean</span>
+            </div>
+          </div>
+          <div class="mockup-kpi">
+            <div class="mockup-kpi-lbl">Outliers Winsorized</div>
+            <div class="mockup-kpi-val">
+              <span class="before">Raw</span>
+              <span class="after">15 Treated</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- CORE CAPABILITIES (4 PILLARS)                                 -->
+  <!-- ============================================================ -->
+  <section id="capabilities" class="section-wrap">
+    <span class="section-tag">Enterprise Capabilities</span>
+    <h2 class="section-title">Built for Modern Analytics Workloads</h2>
+    <p class="section-desc">Four autonomous intelligence engines engineered to eliminate manual data munging and accelerate executive decision-making.</p>
+
+    <div class="features-grid">
+      <!-- Pillar 1 -->
+      <div class="feature-card">
+        <div class="feature-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+        </div>
+        <h3>One-Click Autonomous Cleansing</h3>
+        <p>Intelligent heuristic sniffer detects dirty types, winsorizes statistical outliers (IQR & Z-score), imputes missing cells via distribution medians, and purges duplicate rows.</p>
+        <ul class="feature-list">
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Smart numeric & datetime casting
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Outlier winsorization (clipping)
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Reproducible Python script export
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pillar 2 -->
+      <div class="feature-card">
+        <div class="feature-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="8" height="8" rx="2"></rect><rect x="14" y="2" width="8" height="8" rx="2"></rect><rect x="8" y="14" width="8" height="8" rx="2"></rect><line x1="6" y1="10" x2="6" y2="18"></line><line x1="18" y1="10" x2="18" y2="18"></line></svg>
+        </div>
+        <h3>Relational Modeling & DAX Copilot</h3>
+        <p>Ingest multi-table schemas, synthesize star and snowflake topologies, validate cardinality, and evaluate complex Power BI-compatible DAX formulas in real time.</p>
+        <ul class="feature-list">
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Auto primary & foreign key detection
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            In-memory DAX measure computation
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Power BI template (.pbix) script generator
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pillar 3 -->
+      <div class="feature-card">
+        <div class="feature-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
+        </div>
+        <h3>Predictive AutoML & Deep EDA</h3>
+        <p>Instant exploratory data analysis with Pearson correlation heatmaps, skewness indices, feature importance rankings, and automated benchmark models.</p>
+        <ul class="feature-list">
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Multi-model classification & regression
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Automated feature importance ranking
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Model metrics: Accuracy, Precision, RMSE
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pillar 4 -->
+      <div class="feature-card">
+        <div class="feature-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </div>
+        <h3>Executive Presentation Exports</h3>
+        <p>Generate board-ready PowerPoint presentations (.pptx) with embedded high-res KPI charts, multi-sheet Excel workbooks, or interactive standalone dashboards.</p>
+        <ul class="feature-list">
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Executive PowerPoint slide decks
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Multi-tab styled Excel spreadsheets
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Tokenized secure sharing links
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- LIVE DATASETS SECTION                                        -->
+  <!-- ============================================================ -->
+  <section id="datasets" class="section-wrap" style="border-top: 1px solid var(--border-subtle);">
+    <span class="section-tag">Turnkey Testing</span>
+    <h2 class="section-title">Pre-Packaged Messy Datasets</h2>
+    <p class="section-desc">Select any pre-configured enterprise scenario to immediately stress-test the data quality sniffer, relational modeler, and DAX engine.</p>
+
+    <div class="datasets-grid">
+      <!-- Dataset 1 -->
+      <div class="dataset-card">
+        <div>
+          <div class="dataset-meta">
+            <span class="dataset-badge">Retail & D2C</span>
+            <span class="dataset-badge">7,200 Rows</span>
+          </div>
+          <h3>Omnichannel eCommerce</h3>
+          <p>Features dirty currency formats ($12.50 vs 12.5), malformed date timestamps, missing customer emails, and outlier high-volume orders.</p>
+        </div>
+        <a href="/studio?load_sample=ecommerce_messy" class="btn-dataset-launch">
+          Launch with eCommerce Data →
+        </a>
+      </div>
+
+      <!-- Dataset 2 -->
+      <div class="dataset-card">
+        <div>
+          <div class="dataset-meta">
+            <span class="dataset-badge">Biotech & Pharma</span>
+            <span class="dataset-badge">5,400 Rows</span>
+          </div>
+          <h3>Healthcare Clinical Trials</h3>
+          <p>Clinical vitals including blood pressures, cholesterol panels, BMI indices, and missing laboratory values across randomized trial cohorts.</p>
+        </div>
+        <a href="/studio?load_sample=healthcare_clinical_messy" class="btn-dataset-launch">
+          Launch with Healthcare Data →
+        </a>
+      </div>
+
+      <!-- Dataset 3 -->
+      <div class="dataset-card">
+        <div>
+          <div class="dataset-meta">
+            <span class="dataset-badge">Enterprise B2B</span>
+            <span class="dataset-badge">4,800 Rows</span>
+          </div>
+          <h3>SaaS Subscriptions & MRR</h3>
+          <p>Monthly recurring revenue metrics, churn indicators, seat expansions, contract renewal dates, and billing anomalies across tiers.</p>
+        </div>
+        <a href="/studio?load_sample=saas_subscriptions_messy" class="btn-dataset-launch">
+          Launch with SaaS Metrics →
+        </a>
+      </div>
+
+      <!-- Dataset 4 -->
+      <div class="dataset-card">
+        <div>
+          <div class="dataset-meta">
+            <span class="dataset-badge">Real Estate & PropTech</span>
+            <span class="dataset-badge">3,600 Rows</span>
+          </div>
+          <h3>Property Valuation & Listings</h3>
+          <p>Multi-attribute housing records with square footage anomalies, luxury outlier pricing, missing zip codes, and categorical variations.</p>
+        </div>
+        <a href="/studio?load_sample=real_estate_messy" class="btn-dataset-launch">
+          Launch with Real Estate Data →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECURITY & ARCHITECTURE                                      -->
+  <!-- ============================================================ -->
+  <section id="security" class="section-wrap" style="border-top: 1px solid var(--border-subtle);">
+    <span class="section-tag">Security & Compliance</span>
+    <h2 class="section-title">Enterprise-Grade Zero-Trust Architecture</h2>
+    <p class="section-desc">Designed to satisfy stringent corporate infosec requirements with zero data leakage and cryptographic session isolation.</p>
+
+    <div class="security-grid">
+      <div class="security-card">
+        <h4>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Session Vault & Argon2
+        </h4>
+        <p>Enterprise credentials secured with Argon2/bcrypt hashing, secure HTTP-only session cookies, and time-bound 6-digit OTP email verification.</p>
+      </div>
+
+      <div class="security-card">
+        <h4>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          OWASP Top 10 Fortified
+        </h4>
+        <p>Hardened with strict Content Security Policy (CSP), anti-clickjacking frame protection, nosniff MIME validation, and sliding-window rate limiters.</p>
+      </div>
+
+      <div class="security-card">
+        <h4>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+          Zero Cloud Retention
+        </h4>
+        <p>Uploaded datasets and relational models are processed strictly in ephemeral session memory. Raw payloads are never indexed or saved to external storage.</p>
+      </div>
+
+      <div class="security-card">
+        <h4>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-amber)" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          Granular Workspace RLS
+        </h4>
+        <p>Row-Level Security (RLS) enforcement ensures users only access their own analysis logs and private datasets across Supabase and local SQLite instances.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- DOCUMENTATION & ARCHITECTURE OVERVIEW                        -->
+  <!-- ============================================================ -->
+  <section id="docs" class="section-wrap" style="border-top: 1px solid var(--border-subtle);">
+    <span class="section-tag">Developer Reference</span>
+    <h2 class="section-title">High-Performance Pipeline Architecture</h2>
+    <p class="section-desc">Engineered on a decoupled micro-engine architecture in Python 3.13 and high-speed in-memory vector compute.</p>
+
+    <div class="docs-card">
+      <div>
+        <h3 style="font-size: 1.35rem; margin-bottom: 0.85rem;">In-Memory DAX & ETL Specification</h3>
+        <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
+          AutoAnalyst translates DAX expressions into optimized Pandas vectorized operations, supporting filtering contexts, measure aggregation, and dynamic relationship traversal across multi-table star schemas.
+        </p>
+        <a href="/studio" class="btn-header-primary">
+          Open Developer Studio →
+        </a>
+      </div>
+
+      <div class="code-block">
+        <span class="code-comment">// Sample DAX Evaluation Pipeline</span><br>
+        <span class="code-keyword">DEFINE</span> <span class="code-fn">MEASURE</span> 'Orders'[Gross Profit Margin] =<br>
+        &nbsp;&nbsp;<span class="code-fn">DIVIDE</span>(<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-fn">SUM</span>('Orders'[Revenue]) - <span class="code-fn">SUM</span>('Orders'[COGS]),<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-fn">SUM</span>('Orders'[Revenue]),<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-str">0.0</span><br>
+        &nbsp;&nbsp;)<br><br>
+        <span class="code-comment">// Output: Evaluated in &lt; 12ms against 500k rows</span><br>
+        <span class="code-keyword">EVALUATE</span> <span class="code-fn">ROW</span>(<span class="code-str">"Margin"</span>, [Gross Profit Margin])
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- ENTERPRISE FOOTER                                            -->
+  <!-- ============================================================ -->
+  <footer class="home-footer">
+    <div class="footer-inner">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span class="home-brand-name" style="font-size: 1.1rem;">AutoAnalyst Pro</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">© 2026 AutoAnalyst Inc. All rights reserved.</span>
+      </div>
+
+      <div class="footer-links">
+        <a href="#platform" class="footer-link">Platform</a>
+        <a href="#capabilities" class="footer-link">Features</a>
+        <a href="#security" class="footer-link">Security</a>
+        <a href="#docs" class="footer-link">Documentation</a>
+        <a href="/studio" class="footer-link">Studio</a>
+      </div>
+
+      <div class="footer-status">
+        <span class="footer-status-dot"></span>
+        All Systems Operational
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Theme toggle for home page
+    function initHomeTheme() {
+      const saved = localStorage.getItem('analytica_theme_pref') || 'dark';
+      const effective = saved === 'light' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', effective);
+      updateThemeIcon(effective);
+    }
+
+    function toggleHomeTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('analytica_theme_pref', next);
+      updateThemeIcon(next);
+    }
+
+    function updateThemeIcon(theme) {
+      const icon = document.getElementById('home-theme-icon');
+      if (icon) {
+        icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initHomeTheme);
+  </script>
+</body>
+</html>

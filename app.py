@@ -229,7 +229,8 @@ def login_required(f):
         if "user_id" not in session:
             if request.path.startswith("/api/"):
                 return jsonify({"status": "error", "message": "Authentication required. Please log in.", "code": 401}), 401
-            return redirect(url_for("login_page"))
+            next_url = request.full_path if request.query_string else request.path
+            return redirect(url_for("login_page", next=next_url))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -291,7 +292,8 @@ def apply_security_headers(response):
 @app.route("/login")
 def login_page():
     if "user_id" in session:
-        return redirect(url_for("index"))
+        next_target = request.args.get("next") or url_for("studio_page")
+        return redirect(next_target)
     from engine.email_service import get_supabase_config
     supa_url, supa_key = get_supabase_config()
     return render_template(
@@ -720,9 +722,28 @@ def api_forgot_password_reset():
 # ==========================================
 
 @app.route("/")
+def home():
+    """Enterprise Home & Landing Page with top header navigation."""
+    user = None
+    logged_in = False
+    if "user_id" in session:
+        user = get_user_by_id(session["user_id"])
+        logged_in = bool(user)
+    return render_template("home.html", logged_in=logged_in, user=user)
+
+
+@app.route("/app")
+@app.route("/studio")
 @login_required
-def index():
+def studio_page():
+    """Enterprise BI Analytics & Data Cleansing Studio."""
     return render_template("index.html")
+
+
+@app.route("/index")
+def index():
+    """Compatibility endpoint for legacy index references."""
+    return redirect(url_for("studio_page"))
 
 
 @app.route("/api/samples", methods=["GET"])

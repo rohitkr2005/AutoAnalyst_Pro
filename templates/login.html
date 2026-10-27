@@ -824,6 +824,15 @@
     const SVG_ALERT_WARNING = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C86A64" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
     const SVG_ALERT_SUCCESS = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7DA893" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
 
+    function getPostLoginRedirect() {
+      const params = new URLSearchParams(window.location.search);
+      const next = params.get('next');
+      if (next && next.startsWith('/') && !next.startsWith('//')) {
+        return next;
+      }
+      return '/studio';
+    }
+
     // --- AUTOMATIC SUPABASE MAGIC LINK / OAUTH REDIRECT TOKEN VERIFICATION ---
     window.addEventListener('DOMContentLoaded', async () => {
       initGoogleClient();
@@ -862,7 +871,7 @@
             showAlert('Authentication confirmed! Launching your workspace...', true);
             history.replaceState(null, null, window.location.pathname);
             setTimeout(() => {
-              window.location.href = '/';
+              window.location.href = getPostLoginRedirect();
             }, 600);
           } else {
             showAlert(data.message || 'Could not verify token. Please sign in with your credentials.', false);
@@ -1006,7 +1015,7 @@
         if (data.status === 'success') {
           showAlert("Google account verified! Opening workspace...", true);
           setTimeout(() => {
-            window.location.href = '/';
+            window.location.href = getPostLoginRedirect();
           }, 600);
         } else {
           showAlert(data.message || "Google authentication failed.");
@@ -1028,7 +1037,7 @@
         if (data.status === 'success') {
           showAlert("Google sign-in verified! Loading workspace...", true);
           setTimeout(() => {
-            window.location.href = '/';
+            window.location.href = getPostLoginRedirect();
           }, 600);
         } else {
           showAlert(data.message || "Google authentication failed.");
@@ -1059,7 +1068,7 @@
         if (data.status === 'success') {
           showAlert('Authentication successful! Loading workspace...', true);
           setTimeout(() => {
-            window.location.href = '/';
+            window.location.href = getPostLoginRedirect();
           }, 600);
         } else {
           showAlert(data.message || 'Invalid username or password.');
@@ -1164,7 +1173,7 @@
         if (data.status === 'success') {
           showAlert('Account verified and created! Launching workspace...', true);
           setTimeout(() => {
-            window.location.href = '/';
+            window.location.href = getPostLoginRedirect();
           }, 700);
         } else {
           showAlert(data.message || 'Invalid or expired verification code.');

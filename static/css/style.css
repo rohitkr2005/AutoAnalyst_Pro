@@ -43,10 +43,10 @@
   --accent-rose: #C86A64;
   --accent-rose-light: rgba(200, 106, 100, 0.15);
 
-  --shadow-sm: 0 2px 4px rgba(22, 16, 23, 0.35);
-  --shadow-md: 0 4px 12px rgba(22, 16, 23, 0.45), 0 1px 2px rgba(22, 16, 23, 0.3);
-  --shadow-lg: 0 10px 25px -3px rgba(22, 16, 23, 0.55), 0 4px 6px -2px rgba(22, 16, 23, 0.3);
-  --shadow-glow: 0 0 20px rgba(211, 189, 168, 0.22);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.25);
+  --shadow-glow: 0 1px 3px rgba(0, 0, 0, 0.2);
 
   --subtab-bg: rgba(255, 255, 255, 0.03);
   --subtab-hover: rgba(255, 255, 255, 0.06);
@@ -112,7 +112,7 @@
   --shadow-sm: 0 1px 3px rgba(42, 34, 43, 0.07);
   --shadow-md: 0 4px 12px rgba(42, 34, 43, 0.08), 0 1px 2px rgba(42, 34, 43, 0.04);
   --shadow-lg: 0 10px 25px -3px rgba(42, 34, 43, 0.1), 0 4px 6px -2px rgba(42, 34, 43, 0.05);
-  --shadow-glow: 0 0 20px rgba(138, 107, 83, 0.18);
+  --shadow-glow: 0 1px 3px rgba(42, 34, 43, 0.1);
 
   --subtab-bg: rgba(42, 34, 43, 0.05);
   --subtab-hover: rgba(42, 34, 43, 0.08);
@@ -145,16 +145,9 @@ body {
   transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
-/* Live 3D Background Canvas */
+/* Live 3D Background Canvas - Disabled for clean, authoritative enterprise BI standards */
 .bg-3d-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 0;
-  display: block;
+  display: none !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -368,10 +361,12 @@ h1, h2, h3, h4, h5, h6 {
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.75rem;
   width: 100%;
-  padding: 0.65rem 0.85rem;
-  border-radius: 8px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 0.85rem;
+  border-radius: 6px;
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-secondary);
@@ -382,6 +377,7 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.18s ease;
   position: relative;
   text-align: left;
+  box-sizing: border-box;
 }
 
 .nav-item:hover {
@@ -405,55 +401,70 @@ h1, h2, h3, h4, h5, h6 {
   width: 3px;
   background: var(--primary);
   border-radius: 0 4px 4px 0;
-  box-shadow: 0 0 10px var(--primary);
 }
 
 .nav-item-icon {
-  font-size: 1.1rem;
-  min-width: 22px;
-  text-align: center;
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nav-item-icon svg {
+  width: 18px;
+  height: 18px;
 }
 
 .nav-item-label {
   flex: 1;
+  min-width: 0;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
 }
 
 .nav-badge {
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   font-weight: 600;
-  padding: 0.18rem 0.55rem;
-  border-radius: 9999px;
+  height: 20px;
+  line-height: 18px;
+  padding: 0 0.55rem;
+  border-radius: 4px;
   margin-left: auto;
   white-space: nowrap !important;
   flex-shrink: 0 !important;
-  min-width: max-content;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  line-height: 1.2;
+  box-sizing: border-box;
 }
 
 .nav-badge.live {
   background: var(--accent-emerald-light);
   color: var(--accent-emerald);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  border: 1px solid rgba(16, 185, 129, 0.35);
 }
 
 .nav-badge.count {
   background: var(--bg-input);
   color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
 }
 
 .nav-badge.health {
   background: var(--primary-light);
   color: var(--primary);
+  border: 1px solid var(--border-accent);
 }
 
 .nav-badge.ai {
-  background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-cyan-light) 100%);
+  background: var(--accent-cyan-light);
   color: var(--accent-cyan);
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  border: 1px solid rgba(155, 167, 176, 0.3);
 }
 
 /* Sidebar Logout Navigation Item */
@@ -2263,75 +2274,88 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(135deg, rgba(30, 41, 67, 0.85) 0%, rgba(15, 23, 42, 0.9) 100%);
+  background: var(--bg-card-solid);
   border: 1px solid var(--border-card);
   border-radius: var(--radius-lg);
-  padding: 2rem;
+  padding: 1.75rem 2rem;
   margin-bottom: 1.5rem;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
 }
 
 .health-hero::before {
-  content: '';
-  position: absolute;
-  top: -50px;
-  right: -50px;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
-  pointer-events: none;
+  content: none;
 }
 
 .health-score-dial {
   display: flex;
   align-items: center;
   gap: 1.5rem;
+  min-width: 0;
 }
 
 .dial-circle {
-  width: 90px;
-  height: 90px;
+  width: 110px;
+  height: 110px;
+  min-width: 110px;
+  min-height: 110px;
   border-radius: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   border: 4px solid var(--accent-amber);
-  box-shadow: 0 0 18px rgba(245, 158, 11, 0.3);
-  background: var(--bg-card-solid);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background: var(--bg-primary);
+  box-sizing: border-box;
+  padding: 6px;
+  flex-shrink: 0;
 }
 
 .dial-circle.good {
   border-color: var(--accent-emerald);
-  box-shadow: 0 0 18px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
 }
 
 .dial-score {
   font-family: 'Outfit', sans-serif;
-  font-size: 1.7rem;
+  font-size: 1.8rem;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1;
+  margin: 0;
 }
 
 .dial-label {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
   color: var(--text-muted);
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
+  max-width: 82px;
+  text-align: center;
+  line-height: 1.15;
+  word-break: break-word;
+  margin-top: 4px;
+}
+
+.health-details {
+  min-width: 0;
 }
 
 .health-details h3 {
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   margin-bottom: 0.3rem;
+  word-break: break-word;
 }
 
 .health-details p {
   color: var(--text-secondary);
   font-size: 0.9rem;
   max-width: 550px;
+  line-height: 1.45;
 }
 
 /* Primary CTA Buttons */
@@ -2563,6 +2587,9 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid var(--border-card);
   border-radius: var(--radius-md);
   padding: 1.1rem;
+  overflow: hidden;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .comp-header {
@@ -2571,30 +2598,38 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
   font-weight: 600;
   margin-bottom: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .comp-delta {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .comp-before {
   color: var(--text-muted);
-  font-size: 1.1rem;
+  font-size: 1rem;
   text-decoration: line-through;
+  flex-shrink: 0;
 }
 
 .comp-arrow {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  flex-shrink: 0;
 }
 
 .comp-after {
   color: var(--accent-emerald);
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   font-weight: 700;
   font-family: 'Outfit', sans-serif;
+  word-break: break-word;
 }
 
 /* Transformation Log */

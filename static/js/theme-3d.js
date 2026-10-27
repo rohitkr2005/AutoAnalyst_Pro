@@ -116,7 +116,7 @@
     constructor(canvasId = 'bg-3d-canvas') {
       this.canvasId = canvasId;
       this.canvas = document.getElementById(canvasId);
-      if (!this.canvas) return;
+      if (!this.canvas || window.getComputedStyle(this.canvas).display === 'none') return;
 
       this.ctx = this.canvas.getContext('2d');
       this.width = window.innerWidth;
