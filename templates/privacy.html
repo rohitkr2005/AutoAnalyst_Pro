@@ -58,12 +58,15 @@
       gap: 0.85rem;
       text-decoration: none;
       color: var(--text-primary);
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .home-brand-logo {
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
     }
 
     .home-brand-name {
@@ -72,19 +75,26 @@
       font-weight: 700;
       letter-spacing: -0.02em;
       color: var(--text-primary);
+      white-space: nowrap;
     }
 
     .home-brand-tier {
-      font-size: 0.62rem;
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      word-break: keep-all;
+      font-size: 0.65rem;
       font-weight: 700;
       letter-spacing: 0.08em;
-      padding: 0.15rem 0.5rem;
+      padding: 0.2rem 0.55rem;
       border-radius: 4px;
       background: var(--primary-light);
       color: var(--primary);
       border: 1px solid var(--border-accent);
       margin-left: 0.4rem;
       text-transform: uppercase;
+      line-height: 1;
+      flex-shrink: 0;
       transition: all 0.2s ease;
     }
 
@@ -141,7 +151,9 @@
     .home-header-actions {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .btn-header-ghost {
@@ -151,13 +163,17 @@
       background: transparent;
       border: 1px solid var(--border-card);
       border-radius: 6px;
-      padding: 0.5rem 1.1rem;
+      padding: 0.5rem 1.15rem;
       cursor: pointer;
       text-decoration: none;
       transition: all 0.18s ease;
+      white-space: nowrap;
+      word-break: keep-all;
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
+      justify-content: center;
+      flex-shrink: 0;
+      line-height: 1.2;
     }
 
     .btn-header-ghost:hover {
@@ -178,7 +194,12 @@
       transition: all 0.18s ease;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 0.4rem;
+      white-space: nowrap;
+      word-break: keep-all;
+      flex-shrink: 0;
+      line-height: 1.2;
     }
 
     .btn-header-primary:hover {
@@ -459,15 +480,12 @@
       <span class="home-brand-tier">Enterprise BI</span>
     </a>
 
-    <!-- Center Navigation Links (Exact 7-Item Alignment) -->
+    <!-- Center Navigation Links -->
     <nav class="home-nav" aria-label="Header Navigation">
       <a href="/#platform" class="home-nav-link">Platform</a>
       <a href="/#capabilities" class="home-nav-link">Capabilities</a>
       <a href="/#datasets" class="home-nav-link">Live Datasets</a>
-      <a href="/#security" class="home-nav-link">Architecture & Security</a>
       <a href="/#docs" class="home-nav-link">Documentation</a>
-      <a href="/privacy" class="home-nav-link active" aria-current="page">Privacy Policy</a>
-      <a href="/terms" class="home-nav-link">Terms & Conditions</a>
     </nav>
 
     <!-- Header Actions with SVG Theme Switcher -->
@@ -708,9 +726,11 @@
 
       <div class="footer-links">
         <a href="/" class="footer-link">Platform</a>
+        <a href="/#capabilities" class="footer-link">Capabilities</a>
+        <a href="/#datasets" class="footer-link">Live Datasets</a>
+        <a href="/#docs" class="footer-link">Documentation</a>
         <a href="/privacy" class="footer-link active">Privacy Policy</a>
         <a href="/terms" class="footer-link">Terms & Conditions</a>
-        <a href="/#security" class="footer-link">Security Whitepaper</a>
         <a href="/studio" class="footer-link">Studio</a>
       </div>
 
