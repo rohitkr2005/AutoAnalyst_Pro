@@ -18,10 +18,16 @@
   <link rel="stylesheet" href="/static/css/style.css">
 
   <style>
+    /* Privacy Page Architecture & Responsive Styling */
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden !important;
+    }
+
     .legal-body {
       background-color: var(--bg-primary);
       color: var(--text-primary);
-      overflow-x: hidden;
+      overflow-x: hidden !important;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
       display: flex;
@@ -277,22 +283,6 @@
       flex: 1;
     }
 
-    @media (max-width: 900px) {
-      .legal-layout {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-      }
-      .legal-sidebar {
-        display: none;
-      }
-      .legal-header {
-        padding: 0 1.25rem;
-      }
-      .legal-nav {
-        display: none;
-      }
-    }
-
     /* Sticky Sidebar Navigation */
     .legal-sidebar {
       position: sticky;
@@ -455,6 +445,223 @@
     .footer-link.active {
       color: var(--primary);
     }
+
+    /* Mobile Navigation Drawer */
+    .mobile-menu-btn {
+      display: none;
+      padding: 0.45rem 0.6rem;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .mobile-nav-drawer {
+      display: none;
+      position: fixed;
+      top: 72px;
+      left: 0;
+      right: 0;
+      background: var(--bg-card);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border-card);
+      z-index: 999;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+      padding: 1.5rem;
+      animation: drawerSlideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-theme="light"] .mobile-nav-drawer {
+      background: rgba(255, 255, 255, 0.98);
+      border-bottom: 1px solid #DFDFE4;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .mobile-nav-drawer.open {
+      display: block;
+    }
+
+    @keyframes drawerSlideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .mobile-nav-inner {
+      max-width: 500px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .mobile-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mobile-nav-link {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-decoration: none;
+      padding: 0.8rem 1.1rem;
+      border-radius: 8px;
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mobile-nav-link:hover, .mobile-nav-link:active {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--border-accent);
+    }
+
+    .mobile-nav-divider {
+      height: 1px;
+      background: var(--border-subtle);
+      width: 100%;
+    }
+
+    .mobile-nav-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .mobile-nav-legal {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      padding-top: 0.25rem;
+    }
+
+    .mobile-nav-legal a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .mobile-nav-legal a:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    /* Comprehensive Responsive Breakpoints */
+    @media (max-width: 1100px) {
+      .home-header {
+        padding: 0 1.25rem;
+      }
+      .home-nav {
+        gap: 0.2rem;
+      }
+      .home-nav-link {
+        font-size: 0.84rem;
+        padding: 0.4rem 0.65rem;
+      }
+      .btn-header-ghost {
+        padding: 0.45rem 0.85rem;
+        font-size: 0.84rem;
+      }
+      .btn-header-primary {
+        padding: 0.5rem 1rem;
+        font-size: 0.84rem;
+      }
+    }
+
+    @media (max-width: 880px) {
+      .home-header {
+        padding: 0 1rem;
+      }
+      .home-nav {
+        display: none !important;
+      }
+      .mobile-menu-btn {
+        display: inline-flex !important;
+      }
+      .legal-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 0 1.25rem;
+      }
+      .legal-sidebar {
+        display: none;
+      }
+      .legal-title {
+        font-size: 2.2rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .home-header {
+        padding: 0 0.85rem;
+        height: 64px;
+      }
+      .mobile-nav-drawer {
+        top: 64px;
+      }
+      .home-brand {
+        gap: 0.5rem;
+      }
+      .home-brand-tier {
+        display: none !important;
+      }
+      .home-brand-name {
+        font-size: 1.15rem;
+      }
+      .home-header-actions .btn-header-ghost:not(.mobile-menu-btn):not(#btn-theme-toggle) {
+        display: none !important;
+      }
+      .btn-header-primary {
+        padding: 0.45rem 0.85rem;
+        font-size: 0.82rem;
+        gap: 0.3rem;
+      }
+      .home-header-actions {
+        gap: 0.45rem;
+      }
+
+      .legal-hero {
+        padding: 100px 1rem 30px 1rem;
+      }
+      .legal-title {
+        font-size: 1.85rem;
+        line-height: 1.2;
+      }
+      .legal-subtitle {
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+      .legal-meta-strip {
+        gap: 1rem;
+        padding: 0.85rem 1rem;
+        font-size: 0.8rem;
+      }
+      .legal-layout {
+        padding: 0 1rem;
+        margin-bottom: 3rem;
+      }
+      .footer-inner {
+        flex-direction: column;
+        text-align: center;
+        justify-content: center;
+        gap: 1.25rem;
+      }
+      .footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+      }
+    }
   </style>
 </head>
 <body class="legal-body">
@@ -520,8 +727,47 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </a>
       {% endif %}
+
+      <!-- Mobile Menu Hamburger Button -->
+      <button class="btn-header-ghost mobile-menu-btn" id="btn-mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle Navigation Menu" title="Menu">
+        <svg id="icon-mobile-menu-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <svg id="icon-mobile-menu-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
     </div>
   </header>
+
+  <!-- Mobile Slide-Down Navigation Drawer -->
+  <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+    <div class="mobile-nav-inner">
+      <nav class="mobile-nav-links">
+        <a href="/#platform" class="mobile-nav-link" onclick="closeMobileMenu()">Platform <span>→</span></a>
+        <a href="/#capabilities" class="mobile-nav-link" onclick="closeMobileMenu()">Capabilities <span>→</span></a>
+        <a href="/#datasets" class="mobile-nav-link" onclick="closeMobileMenu()">Live Datasets <span>→</span></a>
+        <a href="/#docs" class="mobile-nav-link" onclick="closeMobileMenu()">Documentation <span>→</span></a>
+      </nav>
+      <div class="mobile-nav-divider"></div>
+      <div class="mobile-nav-actions">
+        {% if logged_in %}
+          <a href="/studio" class="btn-header-primary" style="width: 100%; justify-content: center;" onclick="closeMobileMenu()">Open Studio →</a>
+        {% else %}
+          <a href="/studio" class="btn-header-primary" style="width: 100%; justify-content: center;" onclick="closeMobileMenu()">Launch Studio →</a>
+          <a href="/login" class="btn-header-ghost" style="width: 100%; justify-content: center;" onclick="closeMobileMenu()">Sign In to Account</a>
+        {% endif %}
+      </div>
+      <div class="mobile-nav-legal">
+        <a href="/privacy" onclick="closeMobileMenu()" style="font-weight: 700; color: var(--primary);">Privacy Policy</a>
+        <span>•</span>
+        <a href="/terms" onclick="closeMobileMenu()">Terms & Conditions</a>
+      </div>
+    </div>
+  </div>
 
   <!-- ============================================================ -->
   <!-- HERO TITLE                                                   -->
@@ -774,6 +1020,37 @@
         }
       }
     }
+
+    // Mobile Navigation Drawer Toggle
+    function toggleMobileMenu() {
+      const drawer = document.getElementById('mobile-nav-drawer');
+      const openIcon = document.getElementById('icon-mobile-menu-open');
+      const closeIcon = document.getElementById('icon-mobile-menu-close');
+      if (!drawer) return;
+      const isOpen = drawer.classList.contains('open');
+      if (isOpen) {
+        drawer.classList.remove('open');
+        if (openIcon) openIcon.style.display = 'block';
+        if (closeIcon) closeIcon.style.display = 'none';
+      } else {
+        drawer.classList.add('open');
+        if (openIcon) openIcon.style.display = 'none';
+        if (closeIcon) closeIcon.style.display = 'block';
+      }
+    }
+
+    function closeMobileMenu() {
+      const drawer = document.getElementById('mobile-nav-drawer');
+      const openIcon = document.getElementById('icon-mobile-menu-open');
+      const closeIcon = document.getElementById('icon-mobile-menu-close');
+      if (drawer) drawer.classList.remove('open');
+      if (openIcon) openIcon.style.display = 'block';
+      if (closeIcon) closeIcon.style.display = 'none';
+    }
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 880) closeMobileMenu();
+    });
 
     document.addEventListener('DOMContentLoaded', initLegalTheme);
   </script>
