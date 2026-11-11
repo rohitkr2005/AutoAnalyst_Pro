@@ -10,6 +10,7 @@ import os
 import json
 import random
 import sqlite3
+import urllib.parse
 import urllib.request
 import urllib.error
 from datetime import datetime, timedelta, timezone
@@ -129,72 +130,224 @@ class PGConnectionWrapper:
         self.close()
 
 
+def connect_to_postgres(url: str, timeout: int = 8):
+    """
+    Connects to PostgreSQL with robust URI parsing and decoding:
+    - Normalizes postgres:// to postgresql://
+    - Decodes percent-encoded usernames and passwords (%40 -> @, %23 -> #, etc.)
+      preventing psycopg2 authentication failures with complex cloud passwords.
+    - Automatically handles Supabase IPv4 Pooler fallback if direct connection fails (essential for Render).
+    - Tries both pooler port 5432 and 6543.
+    """
+    if not url:
+        raise ValueError("No database URL provided")
+    url = url.strip()
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql://", 1)
+
+    parsed = urllib.parse.urlsplit(url)
+    user = urllib.parse.unquote(parsed.username) if parsed.username else None
+    password = urllib.parse.unquote(parsed.password) if parsed.password else None
+    dbname = parsed.path.lstrip("/") or "postgres"
+    host = parsed.hostname
+    port = parsed.port or 5432
+
+    # Attempt 1: Connect with parsed & unquoted parameters
+    try:
+        return psycopg2.connect(
+            dbname=dbname,
+            user=user,
+            password=password,
+            host=host,
+            port=port,
+            connect_timeout=timeout
+        )
+    except Exception as e1:
+        # If connection failed and this is Supabase, attempt IPv4 pooler fallback (critical on IPv4-only hosts like Render)
+        if host and ("supabase.co" in host or "pooler.supabase.com" in host):
+            ref = None
+            if "db." in host and ".supabase.co" in host:
+                parts = host.split(".")
+                if len(parts) >= 2:
+                    ref = parts[1]
+            elif user and "." in user:
+                ref = user.split(".", 1)[1]
+
+            if ref:
+                pooler_user = f"postgres.{ref}"
+                pooler_host = "aws-0-ap-south-1.pooler.supabase.com"
+                for alt_port in [5432, 6543]:
+                    if host == pooler_host and port == alt_port:
+                        continue
+                    try:
+                        print(f"[AutoAnalyst Pro] Retrying Supabase IPv4 Pooler at {pooler_host}:{alt_port}...", flush=True)
+                        return psycopg2.connect(
+                            dbname=dbname,
+                            user=pooler_user,
+                            password=password,
+                            host=pooler_host,
+                            port=alt_port,
+                            connect_timeout=timeout
+                        )
+                    except Exception as e_alt:
+                        print(f"[AutoAnalyst Pro] Supabase IPv4 Pooler ({pooler_host}:{alt_port}) attempt failed: {e_alt}", flush=True)
+
+        raise e1
+
+
+def ensure_sqlite_schema(conn=None):
+    """
+    Ensures that the local SQLite fallback database has all required tables and default
+    admin account created. Guarantees zero downtime and prevents 'no such table: users'
+    even when cloud database is offline.
+    """
+    should_close = False
+    if conn is None:
+        os.makedirs(DB_DIR, exist_ok=True)
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        should_close = True
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            full_name TEXT NOT NULL,
+            role TEXT DEFAULT 'Data Analyst',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_login TIMESTAMP
+        );
+        """)
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS user_activity (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            dataset_name TEXT NOT NULL,
+            records_count INTEGER NOT NULL,
+            health_score REAL NOT NULL,
+            action_type TEXT DEFAULT 'Analyzed Dataset',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        );
+        """)
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS otp_verifications (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL,
+            otp_code TEXT NOT NULL,
+            purpose TEXT NOT NULL,
+            payload TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            expires_at TIMESTAMP NOT NULL,
+            used INTEGER DEFAULT 0
+        );
+        """)
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS shared_dashboards (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            token TEXT UNIQUE NOT NULL,
+            title TEXT NOT NULL,
+            dataset_name TEXT NOT NULL,
+            snapshot_json TEXT NOT NULL,
+            created_by INTEGER,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """)
+
+        cursor.execute("SELECT id FROM users WHERE username = 'admin'")
+        if not cursor.fetchone():
+            demo_hash = generate_password_hash("Password123!")
+            cursor.execute("""
+            INSERT INTO users (username, email, password_hash, full_name, role)
+            VALUES ('admin', 'analyst@autoanalyst.io', ?, 'Chief Data Analyst', 'Lead Analyst')
+            """, (demo_hash,))
+
+        conn.commit()
+    except Exception as e:
+        print(f"[AutoAnalyst Pro] SQLite schema initialization warning: {e}", flush=True)
+    finally:
+        if should_close:
+            conn.close()
+
+
 def get_db_connection():
     """
     Provides a unified database connection.
     Connects to Supabase PostgreSQL when DATABASE_URL is set;
     falls back to local SQLite at data/users.db when offline/unset.
     Automatically handles IPv4 pooler fallback for IPv6-restricted cloud containers (like Render).
+    Always ensures the fallback database has the complete schema ready to prevent 'no such table' errors.
     """
     db_url = get_database_url()
     if db_url and PSYCOPG2_AVAILABLE:
         try:
-            pg_conn = psycopg2.connect(db_url, connect_timeout=5)
+            pg_conn = connect_to_postgres(db_url, timeout=6)
             return PGConnectionWrapper(pg_conn)
         except Exception as e:
-            # Check if this was a Supabase Direct URL (IPv6-only, which fails on Render IPv4)
-            if "db." in db_url and ".supabase.co" in db_url:
-                import re
-                m = re.match(r"postgresql://([^:]+):([^@]+)@db\.([^.]+)\.supabase\.co(?::\d+)?/(.+)", db_url)
-                if m:
-                    user, pwd, ref, dbname = m.groups()
-                    pooler_url = f"postgresql://postgres.{ref}:{pwd}@aws-0-ap-south-1.pooler.supabase.com:5432/{dbname}"
-                    try:
-                        print(f"[AutoAnalyst Pro] Direct connection failed ({e}). Auto-switching to Supabase IPv4 Pooler...", flush=True)
-                        pg_conn = psycopg2.connect(pooler_url, connect_timeout=8)
-                        return PGConnectionWrapper(pg_conn)
-                    except Exception as e2:
-                        print(f"[AutoAnalyst Pro] Supabase IPv4 Pooler also failed: {e2}", flush=True)
             # If PostgreSQL fails or is paused by Supabase, gracefully fallback to SQLite to prevent downtime
             print(f"[AutoAnalyst Pro] Cloud database unreachable ({e}). Gracefully falling back to local SQLite database to prevent service disruption.", flush=True)
 
     os.makedirs(DB_DIR, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
+    ensure_sqlite_schema(conn)
     return conn
 
 
-def start_database_keepalive():
-    """Starts a background daemon thread that pings Supabase every 24 hours to prevent the 7-day inactivity pause."""
+def start_database_keepalive(interval_hours: int = 6):
+    """
+    Background daemon thread that periodically executes a lightweight heartbeat query
+    against Supabase PostgreSQL so the project is never paused due to cloud inactivity.
+    Executes an immediate heartbeat upon startup, and then repeats every interval_hours.
+    """
     import threading
     import time
 
     def _keepalive_loop():
+        # Immediate heartbeat on thread startup to reset Supabase inactivity timer right away
+        try:
+            db_url = get_database_url()
+            if db_url and PSYCOPG2_AVAILABLE:
+                conn = connect_to_postgres(db_url, timeout=10)
+                cur = conn.cursor()
+                cur.execute("SELECT 1;")
+                conn.commit()
+                conn.close()
+                print("[AutoAnalyst Pro Keep-Alive] Supabase initial heartbeat successful. Inactivity timer reset.", flush=True)
+        except Exception as ex:
+            print(f"[AutoAnalyst Pro Keep-Alive] Supabase initial heartbeat note: {ex}", flush=True)
+
         while True:
+            time.sleep(interval_hours * 3600)
             try:
                 db_url = get_database_url()
                 if db_url and PSYCOPG2_AVAILABLE:
-                    conn = psycopg2.connect(db_url, connect_timeout=10)
+                    conn = connect_to_postgres(db_url, timeout=10)
                     cur = conn.cursor()
                     cur.execute("SELECT 1;")
                     conn.commit()
                     conn.close()
-                    print("[AutoAnalyst Pro Keep-Alive] Supabase keepalive ping successful. Inactivity timer reset.", flush=True)
+                    print("[AutoAnalyst Pro Keep-Alive] Supabase periodic heartbeat successful.", flush=True)
             except Exception as ex:
-                print(f"[AutoAnalyst Pro Keep-Alive] Keepalive ping error: {ex}", flush=True)
-            # Sleep 24 hours (86,400 seconds)
-            time.sleep(86400)
+                print(f"[AutoAnalyst Pro Keep-Alive] Periodic heartbeat warning: {ex}", flush=True)
 
-    t = threading.Thread(target=_keepalive_loop, daemon=True)
+    t = threading.Thread(target=_keepalive_loop, daemon=True, name="SupabaseKeepAlive")
     t.start()
 
 
 def init_auth_db():
-    """Initializes schema (PostgreSQL or SQLite) and creates default demo analyst account if missing."""
+    """Initializes schema (PostgreSQL and/or SQLite) and creates default demo analyst account if missing."""
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    if is_postgres():
+    if isinstance(conn, PGConnectionWrapper):
         # PostgreSQL Schema for Supabase
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -271,76 +424,31 @@ def init_auth_db():
             END IF;
         END $$;
         """)
+
+        # Seed default demo account on Supabase
+        cursor.execute("SELECT id FROM users WHERE username = ?", ("admin",))
+        if not cursor.fetchone():
+            demo_hash = generate_password_hash("Password123!")
+            cursor.execute("""
+            INSERT INTO users (username, email, password_hash, full_name, role)
+            VALUES (?, ?, ?, ?, ?)
+            """, (
+                "admin",
+                "analyst@autoanalyst.io",
+                demo_hash,
+                "Chief Data Analyst",
+                "Lead Analyst"
+            ))
+
+        conn.commit()
+        conn.close()
+
+        # Also initialize SQLite fallback locally so it is ready at all times
+        ensure_sqlite_schema()
     else:
-        # SQLite Schema
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            full_name TEXT NOT NULL,
-            role TEXT DEFAULT 'Data Analyst',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            last_login TIMESTAMP
-        )
-        """)
-
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS user_activity (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            dataset_name TEXT NOT NULL,
-            records_count INTEGER NOT NULL,
-            health_score REAL NOT NULL,
-            action_type TEXT DEFAULT 'Analyzed Dataset',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users (id)
-        )
-        """)
-
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS otp_verifications (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT NOT NULL,
-            otp_code TEXT NOT NULL,
-            purpose TEXT NOT NULL,
-            payload TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            expires_at TIMESTAMP NOT NULL,
-            used INTEGER DEFAULT 0
-        )
-        """)
-
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS shared_dashboards (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            token TEXT UNIQUE NOT NULL,
-            title TEXT NOT NULL,
-            dataset_name TEXT NOT NULL,
-            snapshot_json TEXT NOT NULL,
-            created_by INTEGER,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-        """)
-
-    # Seed default demo account
-    cursor.execute("SELECT id FROM users WHERE username = ?", ("admin",))
-    if not cursor.fetchone():
-        demo_hash = generate_password_hash("Password123!")
-        cursor.execute("""
-        INSERT INTO users (username, email, password_hash, full_name, role)
-        VALUES (?, ?, ?, ?, ?)
-        """, (
-            "admin",
-            "analyst@autoanalyst.io",
-            demo_hash,
-            "Chief Data Analyst",
-            "Lead Analyst"
-        ))
-
-    conn.commit()
-    conn.close()
+        # SQLite connection
+        conn.commit()
+        conn.close()
 
 
 
@@ -705,32 +813,6 @@ def get_shared_dashboard(token: str) -> Optional[Dict[str, Any]]:
     except Exception as e:
         print(f"[Get Shared Dashboard Error] {e}", flush=True)
         return None
-
-
-def start_database_keepalive(interval_hours: int = 12):
-    """
-    Background daemon thread that periodically executes a lightweight heartbeat query
-    against Supabase PostgreSQL so the project is never paused due to cloud inactivity.
-    """
-    import threading
-    import time
-
-    def _worker():
-        while True:
-            try:
-                time.sleep(interval_hours * 3600)
-                if is_postgres():
-                    conn = get_db_connection()
-                    cur = conn.cursor()
-                    cur.execute("SELECT 1")
-                    cur.fetchone()
-                    conn.close()
-                    print("[KeepAlive] Supabase PostgreSQL heartbeat ping successful.", flush=True)
-            except Exception as e:
-                print(f"[KeepAlive] Heartbeat warning: {e}", flush=True)
-
-    t = threading.Thread(target=_worker, daemon=True, name="SupabaseHeartbeat")
-    t.start()
 
 
 

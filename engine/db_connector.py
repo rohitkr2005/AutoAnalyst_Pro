@@ -67,7 +67,8 @@ def test_db_connection(db_url: Optional[str] = None) -> Dict[str, Any]:
         return {"status": "error", "message": "psycopg2 driver is not installed."}
 
     try:
-        conn = psycopg2.connect(url, connect_timeout=6)
+        from engine.auth import connect_to_postgres
+        conn = connect_to_postgres(url, timeout=6)
         conn.set_session(readonly=True)
         cur = conn.cursor()
         cur.execute("SELECT version();")
@@ -92,7 +93,8 @@ def list_db_tables(db_url: Optional[str] = None) -> Dict[str, Any]:
         return {"status": "error", "message": "psycopg2 driver is not installed."}
 
     try:
-        conn = psycopg2.connect(url, connect_timeout=6)
+        from engine.auth import connect_to_postgres
+        conn = connect_to_postgres(url, timeout=6)
         conn.set_session(readonly=True)
         cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("""
@@ -133,7 +135,8 @@ def load_db_table_data(table_name: str, db_url: Optional[str] = None, limit: int
         return None, "Invalid table name format."
 
     try:
-        conn = psycopg2.connect(url, connect_timeout=8)
+        from engine.auth import connect_to_postgres
+        conn = connect_to_postgres(url, timeout=8)
         conn.set_session(readonly=True)
         sql = f'SELECT * FROM "{table_name}" LIMIT {int(limit)};'
         df = pd.read_sql(sql, conn)
@@ -166,7 +169,8 @@ def execute_custom_db_query(sql_query: str, db_url: Optional[str] = None, limit:
         q_clean += f" LIMIT {int(limit)}"
 
     try:
-        conn = psycopg2.connect(url, connect_timeout=8)
+        from engine.auth import connect_to_postgres
+        conn = connect_to_postgres(url, timeout=8)
         conn.set_session(readonly=True)
         df = pd.read_sql(q_clean, conn)
         conn.close()
